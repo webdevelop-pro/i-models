@@ -1,6 +1,6 @@
 package fundingsource
 
-import "github.com/jackc/pgtype"
+import "github.com/webdevelop-pro/i-models/pgtype"
 
 type FoundingSource struct {
 	ID int `json:"id"`

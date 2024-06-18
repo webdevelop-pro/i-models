@@ -1,6 +1,6 @@
 package transactions
 
-import "github.com/jackc/pgtype"
+import "github.com/webdevelop-pro/i-models/pgtype"
 
 type Transaction struct {
 	ID     int     `json:"id"`

@@ -1,6 +1,6 @@
 package investments
 
-import "github.com/jackc/pgtype"
+import "github.com/webdevelop-pro/i-models/pgtype"
 
 // ToDo
 // Add all other fields

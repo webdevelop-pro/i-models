@@ -1,9 +1,8 @@
-module github.com/webdevelop/i-models
+module github.com/webdevelop-pro/i-models
 
 go 1.22.2
 
 require (
-	github.com/Joker/jade v1.1.3
 	github.com/Masterminds/squirrel v1.5.4
 	github.com/jackc/pgtype v1.14.3
 	github.com/jackc/pgx/v5 v5.6.0
@@ -29,12 +28,12 @@ require (
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/rs/zerolog v1.32.0 // indirect
-	github.com/webdevelop-pro/go-common/context v0.0.0-20240618215514-3852cd8111ed // indirect
+	github.com/webdevelop-pro/go-common/context v0.0.0-20240618222458-01cf9b5d19ef // indirect
 	go.uber.org/dig v1.17.1 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
 	golang.org/x/crypto v0.22.0 // indirect
 	golang.org/x/sync v0.6.0 // indirect
-	golang.org/x/sys v0.19.0 // indirect
+	golang.org/x/sys v0.21.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 )

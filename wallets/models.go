@@ -1,6 +1,6 @@
 package wallets
 
-import "github.com/jackc/pgtype"
+import "github.com/webdevelop-pro/i-models/pgtype"
 
 type Wallet struct {
 	ID                      int    `json:"id"`

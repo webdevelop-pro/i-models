@@ -1,6 +1,6 @@
 package filers
 
-import "github.com/jackc/pgtype"
+import "github.com/webdevelop-pro/i-models/pgtype"
 
 type FileMeta struct {
 	BucketName string `json:"-"`

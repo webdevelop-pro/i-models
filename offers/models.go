@@ -1,7 +1,7 @@
 package offers
 
 import (
-	"github.com/jackc/pgtype"
+	"github.com/webdevelop-pro/i-models/pgtype"
 )
 
 // ToDo

@@ -1,6 +1,6 @@
 package logs
 
-import "github.com/jackc/pgtype"
+import "github.com/webdevelop-pro/i-models/pgtype"
 
 type Logs struct {
 	ID              int            `json:"id"`
