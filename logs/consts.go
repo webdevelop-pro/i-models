@@ -17,4 +17,22 @@ const (
 
 	TypeOutcoming Type = "outcoming"
 	TypeIncoming  Type = "incoming"
+
+	ObjectLogentry      = "logentry"
+	ObjectPermission    = "permission"
+	ObjectGroup         = "group"
+	ObjectContentType   = "contenttype"
+	ObjectSession       = "session"
+	ObjectAccount       = "account"
+	ObjectFiler         = "filer"
+	ObjectOfferFiler    = "offerfiler"
+	ObjectOffer         = "offer"
+	ObjectProfile       = "profile"
+	ObjectInvestment    = "investment"
+	ObjectApplog        = "applog"
+	ObjectEmail         = "email"
+	ObjectComment       = "comment"
+	ObjectWallet        = "wallet"
+	ObjectFundingsource = "fundingsource"
+	ObjectTransaction   = "transaction"
 )

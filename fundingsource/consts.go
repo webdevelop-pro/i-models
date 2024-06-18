@@ -6,10 +6,11 @@ type (
 )
 
 const (
-	Created  Status = "created"
-	Verified Status = "verified"
-	Error    Status = "error"
+	StatusCreated  Status = "created"
+	StatusVerified Status = "verified"
+	StatusError    Status = "error"
 
-	Bank     Type = "bank"
-	Checking Type = "checking"
+	TypeBank     Type = "bank"
+	TypeChecking Type = "checking"
+	TypeSaving   Type = "savings"
 )

@@ -6,14 +6,14 @@ type (
 )
 
 const (
-	Wait      Status = "wait"
-	Created   Status = "created"
-	Pending   Status = "pending"
-	Processed Status = "processed"
-	Cancelled Status = "cancelled"
-	Err       Status = "failed"
+	StatusWait      Status = "wait"
+	StatusCreated   Status = "created"
+	StatusPending   Status = "pending"
+	StatusProcessed Status = "processed"
+	StatusCancelled Status = "cancelled"
+	StatusErr       Status = "failed"
 
-	Deposit    Type = "deposit"
-	Withdrawal Type = "withdrawal"
-	Invest     Type = "investment"
+	TypeDeposit    Type = "deposit"
+	TypeWithdrawal Type = "withdrawal"
+	TypeInvest     Type = "investment"
 )
