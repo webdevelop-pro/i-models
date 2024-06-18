@@ -6,7 +6,7 @@ import (
 	sq "github.com/Masterminds/squirrel"
 	"github.com/pkg/errors"
 	"github.com/webdevelop-pro/go-common/db"
-	"github.com/webdevelop/i-models/models"
+	"github.com/webdevelop-pro/i-models/models"
 )
 
 type ProfileData struct {

@@ -7,7 +7,7 @@ import (
 	"github.com/webdevelop-pro/go-common/db"
 	"github.com/webdevelop-pro/go-common/logger"
 	"github.com/webdevelop-pro/go-common/verser"
-	"github.com/webdevelop/i-models/profiles"
+	"github.com/webdevelop-pro/i-models/profiles"
 	"go.uber.org/fx"
 )
 

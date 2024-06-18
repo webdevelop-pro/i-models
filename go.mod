@@ -4,7 +4,7 @@ go 1.22.2
 
 require (
 	github.com/Masterminds/squirrel v1.5.4
-	github.com/jackc/pgtype v1.14.3
+	github.com/jackc/pgio v1.0.0
 	github.com/jackc/pgx/v5 v5.6.0
 	github.com/pkg/errors v0.9.1
 	github.com/webdevelop-pro/go-common/configurator v0.0.0-20240618222458-01cf9b5d19ef
@@ -16,7 +16,6 @@ require (
 
 require (
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
-	github.com/jackc/pgio v1.0.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20231201235250-de7065d80cb9 // indirect
 	github.com/jackc/puddle/v2 v2.2.1 // indirect
