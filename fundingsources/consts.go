@@ -1,16 +1,33 @@
-package fundingsource
+package fundingsources
 
-type (
-	Status string
-	Type   string
-)
+import "github.com/friendsofgo/errors"
 
+type FoundingSourceT string
+
+// Enum values for FoundingSourceT
 const (
-	StatusCreated  Status = "created"
-	StatusVerified Status = "verified"
-	StatusError    Status = "error"
-
-	TypeBank     Type = "bank"
-	TypeChecking Type = "checking"
-	TypeSaving   Type = "savings"
+	FoundingSourceTChecking FoundingSourceT = "checking"
+	FoundingSourceTBank     FoundingSourceT = "bank"
+	FoundingSourceTSavings  FoundingSourceT = "savings"
 )
+
+func AllFoundingSourceT() []FoundingSourceT {
+	return []FoundingSourceT{
+		FoundingSourceTChecking,
+		FoundingSourceTBank,
+		FoundingSourceTSavings,
+	}
+}
+
+func (e FoundingSourceT) IsValid() error {
+	switch e {
+	case FoundingSourceTChecking, FoundingSourceTBank, FoundingSourceTSavings:
+		return nil
+	default:
+		return errors.New("enum is not valid")
+	}
+}
+
+func (e FoundingSourceT) String() string {
+	return string(e)
+}

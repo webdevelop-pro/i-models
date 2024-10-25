@@ -1,6 +1,6 @@
 package emails
 
 type Provider interface {
-	Send(email *Email) error
-	Cancel(email *Email) error
+	Send(email *EmailEmail) error
+	Cancel(email *EmailEmail) error
 }

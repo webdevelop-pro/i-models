@@ -1,28 +1,66 @@
 package filers
 
-import "github.com/webdevelop-pro/i-models/pgtype"
+import (
+	"github.com/webdevelop-pro/i-models/pgtype"
+)
 
-type FileMeta struct {
-	BucketName string `json:"-"`
-	BucketPath string `json:"-"`
+// FilerFiler is an object representing the database table.
+type FilerFiler struct {
+	ID          int                `json:"id" yaml:"id"`
+	UserID      int                `json:"user_id,omitempty" yaml:"user_id,omitempty"`
+	GroupID     int                `json:"group_id,omitempty" yaml:"group_id,omitempty"`
+	Filename    string             `json:"filename" yaml:"filename"`
+	URL         string             `json:"url" yaml:"url"`
+	Mime        string             `json:"mime" yaml:"mime"`
+	Name        string             `json:"name" yaml:"name"`
+	Description string             `json:"description" yaml:"description"`
+	BucketName  string             `json:"bucket_name" yaml:"bucket_name"`
+	BucketPath  string             `json:"bucket_path" yaml:"bucket_path"`
+	MetaData    map[string]any     `json:"meta_data" yaml:"meta_data"`
+	CreatedAt   pgtype.Timestamptz `json:"created_at" yaml:"created_at"`
+	UpdatedAt   pgtype.Timestamptz `json:"updated_at" yaml:"updated_at"`
+}
 
-	ObjectID   int               `json:"object-id"`
-	ObjectName string            `json:"object-name"`
-	ObjectType string            `json:"object-type"`
-	ObjectData map[string]string `json:"object-data"`
+func (model FilerFiler) ToJSON() map[string]any {
+	return map[string]any{
+		"id":          model.ID,
+		"user_id":     model.UserID,
+		"group_id":    model.GroupID,
+		"filename":    model.Filename,
+		"url":         model.URL,
+		"mime":        model.Mime,
+		"name":        model.Name,
+		"description": model.Description,
+		"bucket_name": model.BucketName,
+		"bucket_path": model.BucketPath,
+		"meta_data":   model.MetaData,
+		"created_at":  model.CreatedAt,
+		"updated_at":  model.UpdatedAt,
+	}
+}
 
-	ID          int64             `json:"id,omitempty"`
-	Filename    string            `json:"filename"`
-	UserID      int64             `json:"user_id"`
-	GroupID     int64             `json:"group_id,omitempty"`
-	Mime        string            `json:"mime,omitempty"`
-	Name        string            `json:"name"`
-	Description string            `json:"description,omitempty"`
-	MetaData    map[string]string `json:"meta_data"`
+func (model FilerFiler) Fields() []string {
+	return []string{
+		"ID",
+		"UserID",
+		"GroupID",
+		"Filename",
+		"URL",
+		"Mime",
+		"Name",
+		"Description",
+		"BucketName",
+		"BucketPath",
+		"MetaData",
+		"CreatedAt",
+		"UpdatedAt",
+	}
+}
 
-	// use to insert link on separate services, like pandadoc and etc
-	URL string `json:"url"`
+func (model FilerFiler) Table() string {
+	return "filer_filers"
+}
 
-	CreatedAt pgtype.Timestamptz `json:"created_at,omitempty"`
-	UpdatedAt pgtype.Timestamptz `json:"updated_at,omitempty"`
+func (model FilerFiler) GetID() any {
+	return model.ID
 }

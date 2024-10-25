@@ -1,11 +1,26 @@
 package models
 
+import (
+	"context"
+
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/webdevelop-pro/go-common/logger"
+	"github.com/webdevelop-pro/go-common/queue/pclient"
+)
+
+type Repository interface {
+	Query(ctx context.Context, sql string, args ...any) (pgx.Rows, error)
+	Exec(ctx context.Context, sql string, args ...any) (pgconn.CommandTag, error)
+	QueryRow(ctx context.Context, sql string, args ...any) pgx.Row
+	LogPubSubMsg(ctx context.Context, topic string, msg *pclient.Message) error
+	GetAppName() string
+	Lg() logger.Logger
+}
+
 type Model interface {
-	Table() string
+	GetID() any
+	ToJSON() map[string]any
 	Fields() []string
-	// UpdatedFields() []string
-	PrimaryFieldKey() string
-	PrimaryFieldValue() any
-	// New(*db.DB, string)
-	// Select(context.Context, []string, any) error
+	Table() string
 }
