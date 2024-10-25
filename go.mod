@@ -1,6 +1,6 @@
 module github.com/webdevelop-pro/i-models
 
-go 1.23.1
+go 1.23.0
 
 require (
 	github.com/Masterminds/squirrel v1.5.4
