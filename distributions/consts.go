@@ -1,11 +1,9 @@
 package distributions
 
 import (
-	"bytes"
 	"encoding/json"
 
 	"github.com/friendsofgo/errors"
-	"github.com/volatiletech/null/v8"
 )
 
 type DistributionT string
@@ -97,11 +95,6 @@ func NewNullDistributionFilerT(v DistributionFilerT, valid bool) NullDistributio
 
 // UnmarshalJSON implements json.Unmarshaler.
 func (e *NullDistributionFilerT) UnmarshalJSON(data []byte) error {
-	if bytes.Equal(data, null.NullBytes) {
-		e.Val = ""
-		e.Valid = false
-		return nil
-	}
 
 	if err := json.Unmarshal(data, &e.Val); err != nil {
 		return err
@@ -113,17 +106,11 @@ func (e *NullDistributionFilerT) UnmarshalJSON(data []byte) error {
 
 // MarshalJSON implements json.Marshaler.
 func (e NullDistributionFilerT) MarshalJSON() ([]byte, error) {
-	if !e.Valid {
-		return null.NullBytes, nil
-	}
 	return json.Marshal(e.Val)
 }
 
 // MarshalText implements encoding.TextMarshaler.
 func (e NullDistributionFilerT) MarshalText() ([]byte, error) {
-	if !e.Valid {
-		return []byte{}, nil
-	}
 	return []byte(e.Val), nil
 }
 
