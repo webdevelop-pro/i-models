@@ -4,7 +4,7 @@ import (
 	"context"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/pkg/errors"
+	"github.com/friendsofgo/errors"
 	"github.com/webdevelop-pro/go-common/db"
 	"github.com/webdevelop-pro/i-models/models"
 )

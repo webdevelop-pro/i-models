@@ -7,7 +7,6 @@ require (
 	github.com/friendsofgo/errors v0.9.2
 	github.com/jackc/pgio v1.0.0
 	github.com/jackc/pgx/v5 v5.7.1
-	github.com/pkg/errors v0.9.1
 	github.com/webdevelop-pro/go-common/configurator v0.0.0-20241024225748-e2a7bf216db9
 	github.com/webdevelop-pro/go-common/db v0.0.0-20241024225748-e2a7bf216db9
 	github.com/webdevelop-pro/go-common/logger v0.0.0-20241024225748-e2a7bf216db9
@@ -48,6 +47,7 @@ require (
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rs/zerolog v1.33.0 // indirect
 	github.com/stretchr/testify v1.9.0 // indirect
