@@ -3,7 +3,7 @@ package offers
 import (
 	"encoding/json"
 
-	"github.com/friendsofgo/errors"
+	"github.com/pkg/errors"
 )
 
 type OfferFilerT string

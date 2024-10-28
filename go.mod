@@ -4,13 +4,13 @@ go 1.23.0
 
 require (
 	github.com/Masterminds/squirrel v1.5.4
-	github.com/friendsofgo/errors v0.9.2
 	github.com/jackc/pgio v1.0.0
 	github.com/jackc/pgx/v5 v5.7.1
-	github.com/webdevelop-pro/go-common/configurator v0.0.0-20241024225748-e2a7bf216db9
-	github.com/webdevelop-pro/go-common/db v0.0.0-20241024225748-e2a7bf216db9
-	github.com/webdevelop-pro/go-common/logger v0.0.0-20241024225748-e2a7bf216db9
-	github.com/webdevelop-pro/go-common/queue v0.0.0-20241024225748-e2a7bf216db9
+	github.com/pkg/errors v0.9.1
+	github.com/webdevelop-pro/go-common/configurator v0.0.0-20241028225919-4a99d7ec19ac
+	github.com/webdevelop-pro/go-common/db v0.0.0-20241028225919-4a99d7ec19ac
+	github.com/webdevelop-pro/go-common/logger v0.0.0-20241028225919-4a99d7ec19ac
+	github.com/webdevelop-pro/go-common/queue v0.0.0-20241028225919-4a99d7ec19ac
 	github.com/webdevelop-pro/go-common/verser v0.0.0-20241024225748-e2a7bf216db9
 	go.uber.org/fx v1.23.0
 )
@@ -25,6 +25,7 @@ require (
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
+	github.com/friendsofgo/errors v0.9.1 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.6 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
@@ -47,7 +48,6 @@ require (
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
-	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rs/zerolog v1.33.0 // indirect
 	github.com/stretchr/testify v1.9.0 // indirect

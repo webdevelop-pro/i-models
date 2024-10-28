@@ -1,6 +1,6 @@
 package logs
 
-import "github.com/friendsofgo/errors"
+import "github.com/pkg/errors"
 
 type (
 	ServiceType string

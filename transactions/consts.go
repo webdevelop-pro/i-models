@@ -1,6 +1,6 @@
 package transactions
 
-import "github.com/friendsofgo/errors"
+import "github.com/pkg/errors"
 
 type TransactionsTypeT string
 

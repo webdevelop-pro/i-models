@@ -1,6 +1,6 @@
 package investments
 
-import "github.com/friendsofgo/errors"
+import "github.com/pkg/errors"
 
 type PaymentT string
 

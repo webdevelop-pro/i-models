@@ -1,6 +1,6 @@
 package wallets
 
-import "github.com/friendsofgo/errors"
+import "github.com/pkg/errors"
 
 type WalletStatusT string
 

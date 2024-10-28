@@ -1,6 +1,6 @@
 package notifications
 
-import "github.com/friendsofgo/errors"
+import "github.com/pkg/errors"
 
 type NotificationStatusT string
 

@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/friendsofgo/errors"
 	"github.com/jackc/pgx/v5"
+	"github.com/pkg/errors"
 	"github.com/webdevelop-pro/go-common/db"
 	"github.com/webdevelop-pro/go-common/logger"
 )
@@ -21,7 +21,7 @@ func RetriveOne[T Model](ctx context.Context, pg Repository, where map[string]in
 		Where(where).PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
 		// we need this to have stacktrace
-		log.Error().Stack().Err(errors.New(ErrSQLPrepare)).Msg(ErrRetrieveOne)
+		log.Error().Stack().Err(errors.WithStack(err)).Msg(ErrRetrieveOne)
 		return nil, err
 	}
 
@@ -30,7 +30,7 @@ func RetriveOne[T Model](ctx context.Context, pg Repository, where map[string]in
 	results, err := pgx.CollectOneRow(rows, pgx.RowToAddrOfStructByName[T])
 	if err != nil {
 		// we need this to have stacktrace
-		log.Error().Stack().Err(errors.New(ErrSQLRequest)).Msg(ErrRetrieveOne)
+		log.Error().Stack().Err(errors.WithStack(err)).Msg(ErrRetrieveOne)
 		return results, err
 	}
 	return results, nil

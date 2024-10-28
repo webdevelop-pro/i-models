@@ -3,7 +3,7 @@ package distributions
 import (
 	"encoding/json"
 
-	"github.com/friendsofgo/errors"
+	"github.com/pkg/errors"
 )
 
 type DistributionT string
