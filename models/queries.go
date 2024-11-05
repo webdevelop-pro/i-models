@@ -9,10 +9,12 @@ import (
 	"github.com/pkg/errors"
 	"github.com/webdevelop-pro/go-common/db"
 	"github.com/webdevelop-pro/go-common/logger"
+	"github.com/webdevelop-pro/go-common/validator"
 )
 
 func RetriveOne[T Model](ctx context.Context, pg Repository, where map[string]interface{}) (*T, error) {
 	log := logger.FromCtx(ctx, "models")
+	valid := validator.New()
 	obj := *new(T)
 
 	// ToDo
@@ -31,6 +33,10 @@ func RetriveOne[T Model](ctx context.Context, pg Repository, where map[string]in
 	if err != nil {
 		// we need this to have stacktrace
 		log.Error().Stack().Err(errors.WithStack(err)).Msg(ErrRetrieveOne)
+		return results, err
+	}
+
+	if err := valid.Verify(results, 400); err != nil {
 		return results, err
 	}
 	return results, nil
