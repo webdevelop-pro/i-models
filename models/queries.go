@@ -7,14 +7,18 @@ import (
 	sq "github.com/Masterminds/squirrel"
 	"github.com/jackc/pgx/v5"
 	"github.com/pkg/errors"
+	"github.com/rs/zerolog"
 	"github.com/webdevelop-pro/go-common/db"
 	"github.com/webdevelop-pro/go-common/logger"
-	"github.com/webdevelop-pro/go-common/validator"
 )
 
+const pkgName = "models"
+
+func log(ctx context.Context) *zerolog.Logger {
+	return logger.FromCtx(ctx, pkgName)
+}
+
 func RetriveOne[T Model](ctx context.Context, pg Repository, where map[string]interface{}) (*T, error) {
-	log := logger.FromCtx(ctx, "models")
-	valid := validator.New()
 	obj := *new(T)
 
 	// ToDo
@@ -23,7 +27,8 @@ func RetriveOne[T Model](ctx context.Context, pg Repository, where map[string]in
 		Where(where).PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
 		// we need this to have stacktrace
-		log.Error().Stack().Err(errors.WithStack(err)).Msg(ErrRetrieveOne)
+		log(ctx).Error().Stack().Err(errors.WithStack(err)).Msg(ErrRetrieveOne)
+
 		return nil, err
 	}
 
@@ -32,18 +37,15 @@ func RetriveOne[T Model](ctx context.Context, pg Repository, where map[string]in
 	results, err := pgx.CollectOneRow(rows, pgx.RowToAddrOfStructByName[T])
 	if err != nil {
 		// we need this to have stacktrace
-		log.Error().Stack().Err(errors.WithStack(err)).Msg(ErrRetrieveOne)
+		log(ctx).Error().Stack().Err(errors.WithStack(err)).Msg(ErrRetrieveOne)
+
 		return results, err
 	}
 
-	if err := valid.Verify(results, 400); err != nil {
-		return results, err
-	}
 	return results, nil
 }
 
 func RetriveAll[T Model](ctx context.Context, pg Repository, where map[string]interface{}) ([]*T, error) {
-	log := logger.FromCtx(ctx, "models")
 	obj := *new(T)
 
 	// ToDo
@@ -51,7 +53,8 @@ func RetriveAll[T Model](ctx context.Context, pg Repository, where map[string]in
 	sql, args, err := sq.Select(strings.Join(obj.Fields(), ",")).From(obj.Table()).
 		Where(where).PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
-		log.Error().Stack().Err(errors.New(ErrSQLPrepare)).Msg(ErrRetrieveAll)
+		log(ctx).Error().Stack().Err(errors.New(ErrSQLPrepare)).Msg(ErrRetrieveAll)
+
 		return nil, err
 	}
 
@@ -59,34 +62,44 @@ func RetriveAll[T Model](ctx context.Context, pg Repository, where map[string]in
 	// Assumes the returned row only has a single hit. StructToFill is the target struct.
 	results, err := pgx.CollectRows(rows, pgx.RowToAddrOfStructByName[T])
 	if err != nil {
-		log.Error().Stack().Err(errors.New(ErrSQLRequest)).Msg(ErrRetrieveAll)
+		log(ctx).Error().Stack().Err(errors.New(ErrSQLRequest)).Msg(ErrRetrieveAll)
+
 		return results, err
 	}
+
 	return results, nil
 }
 
 func Create[T any](ctx context.Context, pg Repository, obj Model) (int, error) {
-	log := logger.FromCtx(ctx, "models")
-	id := 0
-	data := obj.ToJSON()
+	var (
+		id   int
+		data = obj.ToJSON()
+		sqEq = sq.Eq{}
+	)
+
 	delete(data, "id")
-	sqEq := sq.Eq{}
+
 	for key, val := range data {
 		sqEq[key] = val
 	}
+
 	b := sq.Insert(obj.Table()).Suffix("RETURNING id").SetMap(sqEq)
+
 	sql, args, err := b.PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
 		resErr := errors.Wrapf(errors.New(ErrSQLRequest), "%s: %s, %v", err.Error(), sql, args)
-		log.Error().Stack().Err(errors.New(ErrSQLPrepare)).Msg(ErrCreate)
+		log(ctx).Error().Stack().Err(errors.New(ErrSQLPrepare)).Msg(ErrCreate)
+
 		return id, resErr
 	}
 
 	err = pg.QueryRow(ctx, sql, args...).Scan(&id)
 	if err != nil {
 		resErr := errors.Wrapf(err, "sql %s", db.CleanSQL(sql))
-		log.Error().Stack().Err(errors.New(ErrSQLPrepare)).Msg(ErrCreate)
+		log(ctx).Error().Stack().Err(errors.New(ErrSQLPrepare)).Msg(ErrCreate)
+
 		return id, resErr
 	}
+
 	return id, nil
 }
