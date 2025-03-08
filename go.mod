@@ -11,7 +11,6 @@ require (
 	github.com/webdevelop-pro/go-common/db v0.0.0-20241028225919-4a99d7ec19ac
 	github.com/webdevelop-pro/go-common/logger v0.0.0-20241028225919-4a99d7ec19ac
 	github.com/webdevelop-pro/go-common/queue v0.0.0-20241028225919-4a99d7ec19ac
-	github.com/webdevelop-pro/go-common/validator v0.0.0-20241024225208-caf4b7f8afd9
 	github.com/webdevelop-pro/go-common/verser v0.0.0-20241024225748-e2a7bf216db9
 	go.uber.org/fx v1.23.0
 )
@@ -56,6 +55,7 @@ require (
 	github.com/webdevelop-pro/go-common/httputils v0.0.0-20241024225208-caf4b7f8afd9 // indirect
 	github.com/webdevelop-pro/go-common/response v0.0.0-20241024225208-caf4b7f8afd9 // indirect
 	github.com/webdevelop-pro/go-common/tests v0.0.0-20241024225208-caf4b7f8afd9 // indirect
+	github.com/webdevelop-pro/go-common/validator v0.0.0-20241024225208-caf4b7f8afd9 // indirect
 	go.opencensus.io v0.24.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.54.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.54.0 // indirect
@@ -66,7 +66,7 @@ require (
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
 	golang.org/x/crypto v0.31.0 // indirect
-	golang.org/x/net v0.30.0 // indirect
+	golang.org/x/net v0.33.0 // indirect
 	golang.org/x/oauth2 v0.23.0 // indirect
 	golang.org/x/sync v0.10.0 // indirect
 	golang.org/x/sys v0.28.0 // indirect
