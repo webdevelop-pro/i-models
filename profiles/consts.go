@@ -8,6 +8,14 @@ type (
 )
 
 const (
+	Individual ProfileType = "individual"
+	Sdira      ProfileType = "sdira"
+	Solo401k   ProfileType = "solo401k"
+	Trust      ProfileType = "trust"
+	Entity     ProfileType = "entity"
+)
+
+const (
 	AccNew          AccType = "new"
 	AccInProgress   AccType = "in_progress"
 	AccInfoRequired AccType = "info_required"

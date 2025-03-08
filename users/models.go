@@ -4,6 +4,8 @@ import (
 	"github.com/webdevelop-pro/i-models/pgtype"
 )
 
+const Table = "user_users"
+
 // ToDo
 // Add all fields
 type UserData struct {
