@@ -7,8 +7,12 @@ type WalletStatusT string
 // Enum values for WalletStatusT
 const (
 	WalletStatusTCreated  WalletStatusT = "created"
+	WalletStatusTPending  WalletStatusT = "pending"
 	WalletStatusTVerified WalletStatusT = "verified"
 	WalletStatusTError    WalletStatusT = "error"
+
+	WalletAppLabel  = "wallet"
+	WalletModelName = "wallet"
 )
 
 func AllWalletStatusT() []WalletStatusT {

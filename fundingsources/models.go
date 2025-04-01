@@ -7,15 +7,15 @@ import (
 
 // WalletFundingSource is an object representing the database table.
 type WalletFundingSource struct {
-	ID        int                   `json:"id" yaml:"id"`
-	WalletID  int                   `json:"wallet_id,omitempty" yaml:"wallet_id,omitempty"`
-	EntityID  string                `json:"entity_id" yaml:"entity_id"`
-	Type      FoundingSourceT       `json:"type" yaml:"type"`
-	BankName  string                `json:"bank_name" yaml:"bank_name"`
-	Status    wallets.WalletStatusT `json:"status" yaml:"status"`
-	Name      string                `json:"name" yaml:"name"`
-	CreatedAt pgtype.Timestamptz    `json:"created_at" yaml:"created_at"`
-	UpdatedAt pgtype.Timestamptz    `json:"updated_at" yaml:"updated_at"`
+	ID        int                   `db:"-" json:"id" yaml:"id"`
+	WalletID  int                   `db:"-" json:"wallet_id,omitempty" yaml:"wallet_id,omitempty"`
+	EntityID  string                `db:"-" json:"entity_id" yaml:"entity_id"`
+	Type      FoundingSourceT       `db:"-" json:"type" yaml:"type"`
+	BankName  string                `db:"-" json:"bank_name" yaml:"bank_name"`
+	Status    wallets.WalletStatusT `db:"-" json:"status" yaml:"status"`
+	Name      string                `db:"-" json:"name" yaml:"name"`
+	CreatedAt pgtype.Timestamptz    `db:"-" json:"created_at" yaml:"created_at"`
+	UpdatedAt pgtype.Timestamptz    `db:"-" json:"updated_at" yaml:"updated_at"`
 }
 
 func (model WalletFundingSource) ToJSON() map[string]any {

@@ -18,6 +18,9 @@ const (
 	OfferTLegalClosed         OfferT = "legal-closed"
 	OfferTClosedSuccessfully  OfferT = "closed-successfully"
 	OfferTClosedUnsuccesfully OfferT = "closed-unsuccesfully"
+
+	OfferAppLabel  = "offer"
+	OfferModelName = "offer"
 )
 
 func AllOfferT() []OfferT {

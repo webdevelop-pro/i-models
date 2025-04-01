@@ -1,8 +1,21 @@
 package logs
 
 import (
+	"bytes"
+	"context"
+	"fmt"
+	"io"
+	"net/http"
+	"time"
+
+	sq "github.com/Masterminds/squirrel"
+	"github.com/webdevelop-pro/go-common/context/keys"
+	"github.com/webdevelop-pro/go-common/db"
+	"github.com/webdevelop-pro/go-common/logger"
 	"github.com/webdevelop-pro/i-models/pgtype"
 )
+
+type ContextKey rune
 
 // LogLog is an object representing the database table.
 type LogLog struct {
@@ -23,6 +36,116 @@ type LogLog struct {
 	RequestCreatedAt pgtype.Timestamptz `json:"request_created_at" yaml:"request_created_at"`
 	CreatedAt        pgtype.Timestamptz `json:"created_at,omitempty" yaml:"created_at,omitempty"`
 	UpdatedAt        pgtype.Timestamptz `json:"updated_at,omitempty" yaml:"updated_at,omitempty"`
+}
+
+// ToDo Use db.DB instead of pgxpool.Pool
+func GetContentID(ctx context.Context, db db.Repository, serviceLabel, serviceModel string) (int, error) {
+	contentID := 1
+
+	sql, args, err := sq.Select("id").
+		From("django_content_type").Where(sq.And{sq.Eq{"app_label": serviceLabel}, sq.Eq{"model": serviceModel}}).PlaceholderFormat(sq.Dollar).ToSql()
+	if err != nil {
+		return contentID, err
+	}
+
+	err = db.QueryRow(ctx, sql, args...).Scan(&contentID)
+	if err != nil {
+		return contentID, err
+	}
+
+	return contentID, nil
+}
+
+// ToDo Use db.DB instead of pgxpool.Pool
+func (model *LogLog) LogRequest(log logger.Logger, db db.Repository, objectID string, serviceName, objectLabel, objectModel string) func(req *http.Request) {
+	return func(req *http.Request) {
+		var (
+			reqID, _ = req.Context().Value(keys.RequestID).(string)
+			msgID, _ = req.Context().Value(keys.MSGID).(string)
+		)
+
+		sql := fmt.Sprintf(`INSERT INTO %s(
+				service, "type", content_type_id, object_id, path,
+				request_created_at, request_id, request_headers, request_data, msg_id
+			) VALUES (
+				$1, $2, $3   , $4, $5, $6, $7, $8, $9, $10
+			) RETURNING id`, model.Table(),
+		)
+
+		contentID, err := GetContentID(req.Context(), db, objectLabel, objectModel)
+		if err != nil {
+			log.Error().Err(err).Msg("can't get log from database")
+			return
+		}
+
+		rawBody := []byte("{}")
+		if req.Body != nil {
+			rawBody, _ = io.ReadAll(req.Body)
+			req.Body = io.NopCloser(bytes.NewReader(rawBody))
+		}
+
+		// TODO: Use the same format for incoming logs
+		log.Info().Str("path", req.RequestURI).Str("service", serviceName).Msg("Send request to 3rd party")
+
+		err = db.QueryRow(
+			req.Context(),
+			sql,
+			serviceName,
+			LogTypeTOutcoming,
+			// TODO: я сейчас не знаю как легко связать эти поля, не совсем понимаю для ччего они, нужно обсудить
+			contentID,
+			objectID,
+			req.URL.Path,
+			time.Now(),
+			reqID,
+			req.Header,
+			rawBody,
+			msgID,
+		).Scan(&model.ID)
+		if err != nil {
+			log.Error().Err(err).Msg("can't save log in database")
+		}
+	}
+}
+
+func (model *LogLog) LogResponse(log logger.Logger, db db.Repository, serviceName string) func(req *http.Response) {
+	return func(resp *http.Response) {
+		logID, _ := resp.Request.Context().Value(keys.RequestLogID).(int)
+
+		sql := fmt.Sprintf(`UPDATE %s
+			SET status_code=$2, response_headers=$3, response_data=$4
+			WHERE id=$1`, model.Table(),
+		)
+
+		rawBody := []byte("{}")
+		if resp.Body != nil {
+			rawBody, _ = io.ReadAll(resp.Body)
+			resp.Body = io.NopCloser(bytes.NewReader(rawBody))
+		}
+
+		if len(string(rawBody)) == 0 {
+			rawBody = []byte("{}")
+		}
+
+		// TODO: Use the same format for incoming logs
+		log.Debug().Str("path", resp.Request.RequestURI).
+			Int("logID", model.ID).Str("service", serviceName).Msg("3rd party request finished")
+
+		res, err := db.Exec(
+			resp.Request.Context(),
+			sql,
+			model.ID,
+			resp.StatusCode,
+			resp.Header,
+			rawBody,
+		)
+		if err != nil {
+			log.Error().Err(err).Int("log_id", logID).Msg("can't update log in database")
+		}
+		if res.String() == "UPDATE 0" {
+			log.Error().Err(err).Int("log_id", logID).Msg("can't update log in database")
+		}
+	}
 }
 
 func (model LogLog) ToJSON() map[string]any {

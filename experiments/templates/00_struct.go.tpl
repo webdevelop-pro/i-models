@@ -250,12 +250,7 @@ func (model {{$alias.UpSingular}}) ToJSON() map[string]any {
 }
 
 func (model {{$alias.UpSingular}}) Fields() []string {
-	return []string{
-		{{range $column := .Table.Columns -}}
-		{{- $colAlias := $alias.Column $column.Name -}}
-		"{{$column.Name}}",
-		{{end -}}
-	}
+	return models.DefaultFields(user)
 }
 
 func (model {{$alias.UpSingular}}) Table() string {
@@ -264,4 +259,28 @@ func (model {{$alias.UpSingular}}) Table() string {
 
 func (model {{$alias.UpSingular}}) GetID() any {
 	return model.ID
+}
+
+
+func (model {{$alias.UpSingular}}) SetID() any {
+	return model.ID
+}
+
+func (model {{$alias.UpSingular}}) ToJSON() map[string]any {
+	return map[string]any{
+		{{range $column := .Table.Columns -}}
+		{{- $colAlias := $alias.Column $column.Name -}}
+		"{{$column.Name}}": model.{{$colAlias}},
+		{{end -}}
+	}
+}
+
+func (model {{$alias.UpSingular}}) GetField(name string) any {
+	switch name {
+	{{range $column := .Table.Columns -}}
+	case "{{- $alias.Column $column.Name -}}":
+		return model.{{- $alias.Column $column.Name -}}
+	{{end -}}
+	}
+	return nil
 }

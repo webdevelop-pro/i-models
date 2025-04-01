@@ -9,6 +9,9 @@ const (
 	FoundingSourceTChecking FoundingSourceT = "checking"
 	FoundingSourceTBank     FoundingSourceT = "bank"
 	FoundingSourceTSavings  FoundingSourceT = "savings"
+
+	AppLabel  = "wallet"
+	ModelName = "fundingsource"
 )
 
 func AllFoundingSourceT() []FoundingSourceT {

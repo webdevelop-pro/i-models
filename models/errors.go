@@ -14,7 +14,9 @@ const (
 	ErrSQLRequest  = "sql error happen"
 	ErrJSONMarshal = "json marshal error"
 
-	ErrRetrieveOne = "cannot retrieve one element"
-	ErrRetrieveAll = "cannot retrieve elements"
+	ErrRetrieveOne = "cannot retrieve one record"
+	ErrRetrieveAll = "cannot retrieve records"
 	ErrCreate      = "cannot create record"
+	ErrUpdate      = "cannot update record"
+	ErrExist       = "cannot check existence"
 )

@@ -13,6 +13,9 @@ const (
 	Solo401k   ProfileType = "solo401k"
 	Trust      ProfileType = "trust"
 	Entity     ProfileType = "entity"
+
+	ProfileAppLabel  = "accounts"
+	ProfileModelName = "profile"
 )
 
 const (

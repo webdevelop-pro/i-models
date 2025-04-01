@@ -1,7 +1,7 @@
 package profiles
 
 import (
-	"github.com/webdevelop-pro/go-common/db"
+	"reflect"
 )
 
 const Table = "investment_profiles"
@@ -26,22 +26,16 @@ type ProfileData struct {
 }
 
 type Profile struct {
-	ID                  int             `db:"id"`
-	UserID              int             `db:"user_id"`
-	Type                ProfileType     `db:"type"`
-	Data                ProfileData     `db:"data"`
-	KycID               *string         `db:"kyc_id"`
-	KycStatus           KycType         `db:"kyc_status"`
-	AccreditationID     *string         `db:"accreditation_id"`
-	AccreditationData   []Accreditation `db:"accreditation_data"`
-	AccreditationStatus *AccType        `db:"accreditation_status"`
-	EscrowID            string          `db:"escrow_id"`
-	WalletID            *int            `db:"wallet_id"`
-}
-
-func New(pool *db.DB) *Profile {
-	profile := Profile{}
-	return &profile
+	ID                  int             `db:"-"`
+	UserID              int             `db:"-"`
+	Type                ProfileType     `db:"-"`
+	Data                ProfileData     `db:"-"`
+	KycID               *string         `db:"-"`
+	KycStatus           KycType         `db:"-"`
+	AccreditationID     *string         `db:"-"`
+	AccreditationData   []Accreditation `db:"-"`
+	AccreditationStatus *AccType        `db:"-"`
+	EscrowID            string          `db:"-"`
 }
 
 func (prof Profile) Table() string {
@@ -57,7 +51,16 @@ func (prof Profile) PrimaryFieldValue() any {
 }
 
 func (prof Profile) Fields() []string {
-	return []string{""}
+	obj := &prof
+	var res = []string{}
+	val := reflect.ValueOf(obj).Elem()
+	for i := 0; i < val.NumField(); i++ {
+		dbtag := string(val.Type().Field(i).Tag.Get("db"))
+		if dbtag != "" {
+			res = append(res, dbtag)
+		}
+	}
+	return res
 }
 
 func (prof Profile) ToJSON() map[string]any {
@@ -72,10 +75,13 @@ func (prof Profile) ToJSON() map[string]any {
 		"AccreditationData":   prof.AccreditationData,
 		"AccreditationStatus": prof.AccreditationStatus,
 		"EscrowID":            prof.EscrowID,
-		"WalletID":            prof.WalletID,
 	}
 }
 
 func (prof Profile) GetID() any {
 	return prof.ID
+}
+
+func (prof *Profile) SetID(id any) {
+	prof.ID = id.(int)
 }

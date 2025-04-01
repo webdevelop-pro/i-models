@@ -5,51 +5,50 @@ import (
 )
 
 type OfferOffer struct {
-	ID                int                `json:"id" yaml:"id"`
-	UserID            int                `json:"user_id,omitempty" yaml:"user_id,omitempty"`
-	Name              string             `json:"name" yaml:"name"`
-	Slug              string             `json:"slug" yaml:"slug"`
-	MinInvestment     int                `json:"min_investment" yaml:"min_investment"`
-	Description       string             `json:"description" yaml:"description"`
-	Title             string             `json:"title" yaml:"title"`
-	Highlights        string             `json:"highlights" yaml:"highlights"`
-	Valuation         float64            `json:"valuation" yaml:"valuation"`
-	TotalShares       int                `json:"total_shares" yaml:"total_shares"`
-	PricePerShare     float64            `json:"price_per_share" yaml:"price_per_share"`
-	Status            NullOfferT         `json:"status,omitempty" yaml:"status,omitempty"`
-	SecurityType      OfferSecurityTypeT `json:"security_type" yaml:"security_type"`
-	Notes             string             `json:"notes" yaml:"notes"`
-	SubscribedShares  int                `json:"subscribed_shares" yaml:"subscribed_shares"`
-	ConfirmedShares   int                `json:"confirmed_shares" yaml:"confirmed_shares"`
-	AdditionalDetails string             `json:"additional_details" yaml:"additional_details"`
-	SeoTitle          string             `json:"seo_title" yaml:"seo_title"`
-	SeoDescription    string             `json:"seo_description" yaml:"seo_description"`
-	Website           string             `json:"website" yaml:"website"`
-	State             string             `json:"state" yaml:"state"`
-	City              string             `json:"city" yaml:"city"`
-	Address1          string             `json:"address1" yaml:"address1"`
-	Address2          string             `json:"address2" yaml:"address2"`
-	ZipCode           string             `json:"zip_code" yaml:"zip_code"`
-	Country           string             `json:"country" yaml:"country"`
-	EntityID          string             `json:"entity_id" yaml:"entity_id"`
-	Data              any                `json:"data" yaml:"data"`
-	StartAt           pgtype.Timestamptz `json:"start_at,omitempty" yaml:"start_at,omitempty"`
-	CloseAt           pgtype.Timestamptz `json:"close_at,omitempty" yaml:"close_at,omitempty"`
-	ApprovedAt        pgtype.Timestamptz `json:"approved_at,omitempty" yaml:"approved_at,omitempty"`
-	CreatedAt         pgtype.Timestamptz `json:"created_at" yaml:"created_at"`
-	UpdatedAt         pgtype.Timestamptz `json:"updated_at" yaml:"updated_at"`
-	ImageLinkID       int                `json:"image_link_id,omitempty" yaml:"image_link_id,omitempty"`
-	WalletID          int                `json:"wallet_id,omitempty" yaml:"wallet_id,omitempty"`
-	LegalName         string             `json:"legal_name" yaml:"legal_name"`
-	Twitter           string             `json:"twitter" yaml:"twitter"`
-	Facebook          string             `json:"facebook" yaml:"facebook"`
-	Github            string             `json:"github" yaml:"github"`
-	Instagram         string             `json:"instagram" yaml:"instagram"`
-	Telegram          string             `json:"telegram" yaml:"telegram"`
-	Linkedin          string             `json:"linkedin" yaml:"linkedin"`
-	Mastodon          string             `json:"mastodon" yaml:"mastodon"`
-	EsignID           string             `json:"esign_id" yaml:"esign_id"`
-	RegType           string             `json:"reg_type" yaml:"reg_type"`
+	ID                int                `db:"-" json:"id" yaml:"id"`
+	UserID            int                `db:"-" json:"user_id,omitempty" yaml:"user_id,omitempty"`
+	Name              string             `db:"-" json:"name" yaml:"name"`
+	Slug              string             `db:"-" json:"slug" yaml:"slug"`
+	MinInvestment     int                `db:"-" json:"min_investment" yaml:"min_investment"`
+	Description       string             `db:"-" json:"description" yaml:"description"`
+	Title             string             `db:"-" json:"title" yaml:"title"`
+	Highlights        string             `db:"-" json:"highlights" yaml:"highlights"`
+	Valuation         float64            `db:"-" json:"valuation" yaml:"valuation"`
+	TotalShares       int                `db:"-" json:"total_shares" yaml:"total_shares"`
+	PricePerShare     float64            `db:"-" json:"price_per_share" yaml:"price_per_share"`
+	Status            NullOfferT         `db:"-" json:"status,omitempty" yaml:"status,omitempty"`
+	SecurityType      OfferSecurityTypeT `db:"-" json:"security_type" yaml:"security_type"`
+	Notes             string             `db:"-" json:"notes" yaml:"notes"`
+	SubscribedShares  int                `db:"-" json:"subscribed_shares" yaml:"subscribed_shares"`
+	ConfirmedShares   int                `db:"-" json:"confirmed_shares" yaml:"confirmed_shares"`
+	AdditionalDetails string             `db:"-" json:"additional_details" yaml:"additional_details"`
+	SeoTitle          string             `db:"-" json:"seo_title" yaml:"seo_title"`
+	SeoDescription    string             `db:"-" json:"seo_description" yaml:"seo_description"`
+	Website           string             `db:"-" json:"website" yaml:"website"`
+	State             string             `db:"-" json:"state" yaml:"state"`
+	City              string             `db:"-" json:"city" yaml:"city"`
+	Address1          string             `db:"-" json:"address1" yaml:"address1"`
+	Address2          string             `db:"-" json:"address2" yaml:"address2"`
+	ZipCode           string             `db:"-" json:"zip_code" yaml:"zip_code"`
+	Country           string             `db:"-" json:"country" yaml:"country"`
+	EntityID          string             `db:"-" json:"entity_id" yaml:"entity_id"`
+	Data              any                `db:"-" json:"data" yaml:"data"`
+	StartAt           pgtype.Timestamptz `db:"-" json:"start_at,omitempty" yaml:"start_at,omitempty"`
+	CloseAt           pgtype.Timestamptz `db:"-" json:"close_at,omitempty" yaml:"close_at,omitempty"`
+	ApprovedAt        pgtype.Timestamptz `db:"-" json:"approved_at,omitempty" yaml:"approved_at,omitempty"`
+	CreatedAt         pgtype.Timestamptz `db:"-" json:"created_at" yaml:"created_at"`
+	UpdatedAt         pgtype.Timestamptz `db:"-" json:"updated_at" yaml:"updated_at"`
+	ImageLinkID       int                `db:"-" json:"image_link_id,omitempty" yaml:"image_link_id,omitempty"`
+	LegalName         string             `db:"-" json:"legal_name" yaml:"legal_name"`
+	Twitter           string             `db:"-" json:"twitter" yaml:"twitter"`
+	Facebook          string             `db:"-" json:"facebook" yaml:"facebook"`
+	Github            string             `db:"-" json:"github" yaml:"github"`
+	Instagram         string             `db:"-" json:"instagram" yaml:"instagram"`
+	Telegram          string             `db:"-" json:"telegram" yaml:"telegram"`
+	Linkedin          string             `db:"-" json:"linkedin" yaml:"linkedin"`
+	Mastodon          string             `db:"-" json:"mastodon" yaml:"mastodon"`
+	EsignID           string             `db:"-" json:"esign_id" yaml:"esign_id"`
+	RegType           string             `db:"-" json:"reg_type" yaml:"reg_type"`
 }
 
 func (model OfferOffer) ToJSON() map[string]any {
@@ -88,7 +87,6 @@ func (model OfferOffer) ToJSON() map[string]any {
 		"created_at":         model.CreatedAt,
 		"updated_at":         model.UpdatedAt,
 		"image_link_id":      model.ImageLinkID,
-		"wallet_id":          model.WalletID,
 		"legal_name":         model.LegalName,
 		"twitter":            model.Twitter,
 		"facebook":           model.Facebook,
@@ -138,7 +136,6 @@ func (model OfferOffer) Fields() []string {
 		"created_at",
 		"updated_at",
 		"image_link_id",
-		"wallet_id",
 		"legal_name",
 		"twitter",
 		"facebook",
@@ -158,4 +155,8 @@ func (model OfferOffer) Table() string {
 
 func (model OfferOffer) GetID() any {
 	return model.ID
+}
+
+func (model *OfferOffer) SetID(id any) {
+	model.ID = id.(int)
 }
