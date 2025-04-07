@@ -11,8 +11,8 @@ const (
 	WalletStatusTVerified WalletStatusT = "verified"
 	WalletStatusTError    WalletStatusT = "error"
 
-	WalletAppLabel  = "wallet"
-	WalletModelName = "wallet"
+	AppLabel  = "wallet"
+	ModelName = "wallet"
 )
 
 func AllWalletStatusT() []WalletStatusT {

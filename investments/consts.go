@@ -11,6 +11,9 @@ const (
 	PaymentTNorthCapital PaymentT = "north_capital"
 	PaymentTPrimeTrust   PaymentT = "prime_trust"
 	PaymentTApexGroup    PaymentT = "apex_group"
+
+	AppLabel  = "investment"
+	ModelName = "investment"
 )
 
 func AllPaymentT() []PaymentT {

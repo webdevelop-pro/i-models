@@ -9,6 +9,9 @@ const (
 	TransactionsTypeTDeposit    TransactionsTypeT = "deposit"
 	TransactionsTypeTInvestment TransactionsTypeT = "investment"
 	TransactionsTypeTWithdrawal TransactionsTypeT = "withdrawal"
+
+	AppLabel  = "wallet"
+	ModelName = "transaction"
 )
 
 func AllTransactionsTypeT() []TransactionsTypeT {

@@ -8,25 +8,32 @@ const Table = "wallet_wallets"
 
 // WalletWallet is an object representing the database table.
 type WalletWallet struct {
-	ID                      int                `db:"-" json:"id" yaml:"id"`
-	EntityCustomerID        *string            `db:"-" json:"entity_customer_id,omitempty" yaml:"entity_customer_id,omitempty"`
-	EntityCustomerBalanceID *string            `db:"-" json:"entity_customer_balance_id,omitempty" yaml:"entity_customer_balance_id,omitempty"`
-	Balance                 float64            `db:"-" json:"balance" yaml:"balance"`
-	IncBalance              float64            `db:"-" json:"inc_balance" yaml:"inc_balance"`
-	OutBalance              float64            `db:"-" json:"out_balance" yaml:"out_balance"`
-	Status                  WalletStatusT      `db:"-" json:"status" yaml:"status"`
-	CreatedAt               pgtype.Timestamptz `db:"-" json:"created_at" yaml:"created_at"`
-	UpdatedAt               pgtype.Timestamptz `db:"-" json:"updated_at" yaml:"updated_at"`
+	ID     int `db:"-" json:"id" yaml:"id"`
+	UserID int `db:"-" json:"user_id" yaml:"user_id"`
+
+	EntityID        *string            `db:"-" json:"entity_id,omitempty"`
+	EntityBalanceID *string            `db:"-" json:"entity_balance_id,omitempty"`
+	Balance         float64            `db:"-" json:"balance" yaml:"balance"`
+	IncBalance      float64            `db:"-" json:"inc_balance" yaml:"inc_balance"`
+	OutBalance      float64            `db:"-" json:"out_balance" yaml:"out_balance"`
+	Status          WalletStatusT      `db:"-" json:"status" yaml:"status"`
+	CreatedAt       pgtype.Timestamptz `db:"-" json:"created_at" yaml:"created_at"`
+	UpdatedAt       pgtype.Timestamptz `db:"-" json:"updated_at" yaml:"updated_at"`
+
+	ObjectID      string `db:"-" json:"object_id" yaml:"object_id"`
+	ContentTypeID int    `db:"-" json:"content_type_id" yaml:"content_type_id"`
 }
 
 func (model WalletWallet) GetField(name string) any {
 	switch name {
 	case "ID":
 		return model.ID
-	case "EntityCustomerID":
-		return model.EntityCustomerID
-	case "EntityCustomerBalanceID":
-		return model.EntityCustomerBalanceID
+	case "UserID":
+		return model.UserID
+	case "EntityID":
+		return model.EntityID
+	case "EntityBalanceID":
+		return model.EntityBalanceID
 	case "Balance":
 		return model.Balance
 	case "IncBalance":
@@ -55,6 +62,7 @@ func (model WalletWallet) ToJSON() map[string]any {
 func (model WalletWallet) Fields() []string {
 	return []string{
 		"ID",
+		"UserID",
 		"EntityCustomerID",
 		"EntityCustomerBalanceID",
 		"Balance",

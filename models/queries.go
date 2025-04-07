@@ -116,6 +116,7 @@ func Update[T any, PT interface {
 		return false, resErr
 	}
 
+	fmt.Println(sql, args)
 	res, err := pg.Exec(ctx, sql, args...)
 	if err != nil {
 		resErr := errors.Wrapf(err, "sql %s", db.CleanSQL(sql))

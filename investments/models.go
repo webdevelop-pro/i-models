@@ -109,6 +109,10 @@ func (model InvestmentInvestment) GetID() any {
 	return model.ID
 }
 
+func (model *InvestmentInvestment) SetID(id any) {
+	model.ID = id.(int)
+}
+
 // InvestmentProfile is an object representing the database table.
 type InvestmentProfile struct {
 	ID                  int                `json:"id" yaml:"id"`
@@ -177,4 +181,8 @@ func (model InvestmentProfile) Table() string {
 
 func (model InvestmentProfile) GetID() any {
 	return model.ID
+}
+
+func (model *InvestmentProfile) SetID(id any) {
+	model.ID = id.(int)
 }
