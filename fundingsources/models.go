@@ -7,15 +7,15 @@ import (
 
 // WalletFundingSource is an object representing the database table.
 type WalletFundingSource struct {
-	ID        int                   `db:"-" json:"id" yaml:"id"`
-	WalletID  int                   `db:"-" json:"wallet_id,omitempty" yaml:"wallet_id,omitempty"`
-	EntityID  string                `db:"-" json:"entity_id" yaml:"entity_id"`
-	Type      FoundingSourceT       `db:"-" json:"type" yaml:"type"`
-	BankName  string                `db:"-" json:"bank_name" yaml:"bank_name"`
-	Status    wallets.WalletStatusT `db:"-" json:"status" yaml:"status"`
-	Name      string                `db:"-" json:"name" yaml:"name"`
-	CreatedAt pgtype.Timestamptz    `db:"-" json:"created_at" yaml:"created_at"`
-	UpdatedAt pgtype.Timestamptz    `db:"-" json:"updated_at" yaml:"updated_at"`
+	ID        int                   `db:"id" json:"id" yaml:"id"`
+	WalletID  int                   `db:"wallet_id" json:"wallet_id,omitempty" yaml:"wallet_id,omitempty"`
+	EntityID  string                `db:"entity_id" json:"entity_id" yaml:"entity_id"`
+	Type      FoundingSourceT       `db:"type" json:"type" yaml:"type"`
+	BankName  string                `db:"bank_name" json:"bank_name" yaml:"bank_name"`
+	Status    wallets.WalletStatusT `db:"status" json:"status" yaml:"status"`
+	Name      string                `db:"name" json:"name" yaml:"name"`
+	CreatedAt pgtype.Timestamptz    `db:"created_at" json:"created_at" yaml:"created_at"`
+	UpdatedAt pgtype.Timestamptz    `db:"updated_at" json:"updated_at" yaml:"updated_at"`
 }
 
 func (model WalletFundingSource) ToJSON() map[string]any {
@@ -52,4 +52,8 @@ func (model WalletFundingSource) Table() string {
 
 func (model WalletFundingSource) GetID() any {
 	return model.ID
+}
+
+func (model *WalletFundingSource) SetID(id any) {
+	model.ID = id.(int)
 }

@@ -1,37 +1,38 @@
 package investments
 
 import (
+	"github.com/webdevelop-pro/i-models/models"
 	"github.com/webdevelop-pro/i-models/pgtype"
 )
 
 // InvestmentInvestment is an object representing the database table.
 type InvestmentInvestment struct {
-	ID                int                `json:"id" yaml:"id"`
-	UserID            int                `json:"user_id,omitempty" yaml:"user_id,omitempty"`
-	OfferID           int                `json:"offer_id,omitempty" yaml:"offer_id,omitempty"`
-	ProfileID         int                `json:"profile_id,omitempty" yaml:"profile_id,omitempty"`
-	Amount            float64            `json:"amount" yaml:"amount"`
-	PricePerShare     float64            `json:"price_per_share" yaml:"price_per_share"`
-	NumberOfShares    int                `json:"number_of_shares" yaml:"number_of_shares"`
-	PaymentType       PaymentT           `json:"payment_type" yaml:"payment_type"`
-	EscrowType        EscrowT            `json:"escrow_type" yaml:"escrow_type"`
-	FundingType       FundingT           `json:"funding_type" yaml:"funding_type"`
-	FundingStatus     FundingS           `json:"funding_status" yaml:"funding_status"`
-	Status            InvestmentT        `json:"status" yaml:"status"`
-	PrevStatus        InvestmentT        `json:"prev_status" yaml:"prev_status"`
-	Step              InvestmentStepT    `json:"step" yaml:"step"`
-	Commission        float64            `json:"commission" yaml:"commission"`
-	CancelationReason string             `json:"cancelation_reason" yaml:"cancelation_reason"`
-	EntityID          *string            `json:"entity_id,omitempty" yaml:"entity_id,omitempty"`
-	EscrowData        any                `json:"escrow_data" yaml:"escrow_data"`
-	SignatureData     any                `json:"signature_data" yaml:"signature_data"`
-	PaymentData       any                `json:"payment_data" yaml:"payment_data"`
-	Log               any                `json:"log" yaml:"log"`
-	CanceledAt        pgtype.Timestamptz `json:"canceled_at" yaml:"canceled_at"`
-	SubmitedAt        pgtype.Timestamptz `json:"submited_at" yaml:"submited_at"`
-	ClosedAt          pgtype.Timestamptz `json:"closed_at" yaml:"closed_at"`
-	CreatedAt         pgtype.Timestamptz `json:"created_at" yaml:"created_at"`
-	UpdatedAt         pgtype.Timestamptz `json:"updated_at" yaml:"updated_at"`
+	ID                int                `db:"id" json:"id" yaml:"id"`
+	UserID            int                `db:"user_id" json:"user_id,omitempty" yaml:"user_id,omitempty"`
+	OfferID           int                `db:"offer_id" json:"offer_id,omitempty" yaml:"offer_id,omitempty"`
+	ProfileID         int                `db:"profile_id" json:"profile_id,omitempty" yaml:"profile_id,omitempty"`
+	Amount            float64            `db:"amount" json:"amount" yaml:"amount"`
+	PricePerShare     float64            `db:"price_per_share" json:"price_per_share" yaml:"price_per_share"`
+	NumberOfShares    int                `db:"number_of_shares" json:"number_of_shares" yaml:"number_of_shares"`
+	PaymentType       PaymentT           `db:"payment_type" json:"payment_type" yaml:"payment_type"`
+	EscrowType        EscrowT            `db:"escrow_type" json:"escrow_type" yaml:"escrow_type"`
+	FundingType       FundingT           `db:"funding_type" json:"funding_type" yaml:"funding_type"`
+	FundingStatus     FundingS           `db:"funding_status" json:"funding_status" yaml:"funding_status"`
+	Status            InvestmentT        `db:"status" json:"status" yaml:"status"`
+	PrevStatus        InvestmentT        `db:"prev_status" json:"prev_status" yaml:"prev_status"`
+	Step              InvestmentStepT    `db:"step" json:"step" yaml:"step"`
+	Commission        float64            `db:"commission" json:"commission" yaml:"commission"`
+	CancelationReason string             `db:"cancelation_reason" json:"cancelation_reason" yaml:"cancelation_reason"`
+	EntityID          *string            `db:"entity_id" json:"entity_id,omitempty" yaml:"entity_id,omitempty"`
+	TransactionRef    *string            `db:"transaction_ref" json:"transaction_ref,omitempty" yaml:"transaction_ref,omitempty"`
+	EscrowData        any                `db:"escrow_data" json:"escrow_data" yaml:"escrow_data"`
+	SignatureData     any                `db:"signature_data" json:"signature_data" yaml:"signature_data"`
+	PaymentData       any                `db:"payment_data" json:"payment_data" yaml:"payment_data"`
+	CanceledAt        pgtype.Timestamptz `db:"canceled_at" json:"canceled_at" yaml:"canceled_at"`
+	SubmitedAt        pgtype.Timestamptz `db:"submited_at" json:"submited_at" yaml:"submited_at"`
+	ClosedAt          pgtype.Timestamptz `db:"closed_at" json:"closed_at" yaml:"closed_at"`
+	CreatedAt         pgtype.Timestamptz `db:"created_at" json:"created_at" yaml:"created_at"`
+	UpdatedAt         pgtype.Timestamptz `db:"updated_at" json:"updated_at" yaml:"updated_at"`
 }
 
 // IsFundingTypeWire temporary fix for https://github.com/Joker/jade/issues/59
@@ -58,10 +59,10 @@ func (model InvestmentInvestment) ToJSON() map[string]any {
 		"commission":         model.Commission,
 		"cancelation_reason": model.CancelationReason,
 		"entity_id":          model.EntityID,
+		"transaction_ref":    model.TransactionRef,
 		"escrow_data":        model.EscrowData,
 		"signature_data":     model.SignatureData,
 		"payment_data":       model.PaymentData,
-		"log":                model.Log,
 		"canceled_at":        model.CanceledAt,
 		"submited_at":        model.SubmitedAt,
 		"closed_at":          model.ClosedAt,
@@ -71,34 +72,7 @@ func (model InvestmentInvestment) ToJSON() map[string]any {
 }
 
 func (model InvestmentInvestment) Fields() []string {
-	return []string{
-		"ID",
-		"UserID",
-		"OfferID",
-		"ProfileID",
-		"Amount",
-		"PricePerShare",
-		"NumberOfShares",
-		"PaymentType",
-		"EscrowType",
-		"FundingType",
-		"FundingStatus",
-		"Status",
-		"PrevStatus",
-		"Step",
-		"Commission",
-		"CancelationReason",
-		"EntityID",
-		"EscrowData",
-		"SignatureData",
-		"PaymentData",
-		"Log",
-		"CanceledAt",
-		"SubmitedAt",
-		"ClosedAt",
-		"CreatedAt",
-		"UpdatedAt",
-	}
+	return models.DefaultFields(&model)
 }
 
 func (model InvestmentInvestment) Table() string {

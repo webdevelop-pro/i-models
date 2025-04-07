@@ -164,3 +164,38 @@ func Exists[T any, PT interface {
 	}
 	return res == 1, nil
 }
+
+func Delete[T any, PT interface {
+	*T
+	SetID(any)
+	Fields() []string
+	Table() string
+}](ctx context.Context, pg Repository, where map[string]any) (bool, error) {
+	log := logger.FromCtx(ctx, "models")
+	obj := PT(new(T))
+
+	sql, args, err := sq.Delete(obj.Table()).Where(where).
+		PlaceholderFormat(sq.Dollar).ToSql()
+	if err != nil {
+		// we need this to have stacktrace
+		log.Error().Stack().Err(errors.WithStack(err)).Msg(ErrRetrieveOne)
+		return false, err
+	}
+
+	fmt.Println(sql, args)
+	res, err := pg.Exec(ctx, sql, args...)
+	if err != nil {
+		resErr := errors.Wrapf(err, "sql %s", db.CleanSQL(sql))
+		log.Error().Stack().Err(errors.New(ErrSQLPrepare)).Msg(ErrUpdate)
+		return false, resErr
+	}
+	/*
+		if res.String() != "UPDATE 1" {
+			resErr := errors.Wrapf(errors.New(ErrSQLRequest), "no rows updated %s %+v", topic, msg)
+			log.Error().Stack().Err(resErr).Msg("no rows updated")
+			return resErr
+		}
+	*/
+	fmt.Println("delete res", res.String(), res.String() == "DELETE 1")
+	return res.String() == "DELETE 1", nil
+}
