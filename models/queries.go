@@ -2,7 +2,6 @@ package models
 
 import (
 	"context"
-	"fmt"
 	"strings"
 
 	sq "github.com/Masterminds/squirrel"
@@ -10,6 +9,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/webdevelop-pro/go-common/db"
 	"github.com/webdevelop-pro/go-common/logger"
+	"github.com/webdevelop-pro/go-common/queue/pclient"
 )
 
 func RetriveOne[T any, PT interface {
@@ -37,7 +37,6 @@ func RetriveOne[T any, PT interface {
 		return obj, err
 	}
 
-	fmt.Println(sql, args)
 	rows, _ := pg.Query(ctx, sql, args...)
 	// Assumes the returned row only has a single hit. StructToFill is the target struct.
 	results, err := pgx.CollectOneRow(rows, pgx.RowToAddrOfStructByName[T])
@@ -116,7 +115,6 @@ func Update[T any, PT interface {
 		return false, resErr
 	}
 
-	fmt.Println(sql, args)
 	res, err := pg.Exec(ctx, sql, args...)
 	if err != nil {
 		resErr := errors.Wrapf(err, "sql %s", db.CleanSQL(sql))
@@ -130,7 +128,6 @@ func Update[T any, PT interface {
 			return resErr
 		}
 	*/
-	// fmt.Println("update res", res.String(), res.String() == "UPDATE 1")
 	return res.String() == "UPDATE 1", nil
 }
 
@@ -182,7 +179,6 @@ func Delete[T any, PT interface {
 		return false, err
 	}
 
-	fmt.Println(sql, args)
 	res, err := pg.Exec(ctx, sql, args...)
 	if err != nil {
 		resErr := errors.Wrapf(err, "sql %s", db.CleanSQL(sql))
@@ -196,6 +192,45 @@ func Delete[T any, PT interface {
 			return resErr
 		}
 	*/
-	fmt.Println("delete res", res.String(), res.String() == "DELETE 1")
 	return res.String() == "DELETE 1", nil
+}
+
+func LogPubSubMessageExecution(ctx context.Context, pg Repository, msgID string) error {
+	query := `update pubsub_logs set executed=executed+1 where msg_id=$1;`
+	log := logger.FromCtx(ctx, "models")
+
+	_, err := pg.Exec(
+		ctx,
+		query,
+		msgID,
+	)
+	if err != nil {
+		err = errors.Wrapf(err, "for msg %s", msgID)
+		log.Error().Ctx(ctx).Stack().Err(err).Msg("UpdateInvestmentFundingStatus error")
+
+		return err
+	}
+
+	return nil
+}
+
+func LogPubSubMsg(ctx context.Context, pg Repository, topic string, msg *pclient.Message) error {
+	log := logger.FromCtx(ctx, "models")
+	sql := "INSERT INTO pubsub_logs (topic,msg,attr,msg_id) VALUES ($1,$2,$3,$4) RETURNING id"
+	args := []interface{}{
+		topic, msg.Data, msg.Attributes, msg.ID,
+	}
+
+	res, err := pg.Exec(ctx, sql, args...)
+	if err != nil {
+		resErr := errors.Wrapf(err, "sql %s, args: %+v", sql, args)
+		log.Error().Ctx(ctx).Err(resErr).Msg("LogPubSubMsg error")
+		return resErr
+	}
+	if res.String() != "INSERT 0 1" { // event sequence haven't been updated
+		resErr := errors.Wrapf(db.ErrSQLRequest, "pubsub_logs not created %s %+v", topic, msg)
+		log.Error().Ctx(ctx).Err(resErr).Msg("LogPubSubMsg error")
+		return resErr
+	}
+	return nil
 }

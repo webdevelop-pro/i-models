@@ -42,6 +42,7 @@ type LogLog struct {
 func LogHttpRequest(
 	ctx context.Context,
 	db db.Repository,
+	logType LogTypeT,
 	objectID string,
 	serviceName ServicesT,
 	objectLabel string,
@@ -79,14 +80,19 @@ func LogHttpRequest(
 		header = map[string][]string{}
 	}
 
+	path := req.RequestURI
+	if path == "" && req.URL != nil {
+		path = req.URL.EscapedPath()
+	}
+
 	err = db.QueryRow(
 		ctx,
 		sql,
 		serviceName,
-		LogTypeTIncoming,
+		logType,
 		contentID,
 		objectID,
-		req.RequestURI,
+		path,
 		time.Now(),
 		reqID,
 		header,
@@ -134,6 +140,7 @@ func (model *LogLog) LogRequest(log logger.Logger, db db.Repository, objectID st
 		model.ID, err = LogHttpRequest(
 			req.Context(),
 			db,
+			LogTypeTOutcoming,
 			objectID,
 			serviceName,
 			appLabel,
