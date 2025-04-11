@@ -25,9 +25,9 @@ type InvestmentInvestment struct {
 	CancelationReason string             `db:"cancelation_reason" json:"cancelation_reason" yaml:"cancelation_reason"`
 	EntityID          *string            `db:"entity_id" json:"entity_id,omitempty" yaml:"entity_id,omitempty"`
 	TransactionRef    *string            `db:"transaction_ref" json:"transaction_ref,omitempty" yaml:"transaction_ref,omitempty"`
-	EscrowData        any                `db:"escrow_data" json:"escrow_data" yaml:"escrow_data"`
-	SignatureData     any                `db:"signature_data" json:"signature_data" yaml:"signature_data"`
-	PaymentData       any                `db:"payment_data" json:"payment_data" yaml:"payment_data"`
+	EscrowData        map[string]any     `db:"escrow_data" json:"escrow_data" yaml:"escrow_data"`
+	SignatureData     map[string]any     `db:"signature_data" json:"signature_data" yaml:"signature_data"`
+	PaymentData       map[string]any     `db:"payment_data" json:"payment_data" yaml:"payment_data"`
 	CanceledAt        pgtype.Timestamptz `db:"canceled_at" json:"canceled_at" yaml:"canceled_at"`
 	SubmitedAt        pgtype.Timestamptz `db:"submited_at" json:"submited_at" yaml:"submited_at"`
 	ClosedAt          pgtype.Timestamptz `db:"closed_at" json:"closed_at" yaml:"closed_at"`

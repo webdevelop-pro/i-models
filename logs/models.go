@@ -124,6 +124,15 @@ func GetContentID(ctx context.Context, db db.Repository, serviceLabel string, se
 	return contentID, nil
 }
 
+func intToUUID(i string) string {
+	res := i
+	for x := len(i); x < 12; x++ {
+		res = fmt.Sprintf("0%s", res)
+	}
+	//00000000-0000-0000-0000-000000000001
+	return fmt.Sprintf("00000000-0000-0000-0000-%s", res)
+}
+
 // ToDo Use db.DB instead of pgxpool.Pool
 func (model *LogLog) LogRequest(log logger.Logger, db db.Repository, objectID string, serviceName ServicesT, appLabel string, objectModel ObjectType) func(req *http.Request) {
 	return func(req *http.Request) {
@@ -135,6 +144,22 @@ func (model *LogLog) LogRequest(log logger.Logger, db db.Repository, objectID st
 		if req.Body != nil {
 			rawBody, _ = io.ReadAll(req.Body)
 			req.Body = io.NopCloser(bytes.NewReader(rawBody))
+		}
+
+		if val, ok := req.Context().Value(keys.RequestID).(string); ok && val != "" {
+			req.Header.Add("X-Request-Id", val)
+		} else {
+			req.Header.Add("X-Request-Id", intToUUID(objectID))
+		}
+
+		// ToDo: move to adapters/dwolla
+		// https://developers.dwolla.com/docs/balance/api-reference/api-fundamentals/idempotency-key
+		if serviceName == ServicesTDwolla {
+			if val, ok := req.Context().Value(keys.RequestID).(string); ok && val != "" {
+				req.Header.Add("Idempotency-Key", val)
+			} else {
+				req.Header.Add("Idempotency-Key", intToUUID(objectID))
+			}
 		}
 
 		model.ID, err = LogHttpRequest(
