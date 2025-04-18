@@ -206,7 +206,7 @@ func LogPubSubMessageExecution(ctx context.Context, pg Repository, msgID string)
 	)
 	if err != nil {
 		err = errors.Wrapf(err, "for msg %s", msgID)
-		log.Error().Ctx(ctx).Stack().Err(err).Msg("UpdateInvestmentFundingStatus error")
+		log.Error().Stack().Err(err).Msg("UpdateInvestmentFundingStatus error")
 
 		return err
 	}
@@ -215,21 +215,23 @@ func LogPubSubMessageExecution(ctx context.Context, pg Repository, msgID string)
 }
 
 func LogPubSubMsg(ctx context.Context, pg Repository, topic string, msg *pclient.Message) error {
+	// ToDo
+	// Use loki as a storage for pubsub logs insted of postgres
 	log := logger.FromCtx(ctx, "models")
-	sql := "INSERT INTO pubsub_logs (topic,msg,attr,msg_id) VALUES ($1,$2,$3,$4) RETURNING id"
+	sql := "INSERT INTO pubsub_logs (topic,msg,attr,msg_id, created_at) VALUES ($1,$2,$3,$4,$5) RETURNING id"
 	args := []interface{}{
-		topic, msg.Data, msg.Attributes, msg.ID,
+		topic, msg.Data, msg.Attributes, msg.ID, msg.PublishTime,
 	}
 
 	res, err := pg.Exec(ctx, sql, args...)
 	if err != nil {
 		resErr := errors.Wrapf(err, "sql %s, args: %+v", sql, args)
-		log.Error().Ctx(ctx).Err(resErr).Msg("LogPubSubMsg error")
+		log.Error().Stack().Err(resErr).Msg("LogPubSubMsg error")
 		return resErr
 	}
 	if res.String() != "INSERT 0 1" { // event sequence haven't been updated
 		resErr := errors.Wrapf(db.ErrSQLRequest, "pubsub_logs not created %s %+v", topic, msg)
-		log.Error().Ctx(ctx).Err(resErr).Msg("LogPubSubMsg error")
+		log.Error().Stack().Err(resErr).Msg("LogPubSubMsg error")
 		return resErr
 	}
 	return nil
