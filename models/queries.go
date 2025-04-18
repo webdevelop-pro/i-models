@@ -218,9 +218,14 @@ func LogPubSubMsg(ctx context.Context, pg Repository, topic string, msg *pclient
 	// ToDo
 	// Use loki as a storage for pubsub logs insted of postgres
 	log := logger.FromCtx(ctx, "models")
-	sql := "INSERT INTO pubsub_logs (topic,msg,attr,msg_id, created_at) VALUES ($1,$2,$3,$4,$5) RETURNING id"
+	sql := "INSERT INTO pubsub_logs (topic,msg,attr,headers,created_at,msg_id) VALUES ($1,$2,$3,$4,$5,$6) RETURNING id"
 	args := []interface{}{
-		topic, msg.Data, msg.Attributes, msg.ID, msg.PublishTime,
+		topic, msg.Data, msg.Attributes, msg.Headers, msg.PublishTime, msg.ID,
+	}
+
+	// for some reason we don't always get ID from google pubsub
+	if msg.ID == "" {
+		args[5] = nil
 	}
 
 	res, err := pg.Exec(ctx, sql, args...)
