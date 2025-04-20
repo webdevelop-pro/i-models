@@ -1,6 +1,8 @@
 package wallets
 
-import "github.com/pkg/errors"
+import (
+	"github.com/pkg/errors"
+)
 
 type WalletStatusT string
 

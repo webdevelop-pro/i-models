@@ -2,11 +2,17 @@ package wallets
 
 import (
 	"context"
+	"fmt"
+	"time"
 
 	"github.com/pkg/errors"
 	"github.com/webdevelop-pro/go-common/db"
 	"github.com/webdevelop-pro/go-common/logger"
+	"github.com/webdevelop-pro/go-common/queue/pclient"
+	"github.com/webdevelop-pro/i-models/historylogs"
+	"github.com/webdevelop-pro/i-models/logs"
 	"github.com/webdevelop-pro/i-models/models"
+	"github.com/webdevelop-pro/i-models/notifications"
 	"github.com/webdevelop-pro/i-models/pgtype"
 )
 
@@ -132,7 +138,7 @@ func (model *Wallet) SetBalance(val float64) {
 	model.updatedFields = append(model.updatedFields, "balance")
 }
 
-func (model Wallet) Save(ctx context.Context) error {
+func (model Wallet) Save(ctx context.Context, postUpdate func(ctx context.Context, msg pclient.Event) error) error {
 	if model.ID == 0 {
 		err := errors.Errorf("%s: wallet %d", models.ErrIDEmpty, model.ID)
 		logger.FromCtx(ctx, pkgName).Error().Stack().Err(err).Msg(models.ErrIDEmpty)
@@ -159,6 +165,14 @@ func (model Wallet) Save(ctx context.Context) error {
 		err := errors.Errorf("%s: wallet %d", models.ErrNotUpdated, model.ID)
 		logger.FromCtx(ctx, pkgName).Error().Stack().Err(err).Msg(models.ErrNotUpdated)
 		return err
+	} else {
+		postUpdate(ctx, pclient.Event{
+			Action:     pclient.PostUpdate,
+			ObjectID:   model.ID,
+			ObjectName: ModelName,
+			Data:       updates,
+		})
+		model.DefaultPostUpdate(ctx, model.UserID, updates)
 	}
 	return nil
 }
@@ -212,4 +226,113 @@ func (model Wallet) GetID() any {
 
 func (model *Wallet) SetID(id any) {
 	model.ID = id.(int)
+}
+
+func (model *Wallet) NotificationUserUpdate(ctx context.Context, userID int, data map[string]any) error {
+	if userID != 0 {
+		// what user see for wallet: balance, inc/out balance, status
+		watchFields := []string{
+			"balance",
+			"inc_balance",
+			"out_balance",
+			"status",
+		}
+		notifData := map[string]any{}
+		for _, field := range watchFields {
+			val, ok := data[field]
+			if ok {
+				notifData[field] = val
+			}
+		}
+
+		if len(notifData) > 0 {
+			_, err := models.Create[notifications.Notification](
+				ctx,
+				model.db,
+				map[string]any{
+					"user_id": userID,
+					"content": "",
+					"data":    notifData,
+				},
+			)
+			return err
+		}
+	}
+
+	return nil
+}
+
+// func (model *Wallet) PubSubPostUpdate(ctx context.Context, data map[string]any, senderService string) error {
+// 	if model.pubsub != nil {
+// 		// msgID, _ = ctx.Value(keys.MSGID).(string)
+// 		msg := pclient.Event{
+// 			Action:     pclient.PostUpdate,
+// 			ObjectID:   model.ID,
+// 			ObjectName: ModelName,
+// 			Sender:     senderService,
+// 			Data:       data,
+// 		}
+
+// 		msg.RequestID, _ = ctx.Value(keys.RequestID).(string)
+// 		msg.IPAddress, _ = ctx.Value(keys.IPAddress).(string)
+
+// 		newMsg, err := model.pubsub.PublishToTopic(ctx, model.pubsubTopic, data, map[string]string{})
+// 		if err != nil {
+// 			logger.FromCtx(ctx, pkgName).Error().Err(err).Msg(pclient.ErrPublish.Error())
+// 			return nil
+// 		}
+
+// 		err = models.LogPubSubMsg(ctx, model.db, model.pubsubTopic, newMsg)
+// 		if err != nil {
+// 			logger.FromCtx(ctx, pkgName).Warn().Err(err).Msg(db.ErrSQLRequest.Error())
+// 		}
+
+// 		return err
+// 	}
+// 	return nil
+// }
+
+func (model *Wallet) HistoryLogUpdate(ctx context.Context, userID int, data map[string]any) error {
+	// cannot save anything without userID
+	if userID != 0 {
+		upFields := ""
+		for key, _ := range data {
+			upFields = fmt.Sprintf("%s%s,", upFields, key)
+		}
+		if len(upFields) > 0 {
+			upFields = upFields[0 : len(upFields)-1]
+		}
+
+		ContentID, err := logs.GetContentID(ctx, model.db, AppLabel, ModelName)
+		if err != nil {
+			return err
+		}
+
+		data = map[string]any{
+			"action_flag":     historylogs.ActionChange,
+			"change_message":  fmt.Sprintf(`{"changed":{"fields": "%s"}}`, upFields),
+			"object_repr":     fmt.Sprintf("%s: %d", ModelName, model.ID),
+			"action_time":     time.Now(),
+			"user_id":         userID,
+			"content_type_id": ContentID,
+			"object_id":       fmt.Sprintf("%d", model.ID),
+		}
+
+		_, err = models.Create[historylogs.HistoryLog](
+			ctx,
+			model.db,
+			data,
+		)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (model *Wallet) DefaultPostUpdate(ctx context.Context, userID int, updatedData map[string]any) error {
+	model.NotificationUserUpdate(ctx, userID, updatedData)
+	model.HistoryLogUpdate(ctx, userID, updatedData)
+	return nil
 }

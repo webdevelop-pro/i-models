@@ -4,8 +4,8 @@ import (
 	"github.com/webdevelop-pro/i-models/pgtype"
 )
 
-// NotificationNotification is an object representing the database table.
-type NotificationNotification struct {
+// Notification is an object representing the database table.
+type Notification struct {
 	ID        int                 `json:"id" yaml:"id"`
 	UserID    int                 `json:"user_id,omitempty" yaml:"user_id,omitempty"`
 	Content   string              `json:"content" yaml:"content"`
@@ -16,7 +16,7 @@ type NotificationNotification struct {
 	UpdatedAt pgtype.Timestamptz  `json:"updated_at" yaml:"updated_at"`
 }
 
-func (model NotificationNotification) ToJSON() map[string]any {
+func (model Notification) ToJSON() map[string]any {
 	return map[string]any{
 		"id":         model.ID,
 		"user_id":    model.UserID,
@@ -29,7 +29,7 @@ func (model NotificationNotification) ToJSON() map[string]any {
 	}
 }
 
-func (model NotificationNotification) Fields() []string {
+func (model Notification) Fields() []string {
 	return []string{
 		"ID",
 		"UserID",
@@ -42,12 +42,14 @@ func (model NotificationNotification) Fields() []string {
 	}
 }
 
-func (model NotificationNotification) Table() string {
+func (model Notification) Table() string {
 	return "notification_notifications"
 }
 
-func (model NotificationNotification) GetID() any {
+func (model Notification) GetID() any {
 	return model.ID
 }
 
-type Notifications []NotificationNotification
+func (model *Notification) SetID(id any) {
+	model.ID = id.(int)
+}
