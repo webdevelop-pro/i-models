@@ -1,30 +1,63 @@
 package wallets
 
 import (
+	"context"
+
+	"github.com/pkg/errors"
+	"github.com/webdevelop-pro/go-common/db"
+	"github.com/webdevelop-pro/go-common/logger"
+	"github.com/webdevelop-pro/i-models/models"
 	"github.com/webdevelop-pro/i-models/pgtype"
 )
 
 const Table = "wallet_wallets"
+const pkgName = "models/wallets"
 
-// WalletWallet is an object representing the database table.
-type WalletWallet struct {
-	ID     int `db:"-" json:"id" yaml:"id"`
-	UserID int `db:"-" json:"user_id" yaml:"user_id"`
+// Wallet is an object representing the database table.
+type Wallet struct {
+	ID     int `db:"id" json:"id" yaml:"id"`
+	UserID int `db:"user_id" json:"user_id" yaml:"user_id"`
 
-	EntityID        *string            `db:"-" json:"entity_id,omitempty"`
-	EntityBalanceID *string            `db:"-" json:"entity_balance_id,omitempty"`
-	Balance         float64            `db:"-" json:"balance" yaml:"balance"`
-	IncBalance      float64            `db:"-" json:"inc_balance" yaml:"inc_balance"`
-	OutBalance      float64            `db:"-" json:"out_balance" yaml:"out_balance"`
-	Status          WalletStatusT      `db:"-" json:"status" yaml:"status"`
-	CreatedAt       pgtype.Timestamptz `db:"-" json:"created_at" yaml:"created_at"`
-	UpdatedAt       pgtype.Timestamptz `db:"-" json:"updated_at" yaml:"updated_at"`
+	EntityID        *string            `db:"entity_id" json:"entity_id,omitempty"`
+	EntityBalanceID *string            `db:"entity_balance_id" json:"entity_balance_id,omitempty"`
+	Balance         float64            `db:"balance" json:"balance" yaml:"balance"`
+	IncBalance      float64            `db:"inc_balance" json:"inc_balance" yaml:"inc_balance"`
+	OutBalance      float64            `db:"out_balance" json:"out_balance" yaml:"out_balance"`
+	Status          WalletStatusT      `db:"status" json:"status" yaml:"status"`
+	CreatedAt       pgtype.Timestamptz `db:"created_at" json:"created_at" yaml:"created_at"`
+	UpdatedAt       pgtype.Timestamptz `db:"updated_at" json:"updated_at" yaml:"updated_at"`
 
-	ObjectID      string `db:"-" json:"object_id" yaml:"object_id"`
-	ContentTypeID int    `db:"-" json:"content_type_id" yaml:"content_type_id"`
+	ObjectID      string `db:"object_id" json:"object_id" yaml:"object_id"`
+	ContentTypeID int    `db:"content_type_id" json:"content_type_id" yaml:"content_type_id"`
+
+	updatedFields []string      `db:"-" json:"-"`
+	db            db.Repository `db:"-" json:"-"`
 }
 
-func (model WalletWallet) GetField(name string) any {
+func New(db db.Repository) *Wallet {
+	return &Wallet{
+		db: db,
+	}
+}
+
+func (model Wallet) Fields() []string {
+	return []string{
+		"id",
+		"user_id",
+		"entity_id",
+		"entity_balance_id",
+		"balance",
+		"inc_balance",
+		"out_balance",
+		"status",
+		"created_at",
+		"updated_at",
+		"object_id",
+		"content_type_id",
+	}
+}
+
+func (model Wallet) GetField(name string) any {
 	switch name {
 	case "ID":
 		return model.ID
@@ -46,11 +79,121 @@ func (model WalletWallet) GetField(name string) any {
 		return model.CreatedAt
 	case "UpdatedAt":
 		return model.UpdatedAt
+	case "ObjectID":
+		return model.ObjectID
+	case "ContentTypeID":
+		return model.ContentTypeID
 	}
 	return nil
 }
 
-func (model WalletWallet) ToJSON() map[string]any {
+func (model Wallet) GetValueByTag(field string) any {
+	switch field {
+	case "id":
+		return model.ID
+	case "user_id":
+		return model.UserID
+	case "entity_id":
+		return model.EntityID
+	case "entity_balance_id":
+		return model.EntityBalanceID
+	case "balance":
+		return model.Balance
+	case "inc_balance":
+		return model.IncBalance
+	case "out_balance":
+		return model.OutBalance
+	case "status":
+		return model.Status
+	case "created_at":
+		return model.CreatedAt
+	case "updated_at":
+		return model.UpdatedAt
+	case "object_id":
+		return model.ObjectID
+	case "content_type_id":
+		return model.ContentTypeID
+	}
+	return nil
+}
+
+func (model *Wallet) SetOutBalance(val float64) {
+	model.OutBalance = val
+	model.updatedFields = append(model.updatedFields, "out_balance")
+}
+
+func (model *Wallet) SetIncBalance(val float64) {
+	model.IncBalance = val
+	model.updatedFields = append(model.updatedFields, "inc_balance")
+}
+
+func (model *Wallet) SetBalance(val float64) {
+	model.Balance = val
+	model.updatedFields = append(model.updatedFields, "balance")
+}
+
+func (model Wallet) Save(ctx context.Context) error {
+	if model.ID == 0 {
+		err := errors.Errorf("%s: wallet %d", models.ErrIDEmpty, model.ID)
+		logger.FromCtx(ctx, pkgName).Error().Stack().Err(err).Msg(models.ErrIDEmpty)
+		return err
+	}
+
+	updates := map[string]any{}
+	for _, field := range model.updatedFields {
+		updates[field] = model.GetValueByTag(field)
+	}
+	updated, err := models.Update[Wallet](
+		ctx,
+		model.db,
+		map[string]any{
+			"id": model.ID,
+		},
+		updates,
+	)
+	if err != nil {
+		err = errors.Wrapf(err, "cannot update %d", model.ID)
+		return err
+	}
+	if updated == false {
+		err := errors.Errorf("%s: wallet %d", models.ErrNotUpdated, model.ID)
+		logger.FromCtx(ctx, pkgName).Error().Stack().Err(err).Msg(models.ErrNotUpdated)
+		return err
+	}
+	return nil
+}
+
+func Get(ctx context.Context, db db.Repository, where map[string]any) (*Wallet, error) {
+	model, err := models.RetriveOne[Wallet](
+		ctx,
+		db,
+		where,
+	)
+	if err != nil {
+		err = errors.Wrapf(err, "cannot get model")
+		return nil, err
+	}
+	model.db = db
+	return model, nil
+}
+
+func GetByID(ctx context.Context, db db.Repository, id int) (*Wallet, error) {
+	model, err := models.RetriveOne[Wallet](
+		ctx,
+		db,
+		map[string]any{
+			"id": id,
+		},
+	)
+	if err != nil {
+		err = errors.Wrapf(err, "cannot get model")
+		return nil, err
+	}
+	model.db = db
+	return model, nil
+}
+
+func (model Wallet) ToMap() map[string]any {
 	res := map[string]any{}
 	fields := model.Fields()
 	for _, key := range fields {
@@ -59,29 +202,14 @@ func (model WalletWallet) ToJSON() map[string]any {
 	return res
 }
 
-func (model WalletWallet) Fields() []string {
-	return []string{
-		"ID",
-		"UserID",
-		"EntityCustomerID",
-		"EntityCustomerBalanceID",
-		"Balance",
-		"IncBalance",
-		"OutBalance",
-		"Status",
-		"CreatedAt",
-		"UpdatedAt",
-	}
+func (model Wallet) Table() string {
+	return Table
 }
 
-func (model WalletWallet) Table() string {
-	return "wallet_wallets"
-}
-
-func (model WalletWallet) GetID() any {
+func (model Wallet) GetID() any {
 	return model.ID
 }
 
-func (model *WalletWallet) SetID(id any) {
+func (model *Wallet) SetID(id any) {
 	model.ID = id.(int)
 }

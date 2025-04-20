@@ -19,4 +19,7 @@ const (
 	ErrCreate      = "cannot create record"
 	ErrUpdate      = "cannot update record"
 	ErrExist       = "cannot check existence"
+
+	ErrNotUpdated = "cannot update record"
+	ErrIDEmpty    = "model id is not set"
 )
