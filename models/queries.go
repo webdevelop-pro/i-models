@@ -21,12 +21,6 @@ func RetriveOne[T any, PT interface {
 	log := logger.FromCtx(ctx, "models")
 	obj := PT(new(T))
 
-	/*
-		if len(fields) == 0 {
-			fields = obj.Fields()
-		}
-	*/
-
 	// ToDo
 	// Add where in the loop with where incoming parameter
 	sql, args, err := sq.Select(strings.Join(obj.Fields(), ",")).From(obj.Table()).
@@ -39,14 +33,14 @@ func RetriveOne[T any, PT interface {
 
 	rows, _ := pg.Query(ctx, sql, args...)
 	// Assumes the returned row only has a single hit. StructToFill is the target struct.
-	results, err := pgx.CollectOneRow(rows, pgx.RowToAddrOfStructByName[T])
+	results, err := pgx.CollectOneRow(rows, pgx.RowToStructByName[T])
 	if err != nil {
 		// we need this to have stacktrace
 		log.Error().Stack().Err(errors.WithStack(err)).Msg(ErrRetrieveOne)
-		return results, err
+		return &results, err
 	}
 
-	return results, nil
+	return &results, nil
 }
 
 func RetriveAll[T Model](ctx context.Context, pg db.Repository, where map[string]any) ([]*T, error) {

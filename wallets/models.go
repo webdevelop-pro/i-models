@@ -262,36 +262,6 @@ func (model *Wallet) NotificationUserUpdate(ctx context.Context, userID int, dat
 	return nil
 }
 
-// func (model *Wallet) PubSubPostUpdate(ctx context.Context, data map[string]any, senderService string) error {
-// 	if model.pubsub != nil {
-// 		// msgID, _ = ctx.Value(keys.MSGID).(string)
-// 		msg := pclient.Event{
-// 			Action:     pclient.PostUpdate,
-// 			ObjectID:   model.ID,
-// 			ObjectName: ModelName,
-// 			Sender:     senderService,
-// 			Data:       data,
-// 		}
-
-// 		msg.RequestID, _ = ctx.Value(keys.RequestID).(string)
-// 		msg.IPAddress, _ = ctx.Value(keys.IPAddress).(string)
-
-// 		newMsg, err := model.pubsub.PublishToTopic(ctx, model.pubsubTopic, data, map[string]string{})
-// 		if err != nil {
-// 			logger.FromCtx(ctx, pkgName).Error().Err(err).Msg(pclient.ErrPublish.Error())
-// 			return nil
-// 		}
-
-// 		err = models.LogPubSubMsg(ctx, model.db, model.pubsubTopic, newMsg)
-// 		if err != nil {
-// 			logger.FromCtx(ctx, pkgName).Warn().Err(err).Msg(db.ErrSQLRequest.Error())
-// 		}
-
-// 		return err
-// 	}
-// 	return nil
-// }
-
 func (model *Wallet) HistoryLogUpdate(ctx context.Context, userID int, data map[string]any) error {
 	// cannot save anything without userID
 	if userID != 0 {
@@ -332,7 +302,7 @@ func (model *Wallet) HistoryLogUpdate(ctx context.Context, userID int, data map[
 }
 
 func (model *Wallet) DefaultPostUpdate(ctx context.Context, userID int, updatedData map[string]any) error {
-	model.NotificationUserUpdate(ctx, userID, updatedData)
+	// model.NotificationUserUpdate(ctx, userID, updatedData)
 	model.HistoryLogUpdate(ctx, userID, updatedData)
 	return nil
 }

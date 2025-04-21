@@ -2,11 +2,17 @@ package transactions
 
 import (
 	"context"
+	"fmt"
+	"time"
 
 	"github.com/pkg/errors"
 	"github.com/webdevelop-pro/go-common/db"
 	"github.com/webdevelop-pro/go-common/logger"
+	"github.com/webdevelop-pro/go-common/queue/pclient"
+	"github.com/webdevelop-pro/i-models/historylogs"
+	"github.com/webdevelop-pro/i-models/logs"
 	"github.com/webdevelop-pro/i-models/models"
+	"github.com/webdevelop-pro/i-models/notifications"
 	"github.com/webdevelop-pro/i-models/pgtype"
 )
 
@@ -114,7 +120,12 @@ func (model *Transaction) SetStatus(val TransactionsStatusT) {
 	model.updatedFields = append(model.updatedFields, "status")
 }
 
-func (model Transaction) Save(ctx context.Context) error {
+func (model *Transaction) SetEntityID(val *string) {
+	model.EntityID = val
+	model.updatedFields = append(model.updatedFields, "entity_id")
+}
+
+func (model Transaction) Save(ctx context.Context, postUpdate func(ctx context.Context, msg pclient.Event) error) error {
 	if model.ID == 0 {
 		err := errors.Errorf("%s: Transaction %d", models.ErrIDEmpty, model.ID)
 		logger.FromCtx(ctx, pkgName).Error().Stack().Err(err).Msg(models.ErrIDEmpty)
@@ -141,6 +152,14 @@ func (model Transaction) Save(ctx context.Context) error {
 		err := errors.Errorf("%s: Transaction %d", models.ErrNotUpdated, model.ID)
 		logger.FromCtx(ctx, pkgName).Error().Stack().Err(err).Msg(models.ErrNotUpdated)
 		return err
+	} else {
+		postUpdate(ctx, pclient.Event{
+			Action:     pclient.PostUpdate,
+			ObjectID:   model.ID,
+			ObjectName: ModelName,
+			Data:       updates,
+		})
+		model.DefaultPostUpdate(ctx, 1, updates)
 	}
 	return nil
 }
@@ -194,4 +213,81 @@ func (model Transaction) GetID() any {
 
 func (model *Transaction) SetID(id any) {
 	model.ID = id.(int)
+}
+
+func (model *Transaction) NotificationUserUpdate(ctx context.Context, userID int, data map[string]any) error {
+	if userID != 0 {
+		// what user see for wallet: balance, inc/out balance, status
+		watchFields := []string{
+			"amount",
+			"status",
+		}
+		notifData := map[string]any{}
+		for _, field := range watchFields {
+			val, ok := data[field]
+			if ok {
+				notifData[field] = val
+			}
+		}
+
+		if len(notifData) > 0 {
+			_, err := models.Create[notifications.Notification](
+				ctx,
+				model.db,
+				map[string]any{
+					"user_id": userID,
+					"content": "",
+					"data":    notifData,
+				},
+			)
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (model *Transaction) HistoryLogUpdate(ctx context.Context, userID int, data map[string]any) error {
+	// cannot save anything without userID
+	if userID != -1 {
+		upFields := ""
+		for key, _ := range data {
+			upFields = fmt.Sprintf("%s%s,", upFields, key)
+		}
+		if len(upFields) > 0 {
+			upFields = upFields[0 : len(upFields)-1]
+		}
+
+		ContentID, err := logs.GetContentID(ctx, model.db, AppLabel, ModelName)
+		if err != nil {
+			return err
+		}
+
+		data = map[string]any{
+			"action_flag":     historylogs.ActionChange,
+			"change_message":  fmt.Sprintf(`{"changed":{"fields": "%s"}}`, upFields),
+			"object_repr":     fmt.Sprintf("%s: %d", ModelName, model.ID),
+			"action_time":     time.Now(),
+			"user_id":         userID,
+			"content_type_id": ContentID,
+			"object_id":       fmt.Sprintf("%d", model.ID),
+		}
+
+		_, err = models.Create[historylogs.HistoryLog](
+			ctx,
+			model.db,
+			data,
+		)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (model *Transaction) DefaultPostUpdate(ctx context.Context, userID int, updatedData map[string]any) error {
+	// model.NotificationUserUpdate(ctx, userID, updatedData)
+	model.HistoryLogUpdate(ctx, userID, updatedData)
+	return nil
 }
