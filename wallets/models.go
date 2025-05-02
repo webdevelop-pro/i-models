@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	sq "github.com/Masterminds/squirrel"
 	"github.com/pkg/errors"
 	"github.com/webdevelop-pro/go-common/db"
 	"github.com/webdevelop-pro/go-common/logger"
@@ -36,13 +37,15 @@ type Wallet struct {
 	ObjectID      string `db:"object_id" json:"object_id" yaml:"object_id"`
 	ContentTypeID int    `db:"content_type_id" json:"content_type_id" yaml:"content_type_id"`
 
-	updatedFields []string      `db:"-" json:"-"`
-	db            db.Repository `db:"-" json:"-"`
+	updatedFields []string       `db:"-" json:"-"`
+	fns           map[string]any `db:"-" json:"-"`
+	db            db.Repository  `db:"-" json:"-"`
 }
 
 func New(db db.Repository) *Wallet {
 	return &Wallet{
-		db: db,
+		db:  db,
+		fns: map[string]any{},
 	}
 }
 
@@ -133,6 +136,24 @@ func (model *Wallet) SetIncBalance(val float64) {
 	model.updatedFields = append(model.updatedFields, "inc_balance")
 }
 
+func (model *Wallet) SetIncBalanceFN(val float64) {
+	model.IncBalance += val
+	model.fns["fn_inc_balance"] = sq.Expr("inc_balance + ?", val)
+	model.updatedFields = append(model.updatedFields, "fn_inc_balance")
+}
+
+func (model *Wallet) SetOutBalanceFN(val float64) {
+	model.IncBalance += val
+	model.fns["fn_out_balance"] = sq.Expr("out_balance + ?", val)
+	model.updatedFields = append(model.updatedFields, "fn_out_balance")
+}
+
+func (model *Wallet) SetBalanceFN(val float64) {
+	model.IncBalance += val
+	model.fns["fn_balance"] = sq.Expr("balance + ?", val)
+	model.updatedFields = append(model.updatedFields, "fn_balance")
+}
+
 func (model *Wallet) SetBalance(val float64) {
 	model.Balance = val
 	model.updatedFields = append(model.updatedFields, "balance")
@@ -147,7 +168,11 @@ func (model Wallet) Save(ctx context.Context, postUpdate func(ctx context.Contex
 
 	updates := map[string]any{}
 	for _, field := range model.updatedFields {
-		updates[field] = model.GetValueByTag(field)
+		if field[0:3] == "fn_" {
+			updates[field[3:]] = model.fns[field]
+		} else {
+			updates[field] = model.GetValueByTag(field)
+		}
 	}
 	updated, err := models.Update[Wallet](
 		ctx,
@@ -204,6 +229,7 @@ func GetByID(ctx context.Context, db db.Repository, id int) (*Wallet, error) {
 		return nil, err
 	}
 	model.db = db
+	model.fns = map[string]any{}
 	return model, nil
 }
 
