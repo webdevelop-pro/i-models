@@ -43,9 +43,14 @@ func RetriveOne[T any, PT interface {
 	return &results, nil
 }
 
-func RetriveAll[T Model](ctx context.Context, pg db.Repository, where map[string]any) ([]*T, error) {
+func RetriveAll[T any, PT interface {
+	*T
+	SetID(any)
+	Fields() []string
+	Table() string
+}](ctx context.Context, pg db.Repository, where map[string]any) ([]*T, error) {
 	log := logger.FromCtx(ctx, "models")
-	obj := *new(T)
+	obj := PT(new(T))
 
 	// ToDo
 	// Add where in the loop with where incoming parameter
