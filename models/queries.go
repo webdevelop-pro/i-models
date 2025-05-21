@@ -189,7 +189,7 @@ func Delete[T any, PT interface {
 	return res.String() == "DELETE 1", nil
 }
 
-func LogPubSubMessageExecution(ctx context.Context, pg Repository, msgID string) error {
+func LogPubSubMessageExecution(ctx context.Context, pg db.Repository, msgID string) error {
 	query := `update pubsub_logs set executed=executed+1 where msg_id=$1;`
 	log := logger.FromCtx(ctx, "models")
 

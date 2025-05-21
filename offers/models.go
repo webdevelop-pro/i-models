@@ -1,6 +1,11 @@
 package offers
 
 import (
+	"context"
+
+	"github.com/pkg/errors"
+	"github.com/webdevelop-pro/go-common/db"
+	"github.com/webdevelop-pro/i-models/models"
 	"github.com/webdevelop-pro/i-models/pgtype"
 )
 
@@ -49,6 +54,9 @@ type OfferOffer struct {
 	Mastodon          string             `db:"-" json:"mastodon" yaml:"mastodon"`
 	EsignID           string             `db:"-" json:"esign_id" yaml:"esign_id"`
 	RegType           string             `db:"-" json:"reg_type" yaml:"reg_type"`
+
+	updatedFields []string      `db:"-" json:"-"`
+	db            db.Repository `db:"-" json:"-"`
 }
 
 func (model OfferOffer) ToJSON() map[string]any {
@@ -159,4 +167,18 @@ func (model OfferOffer) GetID() any {
 
 func (model *OfferOffer) SetID(id any) {
 	model.ID = id.(int)
+}
+
+func Get(ctx context.Context, db db.Repository, where map[string]any) (*OfferOffer, error) {
+	model, err := models.RetriveOne[OfferOffer](
+		ctx,
+		db,
+		where,
+	)
+	if err != nil {
+		err = errors.Wrapf(err, "cannot get model")
+		return nil, err
+	}
+	model.db = db
+	return model, nil
 }

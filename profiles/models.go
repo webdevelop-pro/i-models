@@ -52,11 +52,11 @@ func (prof Profile) PrimaryFieldValue() any {
 
 func (prof Profile) Fields() []string {
 	obj := &prof
-	var res = []string{}
+	res := []string{}
 	val := reflect.ValueOf(obj).Elem()
 	for i := 0; i < val.NumField(); i++ {
 		dbtag := string(val.Type().Field(i).Tag.Get("db"))
-		if dbtag != "" {
+		if dbtag != "" && dbtag != "-" {
 			res = append(res, dbtag)
 		}
 	}

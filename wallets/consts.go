@@ -20,6 +20,7 @@ const (
 func AllWalletStatusT() []WalletStatusT {
 	return []WalletStatusT{
 		WalletStatusTCreated,
+		WalletStatusTPending,
 		WalletStatusTVerified,
 		WalletStatusTError,
 	}
@@ -27,7 +28,7 @@ func AllWalletStatusT() []WalletStatusT {
 
 func (e WalletStatusT) IsValid() error {
 	switch e {
-	case WalletStatusTCreated, WalletStatusTVerified, WalletStatusTError:
+	case WalletStatusTCreated, WalletStatusTPending, WalletStatusTVerified, WalletStatusTError:
 		return nil
 	default:
 		return errors.New("enum is not valid")
