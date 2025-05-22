@@ -17,7 +17,9 @@ type Contract struct {
 	UserID  int `db:"user_id" json:"user_id" yaml:"user_id"`
 	OfferID int `db:"offer_id" json:"offer_id" yaml:"offer_id"`
 
+	Name          string `db:"address" json:"address" yaml:"address"`
 	Status        string `db:"status" json:"status" yaml:"status"`
+	Symbol        string `db:"address" json:"address" yaml:"address"`
 	Address       string `db:"address" json:"address" yaml:"address"`
 	TransactionTX string `db:"transaction_tx" json:"transaction_tx" yaml:"transaction_tx"`
 
