@@ -26,6 +26,8 @@ const (
 	ObjectWallet        ObjectType = "wallet"
 	ObjectFundingsource ObjectType = "fundingsource"
 	ObjectTransaction   ObjectType = "transaction"
+
+	MsgContentIDNotFound = "content id not found"
 )
 
 type ServicesT string
