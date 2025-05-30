@@ -49,7 +49,7 @@ func LogHttpRequest(
 	objectModel ObjectType,
 	req *http.Request,
 	rawBody []byte,
-) (int, error) {
+) (*LogLog, error) {
 	var (
 		reqID, _ = ctx.Value(keys.RequestID).(string)
 		msgID, _ = ctx.Value(keys.MSGID).(string)
@@ -68,7 +68,7 @@ func LogHttpRequest(
 	contentID, err := GetContentID(ctx, db, objectLabel, objectModel)
 	if err != nil {
 		log.Error().Err(err).Msg("can't get log from database")
-		return model.ID, err
+		return nil, err
 	}
 
 	// no tabs or new lines
@@ -101,9 +101,9 @@ func LogHttpRequest(
 	).Scan(&model.ID)
 	if err != nil {
 		log.Error().Err(err).Msg("can't save log in database")
-		return model.ID, err
+		return &model, err
 	}
-	return model.ID, nil
+	return &model, nil
 }
 
 // ToDo Use db.DB instead of pgxpool.Pool
@@ -162,7 +162,7 @@ func (model *LogLog) LogRequest(log logger.Logger, db db.Repository, objectID st
 			}
 		}
 
-		model.ID, err = LogHttpRequest(
+		obj, err := LogHttpRequest(
 			req.Context(),
 			db,
 			LogTypeTOutcoming,
@@ -175,9 +175,10 @@ func (model *LogLog) LogRequest(log logger.Logger, db db.Repository, objectID st
 			req,
 			rawBody,
 		)
+		model.ID = obj.ID
 
 		// TODO: Use the same format for incoming logs
-		log.Trace().Str("path", req.RequestURI).Str("service", serviceName.String()).Msg("Send request to 3rd party")
+		log.Trace().Str("path", req.RequestURI).Str("service", serviceName.String()).Msg(MsgSendRequest)
 
 		if err != nil {
 			log.Error().Err(err).Msg("can't save log in database")
@@ -187,41 +188,45 @@ func (model *LogLog) LogRequest(log logger.Logger, db db.Repository, objectID st
 
 func (model *LogLog) LogResponse(log logger.Logger, db db.Repository, serviceName ServicesT) func(req *http.Response) {
 	return func(resp *http.Response) {
-		logID, _ := resp.Request.Context().Value(keys.RequestLogID).(int)
+		model.UpdateLog(resp.Request.Context(), log, db, serviceName, resp)
+	}
+}
 
-		sql := fmt.Sprintf(`UPDATE %s
+func (model *LogLog) UpdateLog(ctx context.Context, log logger.Logger, db db.Repository, serviceName ServicesT, resp *http.Response) {
+	logID, _ := resp.Request.Context().Value(keys.RequestLogID).(int)
+
+	sql := fmt.Sprintf(`UPDATE %s
 			SET status_code=$2, response_headers=$3, response_data=$4
 			WHERE id=$1`, model.Table(),
-		)
+	)
 
-		rawBody := []byte("{}")
-		if resp.Body != nil {
-			rawBody, _ = io.ReadAll(resp.Body)
-			resp.Body = io.NopCloser(bytes.NewReader(rawBody))
-		}
+	rawBody := []byte("{}")
+	if resp.Body != nil {
+		rawBody, _ = io.ReadAll(resp.Body)
+		resp.Body = io.NopCloser(bytes.NewReader(rawBody))
+	}
 
-		if len(string(rawBody)) == 0 {
-			rawBody = []byte("{}")
-		}
+	if len(string(rawBody)) == 0 {
+		rawBody = []byte("{}")
+	}
 
-		// TODO: Use the same format for incoming logs
-		log.Trace().Str("path", resp.Request.RequestURI).
-			Int("logID", model.ID).Str("service", serviceName.String()).Msg("3rd party request finished")
+	// TODO: Use the same format for incoming logs
+	log.Trace().Str("path", resp.Request.RequestURI).
+		Int("logID", model.ID).Str("service", serviceName.String()).Msg(MsgRequestProcessed)
 
-		res, err := db.Exec(
-			resp.Request.Context(),
-			sql,
-			model.ID,
-			resp.StatusCode,
-			resp.Header,
-			rawBody,
-		)
-		if err != nil {
-			log.Error().Err(err).Int("log_id", logID).Msg("can't update log in database")
-		}
-		if res.String() == "UPDATE 0" {
-			log.Error().Err(err).Int("log_id", logID).Msg("can't update log in database")
-		}
+	res, err := db.Exec(
+		resp.Request.Context(),
+		sql,
+		model.ID,
+		resp.StatusCode,
+		resp.Header,
+		rawBody,
+	)
+	if err != nil {
+		log.Error().Err(err).Int("log_id", logID).Msg("can't update log in database")
+	}
+	if res.String() == "UPDATE 0" {
+		log.Error().Err(err).Int("log_id", logID).Msg("can't update log in database")
 	}
 }
 

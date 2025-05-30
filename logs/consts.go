@@ -28,6 +28,8 @@ const (
 	ObjectTransaction   ObjectType = "transaction"
 
 	MsgContentIDNotFound = "content id not found"
+	MsgSendRequest       = "Sent request to 3rd party"
+	MsgRequestProcessed  = "3rd party request processed"
 )
 
 type ServicesT string
