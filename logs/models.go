@@ -188,12 +188,13 @@ func (model *LogLog) LogRequest(log logger.Logger, db db.Repository, objectID st
 
 func (model *LogLog) LogResponse(log logger.Logger, db db.Repository, serviceName ServicesT) func(req *http.Response) {
 	return func(resp *http.Response) {
-		model.UpdateLog(resp.Request.Context(), log, db, serviceName, resp)
+		model.UpdateLog(resp, log, db, serviceName)
 	}
 }
 
-func (model *LogLog) UpdateLog(ctx context.Context, log logger.Logger, db db.Repository, serviceName ServicesT, resp *http.Response) {
-	logID, _ := resp.Request.Context().Value(keys.RequestLogID).(int)
+func (model *LogLog) UpdateLog(resp *http.Response, log logger.Logger, db db.Repository, serviceName ServicesT) {
+	ctx := resp.Request.Context()
+	logID, _ := ctx.Value(keys.RequestLogID).(int)
 
 	sql := fmt.Sprintf(`UPDATE %s
 			SET status_code=$2, response_headers=$3, response_data=$4
@@ -210,16 +211,21 @@ func (model *LogLog) UpdateLog(ctx context.Context, log logger.Logger, db db.Rep
 		rawBody = []byte("{}")
 	}
 
+	respHeader := resp.Header
+	if respHeader == nil {
+		respHeader = map[string][]string{}
+	}
+
 	// TODO: Use the same format for incoming logs
 	log.Trace().Str("path", resp.Request.RequestURI).
 		Int("logID", model.ID).Str("service", serviceName.String()).Msg(MsgRequestProcessed)
 
 	res, err := db.Exec(
-		resp.Request.Context(),
+		ctx,
 		sql,
 		model.ID,
 		resp.StatusCode,
-		resp.Header,
+		respHeader,
 		rawBody,
 	)
 	if err != nil {
