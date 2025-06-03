@@ -213,6 +213,7 @@ func Get(ctx context.Context, db db.Repository, where map[string]any) (*Wallet, 
 		return nil, err
 	}
 	model.db = db
+	model.fns = map[string]any{}
 	return model, nil
 }
 
