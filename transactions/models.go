@@ -33,13 +33,15 @@ type Transaction struct {
 	CreatedAt       pgtype.Timestamptz  `json:"created_at" yaml:"created_at"`
 	UpdatedAt       pgtype.Timestamptz  `json:"updated_at" yaml:"updated_at"`
 
-	updatedFields []string      `db:"-" json:"-"`
-	db            db.Repository `db:"-" json:"-"`
+	updatedFields []string       `db:"-" json:"-"`
+	fns           map[string]any `db:"-" json:"-"`
+	db            db.Repository  `db:"-" json:"-"`
 }
 
 func New(db db.Repository) *Transaction {
 	return &Transaction{
-		db: db,
+		db:  db,
+		fns: map[string]any{},
 	}
 }
 
@@ -125,6 +127,12 @@ func (model *Transaction) SetEntityID(val *string) {
 	model.updatedFields = append(model.updatedFields, "entity_id")
 }
 
+// func (model *Transaction) SetIncBalanceFN(val float64) {
+// 	model.IncBalance += val
+// 	model.fns["fn_inc_balance"] = sq.Expr("inc_balance + ?", val)
+// 	model.updatedFields = append(model.updatedFields, "fn_inc_balance")
+// }
+
 func (model Transaction) Save(ctx context.Context, postUpdate func(ctx context.Context, msg pclient.Event) error) error {
 	if model.ID == 0 {
 		err := errors.Errorf("%s: Transaction %d", models.ErrIDEmpty, model.ID)
@@ -175,6 +183,7 @@ func Get(ctx context.Context, db db.Repository, where map[string]any) (*Transact
 		return nil, err
 	}
 	model.db = db
+	model.fns = map[string]any{}
 	return model, nil
 }
 
@@ -191,6 +200,7 @@ func GetByID(ctx context.Context, db db.Repository, id int) (*Transaction, error
 		return nil, err
 	}
 	model.db = db
+	model.fns = map[string]any{}
 	return model, nil
 }
 
