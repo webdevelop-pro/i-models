@@ -2,6 +2,8 @@ package historylogs
 
 import (
 	"time"
+
+	"github.com/webdevelop-pro/go-common/db"
 )
 
 const Table = "django_admin_log"
@@ -17,6 +19,14 @@ type HistoryLog struct {
 	ChangeMessage string    `json:"change_message" yaml:"change_message"`
 	UserID        int       `json:"user_id" yaml:"user_id"`
 	ActionTime    time.Time `json:"action_time" yaml:"action_time"`
+
+	db db.Repository `db:"-" json:"-"`
+}
+
+func New(db db.Repository) *HistoryLog {
+	return &HistoryLog{
+		db: db,
+	}
 }
 
 func (model HistoryLog) ToMap() map[string]any {
@@ -61,4 +71,8 @@ func (model HistoryLog) GetID() any {
 
 func (model *HistoryLog) SetID(id any) {
 	model.ID = id.(int)
+}
+
+func (model *HistoryLog) SetDB(db db.Repository) {
+	model.db = db
 }

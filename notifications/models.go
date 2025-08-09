@@ -2,6 +2,8 @@ package notifications
 
 import (
 	"github.com/webdevelop-pro/i-models/pgtype"
+
+	"github.com/webdevelop-pro/go-common/db"
 )
 
 // Notification is an object representing the database table.
@@ -14,6 +16,14 @@ type Notification struct {
 	Data      any                 `json:"data" yaml:"data"`
 	CreatedAt pgtype.Timestamptz  `json:"created_at" yaml:"created_at"`
 	UpdatedAt pgtype.Timestamptz  `json:"updated_at" yaml:"updated_at"`
+
+	db db.Repository `db:"-" json:"-"`
+}
+
+func New(db db.Repository) *Notification {
+	return &Notification{
+		db: db,
+	}
 }
 
 func (model Notification) ToJSON() map[string]any {
@@ -52,4 +62,8 @@ func (model Notification) GetID() any {
 
 func (model *Notification) SetID(id any) {
 	model.ID = id.(int)
+}
+
+func (model *Notification) SetDB(db db.Repository) {
+	model.db = db
 }

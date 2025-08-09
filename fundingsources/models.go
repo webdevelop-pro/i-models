@@ -3,6 +3,8 @@ package fundingsources
 import (
 	"github.com/webdevelop-pro/i-models/pgtype"
 	"github.com/webdevelop-pro/i-models/wallets"
+
+	"github.com/webdevelop-pro/go-common/db"
 )
 
 // WalletFundingSource is an object representing the database table.
@@ -16,6 +18,17 @@ type WalletFundingSource struct {
 	Name      string                `db:"name" json:"name" yaml:"name"`
 	CreatedAt pgtype.Timestamptz    `db:"created_at" json:"created_at" yaml:"created_at"`
 	UpdatedAt pgtype.Timestamptz    `db:"updated_at" json:"updated_at" yaml:"updated_at"`
+
+	updatedFields []string       `db:"-" json:"-"`
+	fns           map[string]any `db:"-" json:"-"`
+	db            db.Repository  `db:"-" json:"-"`
+}
+
+func New(db db.Repository) *WalletFundingSource {
+	return &WalletFundingSource{
+		db:  db,
+		fns: map[string]any{},
+	}
 }
 
 func (model WalletFundingSource) ToJSON() map[string]any {
@@ -56,4 +69,8 @@ func (model WalletFundingSource) GetID() any {
 
 func (model *WalletFundingSource) SetID(id any) {
 	model.ID = id.(int)
+}
+
+func (model *WalletFundingSource) SetDB(db db.Repository) {
+	model.db = db
 }

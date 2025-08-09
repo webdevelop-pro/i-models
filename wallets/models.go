@@ -255,6 +255,10 @@ func (model *Wallet) SetID(id any) {
 	model.ID = id.(int)
 }
 
+func (model *Wallet) SetDB(db db.Repository) {
+	model.db = db
+}
+
 func (model *Wallet) NotificationUserUpdate(ctx context.Context, userID int, data map[string]any) error {
 	if userID != 0 {
 		// what user see for wallet: balance, inc/out balance, status

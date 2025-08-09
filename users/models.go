@@ -3,6 +3,7 @@ package users
 import (
 	"github.com/webdevelop-pro/i-models/models"
 
+	"github.com/webdevelop-pro/go-common/db"
 	"github.com/webdevelop-pro/i-models/pgtype"
 )
 
@@ -38,6 +39,14 @@ type UserUser struct {
 	CreatedAt   pgtype.Timestamptz `db:"-" json:"created_at" yaml:"created_at"`
 	UpdatedAt   pgtype.Timestamptz `db:"-" json:"updated_at" yaml:"updated_at"`
 	ImageLinkID int                `db:"-" json:"image_link_id,omitempty" yaml:"image_link_id,omitempty"`
+
+	db db.Repository `db:"-" json:"-"`
+}
+
+func New(db db.Repository) *UserUser {
+	return &UserUser{
+		db: db,
+	}
 }
 
 func (model UserUser) ToJSON() map[string]any {
@@ -81,4 +90,8 @@ func (model UserUser) GetID() any {
 
 func (model *UserUser) SetID(id any) {
 	model.ID = id.(int)
+}
+
+func (model *UserUser) SetDB(db db.Repository) {
+	model.db = db
 }

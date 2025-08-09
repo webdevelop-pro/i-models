@@ -74,6 +74,7 @@ func RetriveAll[T any, PT interface {
 func Create[T any, PT interface {
 	*T
 	SetID(any)
+	SetDB(db.Repository)
 	Fields() []string
 	Table() string
 }](ctx context.Context, pg db.Repository, data map[string]any) (*T, error) {
@@ -95,6 +96,7 @@ func Create[T any, PT interface {
 		return obj, resErr
 	}
 	obj.SetID(id)
+	obj.SetDB(pg)
 	return obj, nil
 }
 

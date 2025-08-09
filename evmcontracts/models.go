@@ -26,8 +26,16 @@ type Contract struct {
 	CreatedAt pgtype.Timestamptz `db:"created_at" json:"created_at" yaml:"created_at"`
 	UpdatedAt pgtype.Timestamptz `db:"updated_at" json:"updated_at" yaml:"updated_at"`
 
-	updatedFields []string      `db:"-" json:"-"`
-	db            db.Repository `db:"-" json:"-"`
+	updatedFields []string       `db:"-" json:"-"`
+	fns           map[string]any `db:"-" json:"-"`
+	db            db.Repository  `db:"-" json:"-"`
+}
+
+func New(db db.Repository) *Contract {
+	return &Contract{
+		db:  db,
+		fns: map[string]any{},
+	}
 }
 
 func (model Contract) GetField(name string) any {
@@ -93,6 +101,10 @@ func (model Contract) GetID() any {
 
 func (model *Contract) SetID(id any) {
 	model.ID = id.(int)
+}
+
+func (model *Contract) SetDB(db db.Repository) {
+	model.db = db
 }
 
 func (model Contract) Save(ctx context.Context, postUpdate func(ctx context.Context, msg pclient.Event) error) error {

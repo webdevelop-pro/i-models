@@ -55,8 +55,16 @@ type OfferOffer struct {
 	EsignID           string             `db:"-" json:"esign_id" yaml:"esign_id"`
 	RegType           string             `db:"-" json:"reg_type" yaml:"reg_type"`
 
-	updatedFields []string      `db:"-" json:"-"`
-	db            db.Repository `db:"-" json:"-"`
+	updatedFields []string       `db:"-" json:"-"`
+	fns           map[string]any `db:"-" json:"-"`
+	db            db.Repository  `db:"-" json:"-"`
+}
+
+func New(db db.Repository) *OfferOffer {
+	return &OfferOffer{
+		db:  db,
+		fns: map[string]any{},
+	}
 }
 
 func (model OfferOffer) ToJSON() map[string]any {
@@ -167,6 +175,10 @@ func (model OfferOffer) GetID() any {
 
 func (model *OfferOffer) SetID(id any) {
 	model.ID = id.(int)
+}
+
+func (model *OfferOffer) SetDB(db db.Repository) {
+	model.db = db
 }
 
 func Get(ctx context.Context, db db.Repository, where map[string]any) (*OfferOffer, error) {

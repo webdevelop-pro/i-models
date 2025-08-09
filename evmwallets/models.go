@@ -33,6 +33,13 @@ type Wallet struct {
 	db            db.Repository `db:"-" json:"-"`
 }
 
+func New(db db.Repository) *Wallet {
+	return &Wallet{
+		db:  db,
+		fns: map[string]any{},
+	}
+}
+
 func (model Wallet) GetField(name string) any {
 	switch name {
 	case "ID":
@@ -108,6 +115,10 @@ func (model Wallet) GetID() any {
 
 func (model *Wallet) SetID(id any) {
 	model.ID = id.(int)
+}
+
+func (model *Wallet) SetDB(db db.Repository) {
+	model.db = db
 }
 
 func (model Wallet) Save(ctx context.Context, postUpdate func(ctx context.Context, msg pclient.Event) error) error {

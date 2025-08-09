@@ -26,6 +26,13 @@ type Transfer struct {
 	db            db.Repository `db:"-" json:"-"`
 }
 
+func New(db db.Repository) *Transfer {
+	return &Transfer{
+		db:  db,
+		fns: map[string]any{},
+	}
+}
+
 func (model Transfer) GetField(name string) any {
 	switch name {
 	case "ID":
@@ -85,6 +92,10 @@ func (model Transfer) GetID() any {
 
 func (model *Transfer) SetID(id any) {
 	model.ID = id.(int)
+}
+
+func (model *Transfer) SetDB(db db.Repository) {
+	model.db = db
 }
 
 func (model Transfer) Save(ctx context.Context, postUpdate func(ctx context.Context, msg pclient.Event) error) error {
