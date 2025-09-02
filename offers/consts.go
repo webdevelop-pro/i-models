@@ -21,6 +21,8 @@ const (
 
 	OfferAppLabel  = "offer"
 	OfferModelName = "offer"
+
+	TableName = "offer_offers"
 )
 
 func AllOfferT() []OfferT {

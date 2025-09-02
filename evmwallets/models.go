@@ -29,8 +29,9 @@ type Wallet struct {
 	ObjectID      string `db:"-" json:"object_id" yaml:"object_id"`
 	ContentTypeID int    `db:"-" json:"content_type_id" yaml:"content_type_id"`
 
-	updatedFields []string      `db:"-" json:"-"`
-	db            db.Repository `db:"-" json:"-"`
+	updatedFields []string       `db:"-" json:"-"`
+	fns           map[string]any `db:"-" json:"-"`
+	db            db.Repository  `db:"-" json:"-"`
 }
 
 func New(db db.Repository) *Wallet {

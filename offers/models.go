@@ -166,7 +166,7 @@ func (model OfferOffer) Fields() []string {
 }
 
 func (model OfferOffer) Table() string {
-	return "offer_offers"
+	return TableName
 }
 
 func (model OfferOffer) GetID() any {
