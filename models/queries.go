@@ -68,6 +68,9 @@ func RetriveAll[T any, PT interface {
 		log.Error().Stack().Err(err).Msg(ErrRetrieveAll)
 		return results, err
 	}
+	if results == nil {
+		return []*T{}, nil
+	}
 	return results, nil
 }
 
