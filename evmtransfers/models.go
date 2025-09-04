@@ -19,6 +19,9 @@ type Transfer struct {
 	SourceWalletID *int `db:"source_wallet_id" json:"source_wallet_id" yaml:"source_wallet_id"`
 	InvestmentID   *int `db:"investment_id" json:"investment_id" yaml:"investment_id"`
 
+	Type          string `db:"type" json:"type" yaml:"type"`
+	Amount        string `db:"amount" json:"amount" yaml:"amount"`
+	Network       string `db:"network" json:"network" yaml:"network"`
 	Status        string `db:"status" json:"status" yaml:"status"`
 	TransactionTX string `db:"transaction_tx" json:"transaction_tx" yaml:"transaction_tx"`
 
