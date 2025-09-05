@@ -28,7 +28,7 @@ func RetriveOne[T any, PT interface {
 		Where(where).PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
 		// we need this to have stacktrace
-		log.Error().Stack().Err(errors.WithStack(err)).Msg(ErrRetrieveOne)
+		log.Error().Stack().Any("data", where).Err(errors.WithStack(err)).Msg(ErrRetrieveOne)
 		return obj, err
 	}
 
@@ -41,7 +41,7 @@ func RetriveOne[T any, PT interface {
 	results, err := pgx.CollectOneRow(rows, pgx.RowToStructByName[T])
 	if err != nil {
 		// we need this to have stacktrace
-		log.Error().Stack().Err(errors.WithStack(err)).Msg(ErrRetrieveOne)
+		log.Error().Stack().Any("data", where).Err(errors.WithStack(err)).Msg(ErrRetrieveOne)
 		return &results, err
 	}
 
@@ -62,7 +62,7 @@ func RetriveAll[T any, PT interface {
 	sql, args, err := sq.Select(strings.Join(obj.Fields(), ",")).From(obj.Table()).
 		Where(where).PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
-		log.Error().Stack().Err(err).Msg(ErrRetrieveAll)
+		log.Error().Stack().Any("data", where).Err(err).Msg(ErrRetrieveAll)
 		return nil, err
 	}
 
@@ -74,7 +74,7 @@ func RetriveAll[T any, PT interface {
 	// Assumes the returned row only has a single hit. StructToFill is the target struct.
 	results, err := pgx.CollectRows(rows, pgx.RowToAddrOfStructByName[T])
 	if err != nil {
-		log.Error().Stack().Err(err).Msg(ErrRetrieveAll)
+		log.Error().Stack().Any("data", where).Err(err).Msg(ErrRetrieveAll)
 		return results, err
 	}
 	if results == nil {
@@ -97,14 +97,14 @@ func Create[T any, PT interface {
 	sql, args, err := b.PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
 		resErr := errors.Wrapf(errors.New(ErrSQLRequest), "%s: %s, %v", err.Error(), sql, args)
-		log.Error().Stack().Err(resErr).Msg(ErrCreate)
+		log.Error().Stack().Any("data", data).Err(resErr).Msg(ErrCreate)
 		return obj, resErr
 	}
 
 	err = pg.QueryRow(ctx, sql, args...).Scan(&id)
 	if err != nil {
 		resErr := errors.Wrapf(err, "sql error %s", obj.Table())
-		log.Error().Stack().Any("sql", sql).Any("data", data).Err(resErr).Msg(ErrCreate)
+		log.Error().Stack().Any("data", data).Err(resErr).Msg(ErrCreate)
 		return obj, resErr
 	}
 	obj.SetID(id)
@@ -124,14 +124,14 @@ func Update[T any, PT interface {
 	sql, args, err := b.PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
 		resErr := errors.Wrapf(errors.New(ErrSQLRequest), "%s: %s, %v", err.Error(), sql, args)
-		log.Error().Stack().Err(resErr).Msg(ErrUpdate)
+		log.Error().Stack().Any("data", data).Err(resErr).Msg(ErrUpdate)
 		return false, resErr
 	}
 
 	res, err := pg.Exec(ctx, sql, args...)
 	if err != nil {
 		resErr := errors.Wrapf(err, "sql %s", db.CleanSQL(sql))
-		log.Error().Stack().Err(resErr).Msg(ErrUpdate)
+		log.Error().Stack().Any("data", data).Err(resErr).Msg(ErrUpdate)
 		return false, resErr
 	}
 	/*
@@ -158,7 +158,7 @@ func Exists[T any, PT interface {
 		Where(where).PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
 		// we need this to have stacktrace
-		log.Error().Stack().Err(err).Msg(ErrRetrieveOne)
+		log.Error().Stack().Any("data", where).Err(err).Msg(ErrRetrieveOne)
 		return false, err
 	}
 
@@ -168,7 +168,7 @@ func Exists[T any, PT interface {
 		if err.Error() == pgx.ErrNoRows.Error() {
 			return false, nil
 		} else {
-			log.Error().Stack().Err(err).Msg(ErrRetrieveOne)
+			log.Error().Stack().Any("data", where).Err(err).Msg(ErrRetrieveOne)
 			return res == 1, err
 		}
 	}
@@ -188,14 +188,14 @@ func Delete[T any, PT interface {
 		PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
 		// we need this to have stacktrace
-		log.Error().Stack().Err(errors.WithStack(err)).Msg(ErrRetrieveOne)
+		log.Error().Stack().Any("data", where).Err(errors.WithStack(err)).Msg(ErrRetrieveOne)
 		return false, err
 	}
 
 	res, err := pg.Exec(ctx, sql, args...)
 	if err != nil {
 		resErr := errors.Wrapf(err, "sql %s", db.CleanSQL(sql))
-		log.Error().Stack().Err(resErr).Msg(ErrUpdate)
+		log.Error().Stack().Any("data", where).Err(resErr).Msg(ErrUpdate)
 		return false, resErr
 	}
 	/*
