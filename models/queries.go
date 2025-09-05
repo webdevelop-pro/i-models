@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	sq "github.com/Masterminds/squirrel"
@@ -17,7 +18,7 @@ func RetriveOne[T any, PT interface {
 	SetID(any)
 	Fields() []string
 	Table() string
-}](ctx context.Context, pg Repository, where map[string]any) (*T, error) {
+}](ctx context.Context, pg Repository, where map[string]any, queryParams ...string) (*T, error) {
 	log := logger.FromCtx(ctx, "models")
 	obj := PT(new(T))
 
@@ -29,6 +30,10 @@ func RetriveOne[T any, PT interface {
 		// we need this to have stacktrace
 		log.Error().Stack().Err(errors.WithStack(err)).Msg(ErrRetrieveOne)
 		return obj, err
+	}
+
+	for _, param := range queryParams {
+		sql = fmt.Sprintf("%s %s", sql, param)
 	}
 
 	rows, _ := pg.Query(ctx, sql, args...)
@@ -48,7 +53,7 @@ func RetriveAll[T any, PT interface {
 	SetID(any)
 	Fields() []string
 	Table() string
-}](ctx context.Context, pg db.Repository, where map[string]any) ([]*T, error) {
+}](ctx context.Context, pg db.Repository, where map[string]any, queryParams ...string) ([]*T, error) {
 	log := logger.FromCtx(ctx, "models")
 	obj := PT(new(T))
 
@@ -59,6 +64,10 @@ func RetriveAll[T any, PT interface {
 	if err != nil {
 		log.Error().Stack().Err(err).Msg(ErrRetrieveAll)
 		return nil, err
+	}
+
+	for _, param := range queryParams {
+		sql = fmt.Sprintf("%s %s", sql, param)
 	}
 
 	rows, _ := pg.Query(ctx, sql, args...)
