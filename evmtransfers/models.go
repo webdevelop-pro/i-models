@@ -15,6 +15,7 @@ import (
 type Transfer struct {
 	ID             int  `db:"id" json:"id" yaml:"id"`
 	UserID         int  `db:"user_id" json:"user_id" yaml:"user_id"`
+	TokenID        *int `db:"token_id" json:"token_id" yaml:"token_id"`
 	DestWalletID   *int `db:"dest_wallet_id" json:"dest_wallet_id" yaml:"dest_wallet_id"`
 	SourceWalletID *int `db:"source_wallet_id" json:"source_wallet_id" yaml:"source_wallet_id"`
 	InvestmentID   *int `db:"investment_id" json:"investment_id" yaml:"investment_id"`
