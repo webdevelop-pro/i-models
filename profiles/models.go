@@ -19,10 +19,11 @@ type ProfileData struct {
 	Address1    string      `json:"address1"`
 	Address2    string      `json:"address2"`
 	ZipCode     string      `json:"zip_code"`
-	SSN         string      `json:"ssn"`
-	IPAddress   string      `json:"ip_address"`
-	NCPartyID   string      `json:"nc_party_id"`
-	NCLinkID    string      `json:"nc_link_id"`
+	// We never need to retrieve ssn number
+	// SSN         string      `json:"ssn"`
+	IPAddress string `json:"ip_address"`
+	NCPartyID string `json:"nc_party_id"`
+	NCLinkID  string `json:"nc_link_id"`
 }
 
 type Profile struct {
