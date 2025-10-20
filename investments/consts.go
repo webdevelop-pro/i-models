@@ -75,10 +75,11 @@ type FundingT string
 
 // Enum values for FundingT
 const (
-	FundingTNone   FundingT = "none"
-	FundingTWire   FundingT = "wire"
-	FundingTAch    FundingT = "ach"
-	FundingTWallet FundingT = "wallet"
+	FundingTNone         FundingT = "none"
+	FundingTWire         FundingT = "wire"
+	FundingTAch          FundingT = "ach"
+	FundingTWallet       FundingT = "wallet"
+	FundingTCryptoWallet FundingT = "crypto_wallet"
 )
 
 func AllFundingT() []FundingT {
@@ -87,6 +88,7 @@ func AllFundingT() []FundingT {
 		FundingTWire,
 		FundingTAch,
 		FundingTWallet,
+		FundingTCryptoWallet,
 	}
 }
 
