@@ -1,8 +1,6 @@
 module github.com/webdevelop-pro/i-models
 
-go 1.23.4
-
-toolchain go1.24.0
+go 1.24.0
 
 require (
 	github.com/Masterminds/squirrel v1.5.4
@@ -10,6 +8,7 @@ require (
 	github.com/jackc/pgx/v5 v5.7.1
 	github.com/pkg/errors v0.9.1
 	github.com/webdevelop-pro/go-common/configurator v1.0.14-0.20250308153824-ea389655f71d
+	github.com/webdevelop-pro/go-common/context v1.0.13
 	github.com/webdevelop-pro/go-common/db v1.0.14-0.20250308155549-1bbf68c118c9
 	github.com/webdevelop-pro/go-common/logger v1.0.14-0.20250308155549-1bbf68c118c9
 	github.com/webdevelop-pro/go-common/queue v1.0.14-0.20250308155549-1bbf68c118c9
@@ -51,7 +50,6 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rs/zerolog v1.33.0 // indirect
 	github.com/stretchr/testify v1.10.0 // indirect
-	github.com/webdevelop-pro/go-common/context v1.0.13 // indirect
 	github.com/webdevelop-pro/go-common/httputils v1.0.13 // indirect
 	github.com/webdevelop-pro/go-common/response v1.0.13 // indirect
 	github.com/webdevelop-pro/go-common/tests v1.0.13 // indirect
@@ -65,12 +63,12 @@ require (
 	go.uber.org/dig v1.18.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
-	golang.org/x/crypto v0.31.0 // indirect
-	golang.org/x/net v0.33.0 // indirect
+	golang.org/x/crypto v0.45.0 // indirect
+	golang.org/x/net v0.47.0 // indirect
 	golang.org/x/oauth2 v0.24.0 // indirect
-	golang.org/x/sync v0.10.0 // indirect
-	golang.org/x/sys v0.28.0 // indirect
-	golang.org/x/text v0.21.0 // indirect
+	golang.org/x/sync v0.18.0 // indirect
+	golang.org/x/sys v0.38.0 // indirect
+	golang.org/x/text v0.31.0 // indirect
 	golang.org/x/time v0.8.0 // indirect
 	google.golang.org/api v0.211.0 // indirect
 	google.golang.org/genproto v0.0.0-20241209162323-e6fa225c2576 // indirect
