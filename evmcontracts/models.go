@@ -21,6 +21,7 @@ type Contract struct {
 	Status        string `db:"status" json:"status" yaml:"status"`
 	Symbol        string `db:"symbol" json:"symbol" yaml:"symbol"`
 	Address       string `db:"address" json:"address" yaml:"address"`
+	Ticker        string `db:"ticker" json:"ticker" yaml:"ticker"`
 	TransactionTX string `db:"transaction_tx" json:"transaction_tx" yaml:"transaction_tx"`
 
 	CreatedAt pgtype.Timestamptz `db:"created_at" json:"created_at" yaml:"created_at"`
