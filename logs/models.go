@@ -67,7 +67,7 @@ func LogHttpRequest(
 
 	contentID, err := GetContentID(ctx, db, objectLabel, objectModel)
 	if err != nil {
-		log.Error().Err(err).Msg("can't get log from database")
+		log.Error().Err(err).Msg("can't get content id from database")
 		return nil, err
 	}
 
