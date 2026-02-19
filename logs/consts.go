@@ -40,6 +40,7 @@ const (
 	ServicesTPlaid        ServicesT = "plaid"
 	ServicesTSendgrid     ServicesT = "sendgrid"
 	ServicesTHellosign    ServicesT = "hellosign"
+	ServicesTDocuSeal     ServicesT = "docuseal"
 	ServicesTPandadoc     ServicesT = "pandadoc"
 	ServicesTTwilio       ServicesT = "twilio"
 	ServicesTOry          ServicesT = "ory"
