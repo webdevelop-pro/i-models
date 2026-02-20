@@ -38,7 +38,8 @@ type LogLog struct {
 	UpdatedAt        pgtype.Timestamptz `json:"updated_at,omitempty" yaml:"updated_at,omitempty"`
 }
 
-// ToDo Use db.DB instead of pgxpool.Pool
+// Create initial log entry for http request and return log object with id
+// initial status_code is 0, response_headers and response_data are empty, created_at and updated_at are set to current time
 func LogHttpRequest(
 	ctx context.Context,
 	db db.Repository,

@@ -79,6 +79,8 @@ type LogTypeT string
 const (
 	LogTypeTOutcoming LogTypeT = "outcoming"
 	LogTypeTIncoming  LogTypeT = "incoming"
+	MsgLogNotCreated           = "log not created"
+	MsgLogNotUpdated           = "log not updated"
 )
 
 func AllLogTypeT() []LogTypeT {
