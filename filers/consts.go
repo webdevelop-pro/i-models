@@ -8,4 +8,10 @@ const (
 	OfferTypeInvestmentAgreements OfferFileType = "investment-agreements"
 	OfferTypeInvestorUpdates      OfferFileType = "investor-updates"
 	OfferTypeOther                OfferFileType = "other"
+
+	AppLabel  = "filer_ltree"
+	ModelName = "filerltree"
+	TableName = "filer_filers_ltree"
+
+	pkgName = "models/filerltree"
 )

@@ -1,6 +1,7 @@
 package filers
 
 import (
+	"github.com/webdevelop-pro/go-common/db"
 	"github.com/webdevelop-pro/i-models/pgtype"
 )
 
@@ -19,6 +20,17 @@ type FilerFiler struct {
 	MetaData    map[string]any     `json:"meta_data" yaml:"meta_data"`
 	CreatedAt   pgtype.Timestamptz `json:"created_at" yaml:"created_at"`
 	UpdatedAt   pgtype.Timestamptz `json:"updated_at" yaml:"updated_at"`
+
+	updatedFields []string       `db:"-" json:"-"`
+	fns           map[string]any `db:"-" json:"-"`
+	db            db.Repository  `db:"-" json:"-"`
+}
+
+func New(db db.Repository) *FilerFiler {
+	return &FilerFiler{
+		db:  db,
+		fns: map[string]any{},
+	}
 }
 
 func (model FilerFiler) ToJSON() map[string]any {
@@ -58,9 +70,17 @@ func (model FilerFiler) Fields() []string {
 }
 
 func (model FilerFiler) Table() string {
-	return "filer_filers"
+	return TableName
 }
 
 func (model FilerFiler) GetID() any {
 	return model.ID
+}
+
+func (model *FilerFiler) SetID(id any) {
+	model.ID = id.(int)
+}
+
+func (model *FilerFiler) SetDB(db db.Repository) {
+	model.db = db
 }
