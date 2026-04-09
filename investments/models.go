@@ -7,17 +7,17 @@ import (
 
 // InvestmentInvestment is an object representing the database table.
 type InvestmentInvestment struct {
-	ID                int                `db:"-" json:"id" yaml:"id"`
-	UserID            int                `db:"-" json:"user_id,omitempty" yaml:"user_id,omitempty"`
-	OfferID           int                `db:"-" json:"offer_id,omitempty" yaml:"offer_id,omitempty"`
-	ProfileID         int                `db:"-" json:"profile_id,omitempty" yaml:"profile_id,omitempty"`
-	Amount            float64            `db:"-" json:"amount" yaml:"amount"`
-	PricePerShare     float64            `db:"-" json:"price_per_share" yaml:"price_per_share"`
-	NumberOfShares    int                `db:"-" json:"number_of_shares" yaml:"number_of_shares"`
-	PaymentType       PaymentT           `db:"-" json:"payment_type" yaml:"payment_type"`
+	ID                int                `db:"id" json:"id" yaml:"id"`
+	UserID            int                `db:"user_id" json:"user_id,omitempty" yaml:"user_id,omitempty"`
+	OfferID           int                `db:"offer_id" json:"offer_id,omitempty" yaml:"offer_id,omitempty"`
+	ProfileID         int                `db:"profile_id" json:"profile_id,omitempty" yaml:"profile_id,omitempty"`
+	Amount            float64            `db:"amount" json:"amount" yaml:"amount"`
+	PricePerShare     float64            `db:"price_per_share" json:"price_per_share" yaml:"price_per_share"`
+	NumberOfShares    int                `db:"number_of_shares" json:"number_of_shares" yaml:"number_of_shares"`
+	PaymentType       PaymentT           `db:"payment_type" json:"payment_type" yaml:"payment_type"`
 	EscrowType        EscrowT            `db:"-" json:"escrow_type" yaml:"escrow_type"`
-	FundingType       FundingT           `db:"-" json:"funding_type" yaml:"funding_type"`
-	FundingStatus     FundingS           `db:"-" json:"funding_status" yaml:"funding_status"`
+	FundingType       FundingT           `db:"funding_type" json:"funding_type" yaml:"funding_type"`
+	FundingStatus     FundingS           `db:"funding_status" json:"funding_status" yaml:"funding_status"`
 	Status            InvestmentT        `db:"-" json:"status" yaml:"status"`
 	PrevStatus        InvestmentT        `db:"-" json:"prev_status" yaml:"prev_status"`
 	Step              InvestmentStepT    `db:"-" json:"step" yaml:"step"`
