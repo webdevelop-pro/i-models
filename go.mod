@@ -1,11 +1,11 @@
 module github.com/webdevelop-pro/i-models
 
-go 1.24.0
+go 1.25.0
 
 require (
 	github.com/Masterminds/squirrel v1.5.4
 	github.com/jackc/pgio v1.0.0
-	github.com/jackc/pgx/v5 v5.7.5
+	github.com/jackc/pgx/v5 v5.9.2
 	github.com/pkg/errors v0.9.1
 	github.com/webdevelop-pro/go-common/configurator v1.0.19
 	github.com/webdevelop-pro/go-common/context v1.0.18
