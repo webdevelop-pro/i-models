@@ -18,14 +18,14 @@ type EmailEmail struct {
 	Template          string             `json:"template" yaml:"template"`
 	Status            EmailStatusT       `json:"status" yaml:"status"`
 	Data              any                `json:"data" yaml:"data"`
-	SentAttempCount   int                `json:"sent_attemp_count" yaml:"sent_attemp_count"`
+	SentAttemptCount  int                `json:"sent_attempt_count" yaml:"sent_attempt_count"`
 	ContentHTML       string             `json:"content_html" yaml:"content_html"`
 	MetaData          any                `json:"meta_data" yaml:"meta_data"`
 	RecipientLocation any                `json:"recipient_location" yaml:"recipient_location"`
 	Log               any                `json:"log" yaml:"log"`
 	CreatedAt         pgtype.Timestamptz `json:"created_at" yaml:"created_at"`
 	UpdatedAt         pgtype.Timestamptz `json:"updated_at" yaml:"updated_at"`
-	SentAttempAt      pgtype.Timestamptz `json:"sent_attemp_at" yaml:"sent_attemp_at"`
+	SentAttemptAt     pgtype.Timestamptz `json:"sent_attempt_at" yaml:"sent_attempt_at"`
 
 	db db.Repository `db:"-" json:"-"`
 }
@@ -43,14 +43,14 @@ func (model EmailEmail) ToJSON() map[string]any {
 		"template":           model.Template,
 		"status":             model.Status,
 		"data":               model.Data,
-		"sent_attemp_count":  model.SentAttempCount,
+		"sent_attempt_count": model.SentAttemptCount,
 		"content_html":       model.ContentHTML,
 		"meta_data":          model.MetaData,
 		"recipient_location": model.RecipientLocation,
 		"log":                model.Log,
 		"created_at":         model.CreatedAt,
 		"updated_at":         model.UpdatedAt,
-		"sent_attemp_at":     model.SentAttempAt,
+		"sent_attempt_at":    model.SentAttemptAt,
 	}
 }
 
@@ -67,14 +67,14 @@ func (model EmailEmail) Fields() []string {
 		"template",
 		"status",
 		"data",
-		"sent_attemp_count",
+		"sent_attempt_count",
 		"content_html",
 		"meta_data",
 		"recipient_location",
 		"log",
 		"created_at",
 		"updated_at",
-		"sent_attemp_at",
+		"sent_attempt_at",
 	}
 }
 
