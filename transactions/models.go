@@ -48,8 +48,8 @@ func New(db db.Repository) *Transaction {
 func (model Transaction) Fields() []string {
 	return []string{
 		"id",
-		"source_wallet_id",
-		"dest_wallet_id",
+		"COALESCE(source_wallet_id, 0) AS source_wallet_id",
+		"COALESCE(dest_wallet_id, 0) AS dest_wallet_id",
 		"source_funding_id",
 		"dest_funding_id",
 		"entity_id",

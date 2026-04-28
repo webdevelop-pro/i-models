@@ -8,6 +8,12 @@ type NotificationStatusT string
 const (
 	NotificationStatusTUnread NotificationStatusT = "unread"
 	NotificationStatusTRead   NotificationStatusT = "read"
+
+	AppLabel  = "notification"
+	ModelName = "notification"
+	TableName = "notification_notifications"
+
+	pkgName = "models/notifications"
 )
 
 func AllNotificationStatusT() []NotificationStatusT {

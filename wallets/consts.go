@@ -15,6 +15,8 @@ const (
 
 	AppLabel  = "wallet"
 	ModelName = "wallet"
+
+	TableName = "wallet_wallets"
 )
 
 func AllWalletStatusT() []WalletStatusT {

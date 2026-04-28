@@ -15,19 +15,19 @@ type InvestmentInvestment struct {
 	PricePerShare     float64            `db:"price_per_share" json:"price_per_share" yaml:"price_per_share"`
 	NumberOfShares    int                `db:"number_of_shares" json:"number_of_shares" yaml:"number_of_shares"`
 	PaymentType       PaymentT           `db:"payment_type" json:"payment_type" yaml:"payment_type"`
-	EscrowType        EscrowT            `db:"-" json:"escrow_type" yaml:"escrow_type"`
+	EscrowType        EscrowT            `db:"escrow_type" json:"escrow_type" yaml:"escrow_type"`
 	FundingType       FundingT           `db:"funding_type" json:"funding_type" yaml:"funding_type"`
 	FundingStatus     FundingS           `db:"funding_status" json:"funding_status" yaml:"funding_status"`
-	Status            InvestmentT        `db:"-" json:"status" yaml:"status"`
+	Status            InvestmentT        `db:"status" json:"status" yaml:"status"`
 	PrevStatus        InvestmentT        `db:"-" json:"prev_status" yaml:"prev_status"`
 	Step              InvestmentStepT    `db:"-" json:"step" yaml:"step"`
 	Commission        float64            `db:"-" json:"commission" yaml:"commission"`
 	CancelationReason string             `db:"-" json:"cancelation_reason" yaml:"cancelation_reason"`
 	EntityID          *string            `db:"-" json:"entity_id,omitempty" yaml:"entity_id,omitempty"`
 	TransactionRef    *string            `db:"-" json:"transaction_ref,omitempty" yaml:"transaction_ref,omitempty"`
-	EscrowData        map[string]any     `db:"-" json:"escrow_data" yaml:"escrow_data"`
-	SignatureData     map[string]any     `db:"-" json:"signature_data" yaml:"signature_data"`
-	PaymentData       map[string]any     `db:"-" json:"payment_data" yaml:"payment_data"`
+	EscrowData        map[string]any     `db:"escrow_data" json:"escrow_data" yaml:"escrow_data"`
+	SignatureData     map[string]any     `db:"signature_data" json:"signature_data" yaml:"signature_data"`
+	PaymentData       map[string]any     `db:"payment_data" json:"payment_data" yaml:"payment_data"`
 	CanceledAt        pgtype.Timestamptz `db:"-" json:"canceled_at" yaml:"canceled_at"`
 	SubmitedAt        pgtype.Timestamptz `db:"-" json:"submited_at" yaml:"submited_at"`
 	ClosedAt          pgtype.Timestamptz `db:"-" json:"closed_at" yaml:"closed_at"`
@@ -89,22 +89,22 @@ func (model *InvestmentInvestment) SetID(id any) {
 
 // InvestmentProfile is an object representing the database table.
 type InvestmentProfile struct {
-	ID                  int                `json:"id" yaml:"id"`
-	UserID              int                `json:"user_id,omitempty" yaml:"user_id,omitempty"`
-	Type                ProfileT           `json:"type" yaml:"type"`
-	Data                any                `json:"data" yaml:"data"`
-	KycID               *string            `json:"kyc_id,omitempty" yaml:"kyc_id,omitempty"`
-	KycStatus           KycT               `json:"kyc_status" yaml:"kyc_status"`
-	KycData             any                `json:"kyc_data" yaml:"kyc_data"`
-	AccreditationID     *string            `json:"accreditation_id,omitempty" yaml:"accreditation_id,omitempty"`
-	AccreditationStatus AccreditationT     `json:"accreditation_status" yaml:"accreditation_status"`
-	AccreditationData   any                `json:"accreditation_data" yaml:"accreditation_data"`
-	EscrowID            string             `json:"escrow_id" yaml:"escrow_id"`
-	KycAt               pgtype.Timestamptz `json:"kyc_at,omitempty" yaml:"kyc_at,omitempty"`
-	AccreditationAt     pgtype.Timestamptz `json:"accreditation_at,omitempty" yaml:"accreditation_at,omitempty"`
-	CreatedAt           pgtype.Timestamptz `json:"created_at,omitempty" yaml:"created_at,omitempty"`
-	UpdatedAt           pgtype.Timestamptz `json:"updated_at,omitempty" yaml:"updated_at,omitempty"`
-	WalletID            int                `json:"wallet_id,omitempty" yaml:"wallet_id,omitempty"`
+	ID                  int                `db:"id" json:"id" yaml:"id"`
+	UserID              int                `db:"user_id" json:"user_id,omitempty" yaml:"user_id,omitempty"`
+	Type                ProfileT           `db:"type" json:"type" yaml:"type"`
+	Data                any                `db:"data" json:"data" yaml:"data"`
+	KycID               *string            `db:"kyc_id" json:"kyc_id,omitempty" yaml:"kyc_id,omitempty"`
+	KycStatus           KycT               `db:"kyc_status" json:"kyc_status" yaml:"kyc_status"`
+	KycData             any                `db:"kyc_data" json:"kyc_data" yaml:"kyc_data"`
+	AccreditationID     *string            `db:"accreditation_id" json:"accreditation_id,omitempty" yaml:"accreditation_id,omitempty"`
+	AccreditationStatus AccreditationT     `db:"accreditation_status" json:"accreditation_status" yaml:"accreditation_status"`
+	AccreditationData   any                `db:"accreditation_data" json:"accreditation_data" yaml:"accreditation_data"`
+	EscrowID            string             `db:"escrow_id" json:"escrow_id" yaml:"escrow_id"`
+	KycAt               pgtype.Timestamptz `db:"-" json:"kyc_at,omitempty" yaml:"kyc_at,omitempty"`
+	AccreditationAt     pgtype.Timestamptz `db:"-" json:"accreditation_at,omitempty" yaml:"accreditation_at,omitempty"`
+	CreatedAt           pgtype.Timestamptz `db:"created_at" json:"created_at,omitempty" yaml:"created_at,omitempty"`
+	UpdatedAt           pgtype.Timestamptz `db:"updated_at" json:"updated_at,omitempty" yaml:"updated_at,omitempty"`
+	WalletID            int                `db:"-" json:"wallet_id,omitempty" yaml:"wallet_id,omitempty"`
 }
 
 func (model InvestmentProfile) ToJSON() map[string]any {
@@ -130,22 +130,19 @@ func (model InvestmentProfile) ToJSON() map[string]any {
 
 func (model InvestmentProfile) Fields() []string {
 	return []string{
-		"ID",
-		"UserID",
-		"Type",
-		"Data",
-		"KycID",
-		"KycStatus",
-		"KycData",
-		"AccreditationID",
-		"AccreditationStatus",
-		"AccreditationData",
-		"EscrowID",
-		"KycAt",
-		"AccreditationAt",
-		"CreatedAt",
-		"UpdatedAt",
-		"WalletID",
+		"id",
+		"user_id",
+		"type",
+		"data",
+		"kyc_id",
+		"kyc_status",
+		"kyc_data",
+		"accreditation_id",
+		"accreditation_status",
+		"accreditation_data",
+		"escrow_id",
+		"created_at",
+		"updated_at",
 	}
 }
 

@@ -1,6 +1,7 @@
 package emails
 
 import (
+	"github.com/webdevelop-pro/go-common/db"
 	"github.com/webdevelop-pro/i-models/pgtype"
 )
 
@@ -25,6 +26,8 @@ type EmailEmail struct {
 	CreatedAt         pgtype.Timestamptz `json:"created_at" yaml:"created_at"`
 	UpdatedAt         pgtype.Timestamptz `json:"updated_at" yaml:"updated_at"`
 	SentAttempAt      pgtype.Timestamptz `json:"sent_attemp_at" yaml:"sent_attemp_at"`
+
+	db db.Repository `db:"-" json:"-"`
 }
 
 func (model EmailEmail) ToJSON() map[string]any {
@@ -53,25 +56,25 @@ func (model EmailEmail) ToJSON() map[string]any {
 
 func (model EmailEmail) Fields() []string {
 	return []string{
-		"ID",
-		"UserID",
-		"TransactionID",
-		"RecipientEmail",
-		"RecipientName",
-		"SenderEmail",
-		"SenderName",
-		"Subject",
-		"Template",
-		"Status",
-		"Data",
-		"SentAttempCount",
-		"ContentHTML",
-		"MetaData",
-		"RecipientLocation",
-		"Log",
-		"CreatedAt",
-		"UpdatedAt",
-		"SentAttempAt",
+		"id",
+		"user_id",
+		"transaction_id",
+		"recipient_email",
+		"recipient_name",
+		"sender_email",
+		"sender_name",
+		"subject",
+		"template",
+		"status",
+		"data",
+		"sent_attemp_count",
+		"content_html",
+		"meta_data",
+		"recipient_location",
+		"log",
+		"created_at",
+		"updated_at",
+		"sent_attemp_at",
 	}
 }
 
@@ -81,4 +84,12 @@ func (model EmailEmail) Table() string {
 
 func (model EmailEmail) GetID() any {
 	return model.ID
+}
+
+func (model *EmailEmail) SetID(id any) {
+	model.ID = id.(int)
+}
+
+func (model *EmailEmail) SetDB(db db.Repository) {
+	model.db = db
 }

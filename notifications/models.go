@@ -41,19 +41,19 @@ func (model Notification) ToJSON() map[string]any {
 
 func (model Notification) Fields() []string {
 	return []string{
-		"ID",
-		"UserID",
-		"Content",
-		"Status",
-		"Type",
-		"Data",
-		"CreatedAt",
-		"UpdatedAt",
+		"id",
+		"user_id",
+		"content",
+		"status",
+		"type",
+		"data",
+		"created_at",
+		"updated_at",
 	}
 }
 
 func (model Notification) Table() string {
-	return "notification_notifications"
+	return TableName
 }
 
 func (model Notification) GetID() any {

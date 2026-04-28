@@ -3,6 +3,7 @@ package offers
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 )
 
 type OfferT string
@@ -50,6 +51,21 @@ func (e OfferT) IsValid() error {
 
 func (e OfferT) String() string {
 	return string(e)
+}
+
+func (e *OfferT) Scan(value any) error {
+	switch val := value.(type) {
+	case nil:
+		*e = ""
+	case string:
+		*e = OfferT(val)
+	case []byte:
+		*e = OfferT(val)
+	default:
+		return fmt.Errorf("cannot scan %T into OfferT", value)
+	}
+
+	return nil
 }
 
 // NullOfferT is a nullable OfferT enum type. It supports SQL and JSON serialization.
@@ -145,6 +161,25 @@ func (e NullOfferT) Value() (any, error) {
 	return string(e.Val), nil
 }
 
+func (e *NullOfferT) Scan(value any) error {
+	if value == nil {
+		e.Val = ""
+		e.Valid = false
+
+		return nil
+	}
+
+	var offerType OfferT
+	if err := offerType.Scan(value); err != nil {
+		return err
+	}
+
+	e.Val = offerType
+	e.Valid = true
+
+	return nil
+}
+
 type OfferSecurityTypeT string
 
 // Enum values for OfferSecurityTypeT
@@ -182,6 +217,21 @@ func (e OfferSecurityTypeT) IsValid() error {
 func (e OfferSecurityTypeT) String() string {
 	return string(e)
 } // OfferOffer is an object representing the database table.
+
+func (e *OfferSecurityTypeT) Scan(value any) error {
+	switch val := value.(type) {
+	case nil:
+		*e = ""
+	case string:
+		*e = OfferSecurityTypeT(val)
+	case []byte:
+		*e = OfferSecurityTypeT(val)
+	default:
+		return fmt.Errorf("cannot scan %T into OfferSecurityTypeT", value)
+	}
+
+	return nil
+}
 
 type CommentRelatedT string
 

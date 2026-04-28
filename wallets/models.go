@@ -22,8 +22,8 @@ const pkgName = "models/wallets"
 
 // Wallet is an object representing the database table.
 type Wallet struct {
-	ID     int `db:"id" json:"id" yaml:"id"`
-	UserID int `db:"user_id" json:"user_id" yaml:"user_id"`
+	ID     int  `db:"id" json:"id" yaml:"id"`
+	UserID *int `db:"user_id" json:"user_id,omitempty" yaml:"user_id,omitempty"`
 
 	EntityID        *string            `db:"entity_id" json:"entity_id,omitempty"`
 	EntityBalanceID *string            `db:"entity_balance_id" json:"entity_balance_id,omitempty"`
@@ -197,7 +197,9 @@ func (model Wallet) Save(ctx context.Context, postUpdate func(ctx context.Contex
 			ObjectName: ModelName,
 			Data:       updates,
 		})
-		model.DefaultPostUpdate(ctx, model.UserID, updates)
+		if model.UserID != nil {
+			model.DefaultPostUpdate(ctx, *model.UserID, updates)
+		}
 	}
 	return nil
 }

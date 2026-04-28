@@ -17,19 +17,19 @@ type UserData struct {
 
 // UserUser is an object representing the database table.
 type UserUser struct {
-	ID          int                `db:"-" json:"id" yaml:"id"`
+	ID          int                `db:"id" json:"id" yaml:"id"`
 	Password    string             `db:"-" json:"password" yaml:"password"`
-	Email       string             `db:"-" json:"email" yaml:"email"`
-	FirstName   string             `db:"-" json:"first_name" yaml:"first_name"`
-	LastName    string             `db:"-" json:"last_name" yaml:"last_name"`
+	Email       string             `db:"email" json:"email" yaml:"email"`
+	FirstName   string             `db:"first_name" json:"first_name" yaml:"first_name"`
+	LastName    string             `db:"last_name" json:"last_name" yaml:"last_name"`
 	IsStaff     bool               `db:"-" json:"is_staff" yaml:"is_staff"`
 	IsSuperuser bool               `db:"-" json:"is_superuser" yaml:"is_superuser"`
 	IsActive    bool               `db:"-" json:"is_active" yaml:"is_active"`
-	IdentityID  string             `db:"-" json:"identity_id" yaml:"identity_id"`
+	IdentityID  string             `db:"identity_id" json:"identity_id" yaml:"identity_id"`
 	FacebookID  string             `db:"-" json:"facebook_id" yaml:"facebook_id"`
 	LinkedinID  string             `db:"-" json:"linkedin_id" yaml:"linkedin_id"`
 	GoogleID    string             `db:"-" json:"google_id" yaml:"google_id"`
-	Phone       string             `db:"-" json:"phone" yaml:"phone"`
+	Phone       string             `db:"phone" json:"phone" yaml:"phone"`
 	IPAddress   string             `db:"-" json:"ip_address" yaml:"ip_address"`
 	UserAgent   string             `db:"-" json:"user_agent" yaml:"user_agent"`
 	Timezone    string             `db:"-" json:"timezone" yaml:"timezone"`
