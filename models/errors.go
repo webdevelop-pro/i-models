@@ -5,9 +5,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-var (
-	ErrNotFound = errors.Wrapf(pgx.ErrNoRows, "") // so we have stack trace and error message from pgx for errors.Is
-)
+var ErrNotFound = errors.Wrapf(pgx.ErrNoRows, "") // so we have stack trace and error message from pgx for errors.Is
 
 const (
 	ErrSQLPrepare  = "error during sql prepare"
@@ -18,6 +16,7 @@ const (
 	ErrRetrieveAll = "cannot retrieve records"
 	ErrCreate      = "cannot create record"
 	ErrUpdate      = "cannot update record"
+	ErrDelete      = "cannot delete record"
 	ErrExist       = "cannot check existence"
 
 	ErrNotUpdated = "not record updated"
