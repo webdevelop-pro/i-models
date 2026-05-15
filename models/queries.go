@@ -40,6 +40,15 @@ func RetriveOne[T any, PT interface {
 	// Assumes the returned row only has a single hit. StructToFill is the target struct.
 	results, err := pgx.CollectOneRow(rows, pgx.RowToStructByNameLax[T])
 	if err != nil {
+		// Preserve the pgx.ErrNoRows chain so callers can keep using
+		// errors.Is(err, pgx.ErrNoRows) for the not-found case while still
+		// getting the ErrRetrieveOne context message.
+		if errors.Is(err, pgx.ErrNoRows) {
+			return &results, errors.Wrapf(
+				pgx.ErrNoRows,
+				"%s: %s, %+v", ErrRetrieveOne, sql, args,
+			)
+		}
 		resErr := errors.Wrapf(
 			errors.New(ErrRetrieveOne),
 			"%s: %s, %+v", err.Error(), sql, args,

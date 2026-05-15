@@ -45,6 +45,7 @@ const (
 	ServicesTTwilio       ServicesT = "twilio"
 	ServicesTOry          ServicesT = "ory"
 	ServicesTDwolla       ServicesT = "dwolla"
+	ServicesTAlchemy      ServicesT = "alchemy"
 )
 
 func AllServicesT() []ServicesT {
@@ -57,12 +58,13 @@ func AllServicesT() []ServicesT {
 		ServicesTTwilio,
 		ServicesTOry,
 		ServicesTDwolla,
+		ServicesTAlchemy,
 	}
 }
 
 func (e ServicesT) IsValid() error {
 	switch e {
-	case ServicesTNorthCapital, ServicesTPlaid, ServicesTSendgrid, ServicesTHellosign, ServicesTPandadoc, ServicesTTwilio, ServicesTOry, ServicesTDwolla:
+	case ServicesTNorthCapital, ServicesTPlaid, ServicesTSendgrid, ServicesTHellosign, ServicesTPandadoc, ServicesTTwilio, ServicesTOry, ServicesTDwolla, ServicesTAlchemy:
 		return nil
 	default:
 		return errors.New("enum is not valid")
