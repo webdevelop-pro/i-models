@@ -12,6 +12,7 @@ require (
 	github.com/webdevelop-pro/go-common/db v1.0.32
 	github.com/webdevelop-pro/go-common/logger v1.0.21
 	github.com/webdevelop-pro/go-common/queue v1.0.33
+	github.com/webdevelop-pro/go-common/tests v1.0.22
 	github.com/webdevelop-pro/go-common/verser v1.0.19
 	go.uber.org/fx v1.24.0
 )
@@ -54,7 +55,6 @@ require (
 	github.com/stretchr/testify v1.11.1 // indirect
 	github.com/webdevelop-pro/go-common/httputils v1.0.20 // indirect
 	github.com/webdevelop-pro/go-common/response v1.0.19 // indirect
-	github.com/webdevelop-pro/go-common/tests v1.0.22 // indirect
 	github.com/webdevelop-pro/go-common/validator v1.0.22 // indirect
 	go.opencensus.io v0.24.0 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
