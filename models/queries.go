@@ -171,16 +171,25 @@ func Exists[T any, PT interface {
 	SetID(any)
 	Fields() []string
 	Table() string
-}](ctx context.Context, pg Repository, where map[string]any) (bool, error) {
+}](ctx context.Context, pg Repository, where map[string]any, exprs ...sq.Sqlizer) (bool, error) {
 	obj := PT(new(T))
 	res := 0
 
-	sql, args, err := sq.Select("1").From(obj.Table()).
-		Where(where).PlaceholderFormat(sq.Dollar).ToSql()
+	builder := sq.Select("1").From(obj.Table())
+	if len(where) > 0 {
+		builder = builder.Where(where)
+	}
+	for _, expr := range exprs {
+		if expr != nil {
+			builder = builder.Where(expr)
+		}
+	}
+
+	sql, args, err := builder.PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
 		resErr := errors.Wrapf(
 			errors.New(ErrSQLPrepare),
-			"%s: %s", err.Error(), where,
+			"%s: %s, %+v", err.Error(), where, exprs,
 		)
 		return false, resErr
 	}
@@ -188,7 +197,7 @@ func Exists[T any, PT interface {
 	err = pg.QueryRow(ctx, sql, args...).Scan(&res)
 	// Assumes the returned row only has a single hit. StructToFill is the target struct.
 	if err != nil {
-		if err.Error() == pgx.ErrNoRows.Error() {
+		if errors.Is(err, pgx.ErrNoRows) {
 			return false, nil
 		} else {
 			resErr := errors.Wrapf(
@@ -206,15 +215,24 @@ func Delete[T any, PT interface {
 	SetID(any)
 	Fields() []string
 	Table() string
-}](ctx context.Context, pg Repository, where map[string]any) (bool, error) {
+}](ctx context.Context, pg Repository, where map[string]any, exprs ...sq.Sqlizer) (bool, error) {
 	obj := PT(new(T))
 
-	sql, args, err := sq.Delete(obj.Table()).Where(where).
-		PlaceholderFormat(sq.Dollar).ToSql()
+	builder := sq.Delete(obj.Table())
+	if len(where) > 0 {
+		builder = builder.Where(where)
+	}
+	for _, expr := range exprs {
+		if expr != nil {
+			builder = builder.Where(expr)
+		}
+	}
+
+	sql, args, err := builder.PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
 		resErr := errors.Wrapf(
 			errors.New(ErrSQLPrepare),
-			"%s: %s", err.Error(), where,
+			"%s: %s, %+v", err.Error(), where, exprs,
 		)
 		return false, resErr
 	}
