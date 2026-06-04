@@ -7,6 +7,7 @@ package pubsubactivities
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/jackc/pgx/v5"
@@ -48,7 +49,7 @@ RETURNING msg_id`
 	if err != nil {
 		// No row returned ⇒ the conflicting row was 'processing' or
 		// 'processed' (the WHERE excluded it). Not an error: skip.
-		if err.Error() == pgx.ErrNoRows.Error() {
+		if errors.Is(err, pgx.ErrNoRows) {
 			return false, nil
 		}
 		return false, fmt.Errorf("pubsub_activities claim (%s/%s): %w", service, msgID, err)

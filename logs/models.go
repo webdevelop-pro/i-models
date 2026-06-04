@@ -12,6 +12,7 @@ import (
 	"github.com/webdevelop-pro/go-common/context/keys"
 	"github.com/webdevelop-pro/go-common/db"
 	"github.com/webdevelop-pro/go-common/logger"
+	"github.com/webdevelop-pro/i-models/models"
 	"github.com/webdevelop-pro/i-models/pgtype"
 )
 
@@ -19,23 +20,23 @@ type ContextKey rune
 
 // LogLog is an object representing the database table.
 type LogLog struct {
-	ID               int                `json:"id" yaml:"id"`
-	ContentTypeID    int                `json:"content_type_id" yaml:"content_type_id"`
-	MSGID            *string            `json:"msg_id,omitempty" yaml:"msg_id,omitempty"`
-	ObjectID         string             `json:"object_id" yaml:"object_id"`
-	StatusCode       int                `json:"status_code" yaml:"status_code"`
-	Path             string             `json:"path" yaml:"path"`
-	RequestHeaders   any                `json:"request_headers" yaml:"request_headers"`
-	RequestData      string             `json:"request_data" yaml:"request_data"`
-	ResponseHeaders  any                `json:"response_headers" yaml:"response_headers"`
-	ResponseData     string             `json:"response_data" yaml:"response_data"`
-	Service          ServicesT          `json:"service" yaml:"service"`
-	Type             LogTypeT           `json:"type" yaml:"type"`
-	RequestID        *string            `json:"request_id,omitempty" yaml:"request_id,omitempty"`
-	MetaData         any                `json:"meta_data" yaml:"meta_data"`
-	RequestCreatedAt pgtype.Timestamptz `json:"request_created_at" yaml:"request_created_at"`
-	CreatedAt        pgtype.Timestamptz `json:"created_at,omitempty" yaml:"created_at,omitempty"`
-	UpdatedAt        pgtype.Timestamptz `json:"updated_at,omitempty" yaml:"updated_at,omitempty"`
+	ID               int                `db:"id" json:"id" yaml:"id"`
+	ContentTypeID    int                `db:"content_type_id" json:"content_type_id" yaml:"content_type_id"`
+	MSGID            *string            `db:"msg_id" json:"msg_id,omitempty" yaml:"msg_id,omitempty"`
+	ObjectID         string             `db:"object_id" json:"object_id" yaml:"object_id"`
+	StatusCode       int                `db:"status_code" json:"status_code" yaml:"status_code"`
+	Path             string             `db:"path" json:"path" yaml:"path"`
+	RequestHeaders   any                `db:"request_headers" json:"request_headers" yaml:"request_headers"`
+	RequestData      string             `db:"request_data" json:"request_data" yaml:"request_data"`
+	ResponseHeaders  any                `db:"response_headers" json:"response_headers" yaml:"response_headers"`
+	ResponseData     string             `db:"response_data" json:"response_data" yaml:"response_data"`
+	Service          ServicesT          `db:"service" json:"service" yaml:"service"`
+	Type             LogTypeT           `db:"type" json:"type" yaml:"type"`
+	RequestID        *string            `db:"request_id" json:"request_id,omitempty" yaml:"request_id,omitempty"`
+	MetaData         any                `db:"meta_data" json:"meta_data" yaml:"meta_data"`
+	RequestCreatedAt pgtype.Timestamptz `db:"request_created_at" json:"request_created_at" yaml:"request_created_at"`
+	CreatedAt        pgtype.Timestamptz `db:"created_at" json:"created_at,omitempty" yaml:"created_at,omitempty"`
+	UpdatedAt        pgtype.Timestamptz `db:"updated_at" json:"updated_at,omitempty" yaml:"updated_at,omitempty"`
 }
 
 // Create initial log entry for http request and return log object with id
@@ -260,25 +261,7 @@ func (model LogLog) ToJSON() map[string]any {
 }
 
 func (model LogLog) Fields() []string {
-	return []string{
-		"ID",
-		"ContentTypeID",
-		"MSGID",
-		"ObjectID",
-		"StatusCode",
-		"Path",
-		"RequestHeaders",
-		"RequestData",
-		"ResponseHeaders",
-		"ResponseData",
-		"Service",
-		"Type",
-		"RequestID",
-		"MetaData",
-		"RequestCreatedAt",
-		"CreatedAt",
-		"UpdatedAt",
-	}
+	return models.DefaultFields(&model)
 }
 
 func (model LogLog) Table() string {

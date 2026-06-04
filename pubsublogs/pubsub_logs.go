@@ -1,19 +1,20 @@
 package pubsublogs
 
 import (
+	"github.com/webdevelop-pro/i-models/models"
 	"github.com/webdevelop-pro/i-models/pgtype"
 )
 
 // PubsubLog is an object representing the database table.
 type PubsubLog struct {
-	ID        int                `json:"id" yaml:"id"`
-	Topic     string             `json:"topic" yaml:"topic"`
-	MSG       any                `json:"msg" yaml:"msg"`
-	Attr      any                `json:"attr,omitempty" yaml:"attr,omitempty"`
-	MSGID     *string            `json:"msg_id,omitempty" yaml:"msg_id,omitempty"`
-	Executed  int                `json:"executed,omitempty" yaml:"executed,omitempty"`
-	CreatedAt pgtype.Timestamptz `json:"created_at" yaml:"created_at"`
-	UpdatedAt pgtype.Timestamptz `json:"updated_at" yaml:"updated_at"`
+	ID        int                `db:"id" json:"id" yaml:"id"`
+	Topic     string             `db:"topic" json:"topic" yaml:"topic"`
+	MSG       any                `db:"msg" json:"msg" yaml:"msg"`
+	Attr      any                `db:"attr" json:"attr,omitempty" yaml:"attr,omitempty"`
+	MSGID     *string            `db:"msg_id" json:"msg_id,omitempty" yaml:"msg_id,omitempty"`
+	Executed  int                `db:"executed" json:"executed,omitempty" yaml:"executed,omitempty"`
+	CreatedAt pgtype.Timestamptz `db:"created_at" json:"created_at" yaml:"created_at"`
+	UpdatedAt pgtype.Timestamptz `db:"updated_at" json:"updated_at" yaml:"updated_at"`
 }
 
 func (model PubsubLog) ToJSON() map[string]any {
@@ -30,16 +31,7 @@ func (model PubsubLog) ToJSON() map[string]any {
 }
 
 func (model PubsubLog) Fields() []string {
-	return []string{
-		"ID",
-		"Topic",
-		"MSG",
-		"Attr",
-		"MSGID",
-		"Executed",
-		"CreatedAt",
-		"UpdatedAt",
-	}
+	return models.DefaultFields(&model)
 }
 
 func (model PubsubLog) Table() string {

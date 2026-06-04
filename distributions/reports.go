@@ -1,20 +1,21 @@
 package distributions
 
 import (
+	"github.com/webdevelop-pro/i-models/models"
 	"github.com/webdevelop-pro/i-models/pgtype"
 )
 
 // DistributionDistributionReport is an object representing the database table.
 type DistributionDistributionReport struct {
-	ID          int                `json:"id" yaml:"id"`
-	UserID      int                `json:"user_id,omitempty" yaml:"user_id,omitempty"`
-	OfferID     int                `json:"offer_id,omitempty" yaml:"offer_id,omitempty"`
-	Amount      float64            `json:"amount" yaml:"amount"`
-	SubmitedAt  pgtype.Timestamptz `json:"submited_at" yaml:"submited_at"`
-	Data        any                `json:"data" yaml:"data"`
-	CreatedAt   pgtype.Timestamptz `json:"created_at" yaml:"created_at"`
-	UpdatedAt   pgtype.Timestamptz `json:"updated_at" yaml:"updated_at"`
-	ImageLinkID int                `json:"image_link_id,omitempty" yaml:"image_link_id,omitempty"`
+	ID          int                `db:"id" json:"id" yaml:"id"`
+	UserID      int                `db:"user_id" json:"user_id,omitempty" yaml:"user_id,omitempty"`
+	OfferID     int                `db:"offer_id" json:"offer_id,omitempty" yaml:"offer_id,omitempty"`
+	Amount      float64            `db:"amount" json:"amount" yaml:"amount"`
+	SubmitedAt  pgtype.Timestamptz `db:"submited_at" json:"submited_at" yaml:"submited_at"`
+	Data        any                `db:"data" json:"data" yaml:"data"`
+	CreatedAt   pgtype.Timestamptz `db:"created_at" json:"created_at" yaml:"created_at"`
+	UpdatedAt   pgtype.Timestamptz `db:"updated_at" json:"updated_at" yaml:"updated_at"`
+	ImageLinkID int                `db:"image_link_id" json:"image_link_id,omitempty" yaml:"image_link_id,omitempty"`
 }
 
 func (model DistributionDistributionReport) ToJSON() map[string]any {
@@ -32,17 +33,7 @@ func (model DistributionDistributionReport) ToJSON() map[string]any {
 }
 
 func (model DistributionDistributionReport) Fields() []string {
-	return []string{
-		"ID",
-		"UserID",
-		"OfferID",
-		"Amount",
-		"SubmitedAt",
-		"Data",
-		"CreatedAt",
-		"UpdatedAt",
-		"ImageLinkID",
-	}
+	return models.DefaultFields(&model)
 }
 
 func (model DistributionDistributionReport) Table() string {

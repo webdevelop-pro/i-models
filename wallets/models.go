@@ -208,7 +208,7 @@ func Get(ctx context.Context, db db.Repository, where map[string]any) (*Wallet, 
 	model, err := models.RetriveOne[Wallet](
 		ctx,
 		db,
-		where,
+		sq.Eq(where),
 	)
 	if err != nil {
 		err = errors.Wrapf(err, "cannot get model")
@@ -223,7 +223,7 @@ func GetByID(ctx context.Context, db db.Repository, id int) (*Wallet, error) {
 	model, err := models.RetriveOne[Wallet](
 		ctx,
 		db,
-		map[string]any{
+		sq.Eq{
 			"id": id,
 		},
 	)
@@ -240,7 +240,7 @@ func (model Wallet) ToMap() map[string]any {
 	res := map[string]any{}
 	fields := model.Fields()
 	for _, key := range fields {
-		res[key] = model.GetField(key)
+		res[key] = model.GetValueByTag(key)
 	}
 	return res
 }

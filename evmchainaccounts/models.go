@@ -104,7 +104,7 @@ func (model EvmChainAccount) ToJSON() map[string]any {
 	res := map[string]any{}
 	fields := model.Fields()
 	for _, key := range fields {
-		res[key] = model.GetField(key)
+		res[key] = model.GetValueByTag(key)
 	}
 	return res
 }

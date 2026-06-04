@@ -1,22 +1,23 @@
 package distributions
 
 import (
+	"github.com/webdevelop-pro/i-models/models"
 	"github.com/webdevelop-pro/i-models/pgtype"
 )
 
 // DistributionDistribution is an object representing the database table.
 type DistributionDistribution struct {
-	ID           int                `json:"id" yaml:"id"`
-	UserID       int                `json:"user_id,omitempty" yaml:"user_id,omitempty"`
-	ProfileID    int                `json:"profile_id,omitempty" yaml:"profile_id,omitempty"`
-	InvestmentID int                `json:"investment_id,omitempty" yaml:"investment_id,omitempty"`
-	ReportID     int                `json:"report_id,omitempty" yaml:"report_id,omitempty"`
-	Amount       float64            `json:"amount" yaml:"amount"`
-	Status       DistributionT      `json:"status" yaml:"status"`
-	Data         any                `json:"data" yaml:"data"`
-	SubmitedAt   pgtype.Timestamptz `json:"submited_at" yaml:"submited_at"`
-	CreatedAt    pgtype.Timestamptz `json:"created_at" yaml:"created_at"`
-	UpdatedAt    pgtype.Timestamptz `json:"updated_at" yaml:"updated_at"`
+	ID           int                `db:"id" json:"id" yaml:"id"`
+	UserID       int                `db:"user_id" json:"user_id,omitempty" yaml:"user_id,omitempty"`
+	ProfileID    int                `db:"profile_id" json:"profile_id,omitempty" yaml:"profile_id,omitempty"`
+	InvestmentID int                `db:"investment_id" json:"investment_id,omitempty" yaml:"investment_id,omitempty"`
+	ReportID     int                `db:"report_id" json:"report_id,omitempty" yaml:"report_id,omitempty"`
+	Amount       float64            `db:"amount" json:"amount" yaml:"amount"`
+	Status       DistributionT      `db:"status" json:"status" yaml:"status"`
+	Data         any                `db:"data" json:"data" yaml:"data"`
+	SubmitedAt   pgtype.Timestamptz `db:"submited_at" json:"submited_at" yaml:"submited_at"`
+	CreatedAt    pgtype.Timestamptz `db:"created_at" json:"created_at" yaml:"created_at"`
+	UpdatedAt    pgtype.Timestamptz `db:"updated_at" json:"updated_at" yaml:"updated_at"`
 }
 
 func (model DistributionDistribution) ToJSON() map[string]any {
@@ -36,19 +37,7 @@ func (model DistributionDistribution) ToJSON() map[string]any {
 }
 
 func (model DistributionDistribution) Fields() []string {
-	return []string{
-		"ID",
-		"UserID",
-		"ProfileID",
-		"InvestmentID",
-		"ReportID",
-		"Amount",
-		"Status",
-		"Data",
-		"SubmitedAt",
-		"CreatedAt",
-		"UpdatedAt",
-	}
+	return models.DefaultFields(&model)
 }
 
 func (model DistributionDistribution) Table() string {

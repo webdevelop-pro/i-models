@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	sq "github.com/Masterminds/squirrel"
 	"github.com/pkg/errors"
 	"github.com/webdevelop-pro/go-common/db"
 	"github.com/webdevelop-pro/go-common/logger"
@@ -176,7 +177,7 @@ func Get(ctx context.Context, db db.Repository, where map[string]any) (*Transact
 	model, err := models.RetriveOne[Transaction](
 		ctx,
 		db,
-		where,
+		sq.Eq(where),
 	)
 	if err != nil {
 		err = errors.Wrapf(err, "cannot get model")
@@ -191,7 +192,7 @@ func GetByID(ctx context.Context, db db.Repository, id int) (*Transaction, error
 	model, err := models.RetriveOne[Transaction](
 		ctx,
 		db,
-		map[string]any{
+		sq.Eq{
 			"id": id,
 		},
 	)
@@ -206,11 +207,26 @@ func GetByID(ctx context.Context, db db.Repository, id int) (*Transaction, error
 
 func (model Transaction) ToMap() map[string]any {
 	res := map[string]any{}
-	fields := model.Fields()
-	for _, key := range fields {
-		res[key] = model.GetField(key)
+	for _, key := range model.mapFields() {
+		res[key] = model.GetValueByTag(key)
 	}
 	return res
+}
+
+func (model Transaction) mapFields() []string {
+	return []string{
+		"id",
+		"source_wallet_id",
+		"dest_wallet_id",
+		"source_funding_id",
+		"dest_funding_id",
+		"entity_id",
+		"type",
+		"amount",
+		"status",
+		"created_at",
+		"updated_at",
+	}
 }
 
 func (model Transaction) Table() string {

@@ -66,6 +66,12 @@ func (model Contract) GetValueByTag(name string) any {
 		return model.UserID
 	case "offer_id":
 		return model.OfferID
+	case "name":
+		return model.Name
+	case "symbol":
+		return model.Symbol
+	case "address":
+		return model.Address
 	case "transaction_tx":
 		return model.TransactionTX
 	case "status":
@@ -82,7 +88,7 @@ func (model Contract) ToJSON() map[string]any {
 	res := map[string]any{}
 	fields := model.Fields()
 	for _, key := range fields {
-		res[key] = model.GetField(key)
+		res[key] = model.GetValueByTag(key)
 	}
 	return res
 }

@@ -2,24 +2,25 @@ package filers
 
 import (
 	"github.com/webdevelop-pro/go-common/db"
+	"github.com/webdevelop-pro/i-models/models"
 	"github.com/webdevelop-pro/i-models/pgtype"
 )
 
 // FilerFiler is an object representing the database table.
 type FilerFiler struct {
-	ID          int                `json:"id" yaml:"id"`
-	UserID      int                `json:"user_id,omitempty" yaml:"user_id,omitempty"`
-	GroupID     int                `json:"group_id,omitempty" yaml:"group_id,omitempty"`
-	Filename    string             `json:"filename" yaml:"filename"`
-	URL         string             `json:"url" yaml:"url"`
-	Mime        string             `json:"mime" yaml:"mime"`
-	Name        string             `json:"name" yaml:"name"`
-	Description string             `json:"description" yaml:"description"`
-	BucketName  string             `json:"bucket_name" yaml:"bucket_name"`
-	BucketPath  string             `json:"bucket_path" yaml:"bucket_path"`
-	MetaData    map[string]any     `json:"meta_data" yaml:"meta_data"`
-	CreatedAt   pgtype.Timestamptz `json:"created_at" yaml:"created_at"`
-	UpdatedAt   pgtype.Timestamptz `json:"updated_at" yaml:"updated_at"`
+	ID          int                `db:"id" json:"id" yaml:"id"`
+	UserID      int                `db:"user_id" json:"user_id,omitempty" yaml:"user_id,omitempty"`
+	GroupID     int                `db:"group_id" json:"group_id,omitempty" yaml:"group_id,omitempty"`
+	Filename    string             `db:"filename" json:"filename" yaml:"filename"`
+	URL         string             `db:"url" json:"url" yaml:"url"`
+	Mime        string             `db:"mime" json:"mime" yaml:"mime"`
+	Name        string             `db:"name" json:"name" yaml:"name"`
+	Description string             `db:"description" json:"description" yaml:"description"`
+	BucketName  string             `db:"bucket_name" json:"bucket_name" yaml:"bucket_name"`
+	BucketPath  string             `db:"bucket_path" json:"bucket_path" yaml:"bucket_path"`
+	MetaData    map[string]any     `db:"meta_data" json:"meta_data" yaml:"meta_data"`
+	CreatedAt   pgtype.Timestamptz `db:"created_at" json:"created_at" yaml:"created_at"`
+	UpdatedAt   pgtype.Timestamptz `db:"updated_at" json:"updated_at" yaml:"updated_at"`
 
 	updatedFields []string       `db:"-" json:"-"`
 	fns           map[string]any `db:"-" json:"-"`
@@ -52,21 +53,7 @@ func (model FilerFiler) ToJSON() map[string]any {
 }
 
 func (model FilerFiler) Fields() []string {
-	return []string{
-		"ID",
-		"UserID",
-		"GroupID",
-		"Filename",
-		"URL",
-		"Mime",
-		"Name",
-		"Description",
-		"BucketName",
-		"BucketPath",
-		"MetaData",
-		"CreatedAt",
-		"UpdatedAt",
-	}
+	return models.DefaultFields(&model)
 }
 
 func (model FilerFiler) Table() string {

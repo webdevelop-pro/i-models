@@ -2,7 +2,6 @@ package models
 
 import (
 	"context"
-	"fmt"
 	"strings"
 
 	sq "github.com/Masterminds/squirrel"
@@ -12,46 +11,56 @@ import (
 	"github.com/webdevelop-pro/go-common/queue/pclient"
 )
 
-func RetriveOne[T any, PT interface {
+type queryModel[T any] interface {
 	*T
 	SetID(any)
 	Fields() []string
 	Table() string
-}](ctx context.Context, pg Repository, where map[string]any, queryParams ...string) (*T, error) {
+}
+
+func RetrieveOne[T any, PT queryModel[T]](ctx context.Context, pg Repository, where sq.Sqlizer, suffixes ...sq.Sqlizer) (*T, error) {
 	obj := PT(new(T))
 
-	// ToDo
-	// Add where in the loop with where incoming parameter
-	sql, args, err := sq.Select(strings.Join(obj.Fields(), ",")).From(obj.Table()).
-		Where(where).PlaceholderFormat(sq.Dollar).ToSql()
+	builder := sq.Select(strings.Join(obj.Fields(), ",")).From(obj.Table())
+	if where != nil {
+		builder = builder.Where(where)
+	}
+	for _, suffix := range suffixes {
+		if suffix != nil {
+			builder = builder.SuffixExpr(suffix)
+		}
+	}
+
+	sql, args, err := builder.PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
 		resErr := errors.Wrapf(
-			errors.New(ErrSQLPrepare),
-			"%s: %s, %+v", err.Error(), where, queryParams,
+			err,
+			"%s: %s, %+v", ErrSQLPrepare, where, suffixes,
 		)
 		return obj, resErr
 	}
 
-	for _, param := range queryParams {
-		sql = fmt.Sprintf("%s %s", sql, param)
+	rows, err := pg.Query(ctx, sql, args...)
+	if err != nil {
+		resErr := errors.Wrapf(
+			err,
+			"%s: %s, %+v", ErrRetrieveOne, sql, args,
+		)
+		return obj, resErr
 	}
 
-	rows, _ := pg.Query(ctx, sql, args...)
 	// Assumes the returned row only has a single hit. StructToFill is the target struct.
 	results, err := pgx.CollectOneRow(rows, pgx.RowToStructByNameLax[T])
 	if err != nil {
-		// Preserve the pgx.ErrNoRows chain so callers can keep using
-		// errors.Is(err, pgx.ErrNoRows) for the not-found case while still
-		// getting the ErrRetrieveOne context message.
 		if errors.Is(err, pgx.ErrNoRows) {
 			return &results, errors.Wrapf(
-				pgx.ErrNoRows,
+				ErrRecordNotFound,
 				"%s: %s, %+v", ErrRetrieveOne, sql, args,
 			)
 		}
 		resErr := errors.Wrapf(
-			errors.New(ErrRetrieveOne),
-			"%s: %s, %+v", err.Error(), sql, args,
+			err,
+			"%s: %s, %+v", ErrRetrieveOne, sql, args,
 		)
 		return &results, resErr
 	}
@@ -59,37 +68,48 @@ func RetriveOne[T any, PT interface {
 	return &results, nil
 }
 
-func RetriveAll[T any, PT interface {
-	*T
-	SetID(any)
-	Fields() []string
-	Table() string
-}](ctx context.Context, pg db.Repository, where map[string]any, queryParams ...string) ([]*T, error) {
+// Deprecated: use RetrieveOne.
+func RetriveOne[T any, PT queryModel[T]](ctx context.Context, pg Repository, where sq.Sqlizer, suffixes ...sq.Sqlizer) (*T, error) {
+	return RetrieveOne[T, PT](ctx, pg, where, suffixes...)
+}
+
+func RetrieveAll[T any, PT queryModel[T]](ctx context.Context, pg Repository, where sq.Sqlizer, suffixes ...sq.Sqlizer) ([]*T, error) {
 	obj := PT(new(T))
 
-	// ToDo
-	// Add where in the loop with where incoming parameter
-	sql, args, err := sq.Select(strings.Join(obj.Fields(), ",")).From(obj.Table()).
-		Where(where).PlaceholderFormat(sq.Dollar).ToSql()
+	builder := sq.Select(strings.Join(obj.Fields(), ",")).From(obj.Table())
+	if where != nil {
+		builder = builder.Where(where)
+	}
+	for _, suffix := range suffixes {
+		if suffix != nil {
+			builder = builder.SuffixExpr(suffix)
+		}
+	}
+
+	sql, args, err := builder.PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
 		resErr := errors.Wrapf(
-			errors.New(ErrSQLPrepare),
-			"%s: %s, %+v", err.Error(), where, queryParams,
+			err,
+			"%s: %s, %+v", ErrSQLPrepare, where, suffixes,
 		)
 		return nil, resErr
 	}
 
-	for _, param := range queryParams {
-		sql = fmt.Sprintf("%s %s", sql, param)
+	rows, err := pg.Query(ctx, sql, args...)
+	if err != nil {
+		resErr := errors.Wrapf(
+			err,
+			"%s: %s, %+v", ErrRetrieveAll, sql, args,
+		)
+		return nil, resErr
 	}
 
-	rows, _ := pg.Query(ctx, sql, args...)
 	// Assumes the returned row only has a single hit. StructToFill is the target struct.
 	results, err := pgx.CollectRows(rows, pgx.RowToAddrOfStructByName[T])
 	if err != nil {
 		resErr := errors.Wrapf(
-			errors.New(ErrRetrieveAll),
-			"%s: %s, %+v", err.Error(), sql, args,
+			err,
+			"%s: %s, %+v", ErrRetrieveAll, sql, args,
 		)
 		return results, resErr
 	}
@@ -97,6 +117,11 @@ func RetriveAll[T any, PT interface {
 		return []*T{}, nil
 	}
 	return results, nil
+}
+
+// Deprecated: use RetrieveAll.
+func RetriveAll[T any, PT queryModel[T]](ctx context.Context, pg Repository, where sq.Sqlizer, suffixes ...sq.Sqlizer) ([]*T, error) {
+	return RetrieveAll[T, PT](ctx, pg, where, suffixes...)
 }
 
 func Create[T any, PT interface {
@@ -112,8 +137,8 @@ func Create[T any, PT interface {
 	sql, args, err := b.PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
 		resErr := errors.Wrapf(
-			errors.New(ErrSQLPrepare),
-			"%s: %s, %+v", err.Error(), sql, args,
+			err,
+			"%s: %s, %+v", ErrSQLPrepare, sql, args,
 		)
 		return obj, resErr
 	}
@@ -121,8 +146,8 @@ func Create[T any, PT interface {
 	err = pg.QueryRow(ctx, sql, args...).Scan(&id)
 	if err != nil {
 		resErr := errors.Wrapf(
-			errors.New(ErrCreate),
-			"%s: %s, %+v", err.Error(), sql, args,
+			err,
+			"%s: %s, %+v", ErrCreate, sql, args,
 		)
 		return obj, resErr
 	}
@@ -136,14 +161,27 @@ func Update[T any, PT interface {
 	SetID(any)
 	Fields() []string
 	Table() string
-}](ctx context.Context, pg db.Repository, where map[string]any, data map[string]any) (bool, error) {
+}](ctx context.Context, pg db.Repository, where map[string]any, data map[string]any, exprs ...sq.Sqlizer) (bool, error) {
 	obj := PT(new(T))
-	b := sq.Update(obj.Table()).SetMap(data).Where(where)
-	sql, args, err := b.PlaceholderFormat(sq.Dollar).ToSql()
+	if !hasPredicate(where, exprs) {
+		return false, errors.Wrap(errors.New(ErrSQLPrepare), ErrEmptyPredicate)
+	}
+
+	builder := sq.Update(obj.Table()).SetMap(data)
+	if len(where) > 0 {
+		builder = builder.Where(where)
+	}
+	for _, expr := range exprs {
+		if expr != nil {
+			builder = builder.Where(expr)
+		}
+	}
+
+	sql, args, err := builder.PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
 		resErr := errors.Wrapf(
-			errors.New(ErrSQLPrepare),
-			"%s: %s %+v", err.Error(), where, data,
+			err,
+			"%s: %s %+v %+v", ErrSQLPrepare, where, data, exprs,
 		)
 		return false, resErr
 	}
@@ -151,8 +189,8 @@ func Update[T any, PT interface {
 	res, err := pg.Exec(ctx, sql, args...)
 	if err != nil {
 		resErr := errors.Wrapf(
-			errors.New(ErrUpdate),
-			"%s: %s, %+v", err.Error(), sql, args,
+			err,
+			"%s: %s, %+v", ErrUpdate, sql, args,
 		)
 		return false, resErr
 	}
@@ -188,8 +226,8 @@ func Exists[T any, PT interface {
 	sql, args, err := builder.PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
 		resErr := errors.Wrapf(
-			errors.New(ErrSQLPrepare),
-			"%s: %s, %+v", err.Error(), where, exprs,
+			err,
+			"%s: %s, %+v", ErrSQLPrepare, where, exprs,
 		)
 		return false, resErr
 	}
@@ -201,8 +239,8 @@ func Exists[T any, PT interface {
 			return false, nil
 		} else {
 			resErr := errors.Wrapf(
-				errors.New(ErrRetrieveOne),
-				"%s: %s, %+v", err.Error(), sql, args,
+				err,
+				"%s: %s, %+v", ErrRetrieveOne, sql, args,
 			)
 			return res == 1, resErr
 		}
@@ -217,6 +255,9 @@ func Delete[T any, PT interface {
 	Table() string
 }](ctx context.Context, pg Repository, where map[string]any, exprs ...sq.Sqlizer) (bool, error) {
 	obj := PT(new(T))
+	if !hasPredicate(where, exprs) {
+		return false, errors.Wrap(errors.New(ErrSQLPrepare), ErrEmptyPredicate)
+	}
 
 	builder := sq.Delete(obj.Table())
 	if len(where) > 0 {
@@ -231,8 +272,8 @@ func Delete[T any, PT interface {
 	sql, args, err := builder.PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
 		resErr := errors.Wrapf(
-			errors.New(ErrSQLPrepare),
-			"%s: %s, %+v", err.Error(), where, exprs,
+			err,
+			"%s: %s, %+v", ErrSQLPrepare, where, exprs,
 		)
 		return false, resErr
 	}
@@ -240,8 +281,8 @@ func Delete[T any, PT interface {
 	res, err := pg.Exec(ctx, sql, args...)
 	if err != nil {
 		resErr := errors.Wrapf(
-			errors.New(ErrDelete),
-			"%s: %s, %+v", err.Error(), sql, args,
+			err,
+			"%s: %s, %+v", ErrDelete, sql, args,
 		)
 		return false, resErr
 	}
@@ -253,6 +294,69 @@ func Delete[T any, PT interface {
 		}
 	*/
 	return res.String() == "DELETE 1", nil
+}
+
+func hasPredicate(where map[string]any, exprs []sq.Sqlizer) bool {
+	if len(where) > 0 {
+		return true
+	}
+	for _, expr := range exprs {
+		if isSubstantivePredicate(expr) {
+			return true
+		}
+	}
+	return false
+}
+
+func isSubstantivePredicate(expr sq.Sqlizer) bool {
+	if expr == nil {
+		return false
+	}
+
+	sql, _, err := expr.ToSql()
+	if err != nil {
+		return true
+	}
+	sql = strings.ToLower(strings.Join(strings.Fields(strings.TrimSpace(sql)), " "))
+	if sql == "" {
+		return false
+	}
+
+	stripped := trimOuterParens(sql)
+	compactStripped := strings.ReplaceAll(stripped, " ", "")
+	if stripped == "" || compactStripped == "1=1" || compactStripped == "true" {
+		return false
+	}
+
+	compact := strings.ReplaceAll(sql, " ", "")
+	return compact != "1=1" && compact != "true" &&
+		!strings.Contains(compact, "(1=1)") && !strings.Contains(compact, "(true)")
+}
+
+func trimOuterParens(sql string) string {
+	for len(sql) >= 2 && sql[0] == '(' && sql[len(sql)-1] == ')' && outerParensWrap(sql) {
+		sql = strings.TrimSpace(sql[1 : len(sql)-1])
+	}
+	return sql
+}
+
+func outerParensWrap(sql string) bool {
+	depth := 0
+	for i, r := range sql {
+		switch r {
+		case '(':
+			depth++
+		case ')':
+			depth--
+			if depth == 0 && i != len(sql)-1 {
+				return false
+			}
+		}
+		if depth < 0 {
+			return false
+		}
+	}
+	return depth == 0
 }
 
 func LogPubSubMessageExecution(ctx context.Context, pg db.Repository, msgID string) error {
@@ -298,7 +402,7 @@ func LogPubSubMsg(ctx context.Context, pg Repository, topic string, msg *pclient
 	if res.String() != "INSERT 0 1" { // event sequence haven't been updated
 		resErr := errors.Wrapf(
 			errors.New("pubsub_logs not created"),
-			"%s, %s %+v", err.Error(), topic, msg,
+			"%s %+v", topic, msg,
 		)
 		return resErr
 	}

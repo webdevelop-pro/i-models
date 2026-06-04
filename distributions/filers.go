@@ -1,11 +1,13 @@
 package distributions
 
+import "github.com/webdevelop-pro/i-models/models"
+
 // DistributionDistributionFiler is an object representing the database table.
 type DistributionDistributionFiler struct {
-	ID             int                    `json:"id" yaml:"id"`
-	DistributionID int                    `json:"distribution_id,omitempty" yaml:"distribution_id,omitempty"`
-	FilerID        int                    `json:"filer_id,omitempty" yaml:"filer_id,omitempty"`
-	Type           NullDistributionFilerT `json:"type,omitempty" yaml:"type,omitempty"`
+	ID             int                    `db:"id" json:"id" yaml:"id"`
+	DistributionID int                    `db:"distribution_id" json:"distribution_id,omitempty" yaml:"distribution_id,omitempty"`
+	FilerID        int                    `db:"filer_id" json:"filer_id,omitempty" yaml:"filer_id,omitempty"`
+	Type           NullDistributionFilerT `db:"type" json:"type,omitempty" yaml:"type,omitempty"`
 }
 
 func (model DistributionDistributionFiler) ToJSON() map[string]any {
@@ -18,12 +20,7 @@ func (model DistributionDistributionFiler) ToJSON() map[string]any {
 }
 
 func (model DistributionDistributionFiler) Fields() []string {
-	return []string{
-		"ID",
-		"DistributionID",
-		"FilerID",
-		"Type",
-	}
+	return models.DefaultFields(&model)
 }
 
 func (model DistributionDistributionFiler) Table() string {

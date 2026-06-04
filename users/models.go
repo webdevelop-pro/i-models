@@ -18,7 +18,7 @@ type UserData struct {
 // UserUser is an object representing the database table.
 type UserUser struct {
 	ID          int                `db:"id" json:"id" yaml:"id"`
-	Password    string             `db:"-" json:"password" yaml:"password"`
+	Password    string             `db:"-" json:"-" yaml:"-"`
 	Email       string             `db:"email" json:"email" yaml:"email"`
 	FirstName   string             `db:"first_name" json:"first_name" yaml:"first_name"`
 	LastName    string             `db:"last_name" json:"last_name" yaml:"last_name"`
@@ -52,7 +52,6 @@ func New(db db.Repository) *UserUser {
 func (model UserUser) ToJSON() map[string]any {
 	return map[string]any{
 		"id":            model.ID,
-		"password":      model.Password,
 		"email":         model.Email,
 		"first_name":    model.FirstName,
 		"last_name":     model.LastName,

@@ -17,7 +17,7 @@ type Wallet struct {
 	UserID int `db:"user_id" json:"user_id" yaml:"user_id"`
 
 	PublicKey  string `db:"public_key" json:"public_key" yaml:"public_key"`
-	PrivateKey string `db:"private_key" json:"private_key" yaml:"private_key"`
+	PrivateKey string `db:"private_key" json:"-" yaml:"-"`
 
 	Balance    float64            `db:"balance" json:"balance" yaml:"balance"`
 	IncBalance float64            `db:"inc_balance" json:"inc_balance" yaml:"inc_balance"`
@@ -97,7 +97,10 @@ func (model Wallet) ToJSON() map[string]any {
 	res := map[string]any{}
 	fields := model.Fields()
 	for _, key := range fields {
-		res[key] = model.GetField(key)
+		if key == "private_key" {
+			continue
+		}
+		res[key] = model.GetValueByTag(key)
 	}
 	return res
 }

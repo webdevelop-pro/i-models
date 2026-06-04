@@ -2,6 +2,7 @@ package models
 
 import (
 	"reflect"
+	"strings"
 )
 
 type GenericModel struct {
@@ -42,13 +43,20 @@ func DefaultFields(obj any) []string {
 	var res = []string{}
 	val := reflect.ValueOf(obj).Elem()
 	for i := 0; i < val.NumField(); i++ {
-		dbtag := string(val.Type().Field(i).Tag.Get("db"))
+		dbtag := cleanTag(val.Type().Field(i).Tag.Get("db"))
 		if dbtag == "" {
-			dbtag = string(val.Type().Field(i).Tag.Get("json"))
+			dbtag = cleanTag(val.Type().Field(i).Tag.Get("json"))
 		}
 		if dbtag != "" && dbtag != "-" {
 			res = append(res, dbtag)
 		}
 	}
 	return res
+}
+
+func cleanTag(tag string) string {
+	if idx := strings.IndexByte(tag, ','); idx >= 0 {
+		return tag[:idx]
+	}
+	return tag
 }

@@ -69,8 +69,22 @@ func (model Transfer) GetValueByTag(name string) any {
 	switch name {
 	case "id":
 		return model.ID
+	case "user_id":
+		return model.UserID
+	case "token_id":
+		return model.TokenID
+	case "dest_wallet_id":
+		return model.DestWalletID
+	case "source_wallet_id":
+		return model.SourceWalletID
 	case "investment_id":
 		return model.InvestmentID
+	case "type":
+		return model.Type
+	case "amount":
+		return model.Amount
+	case "network":
+		return model.Network
 	case "transaction_tx":
 		return model.TransactionTX
 	case "status":
@@ -87,7 +101,7 @@ func (model Transfer) ToJSON() map[string]any {
 	res := map[string]any{}
 	fields := model.Fields()
 	for _, key := range fields {
-		res[key] = model.GetField(key)
+		res[key] = model.GetValueByTag(key)
 	}
 	return res
 }

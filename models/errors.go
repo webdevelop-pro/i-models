@@ -5,7 +5,10 @@ import (
 	"github.com/pkg/errors"
 )
 
-var ErrNotFound = errors.Wrapf(pgx.ErrNoRows, "") // so we have stack trace and error message from pgx for errors.Is
+var (
+	ErrRecordNotFound = errors.Wrap(pgx.ErrNoRows, "record not found")
+	ErrNotFound       = ErrRecordNotFound
+)
 
 const (
 	ErrSQLPrepare  = "error during sql prepare"
@@ -19,6 +22,7 @@ const (
 	ErrDelete      = "cannot delete record"
 	ErrExist       = "cannot check existence"
 
-	ErrNotUpdated = "not record updated"
-	ErrIDEmpty    = "model id is not set"
+	ErrEmptyPredicate = "empty predicate is not allowed"
+	ErrNotUpdated     = "not record updated"
+	ErrIDEmpty        = "model id is not set"
 )

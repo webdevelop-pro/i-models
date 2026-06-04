@@ -3,6 +3,7 @@ package offers
 import (
 	"context"
 
+	sq "github.com/Masterminds/squirrel"
 	"github.com/pkg/errors"
 	"github.com/webdevelop-pro/go-common/db"
 	"github.com/webdevelop-pro/i-models/models"
@@ -185,7 +186,7 @@ func Get(ctx context.Context, db db.Repository, where map[string]any) (*OfferOff
 	model, err := models.RetriveOne[OfferOffer](
 		ctx,
 		db,
-		where,
+		sq.Eq(where),
 	)
 	if err != nil {
 		err = errors.Wrapf(err, "cannot get model")

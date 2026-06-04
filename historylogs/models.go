@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/webdevelop-pro/go-common/db"
+	"github.com/webdevelop-pro/i-models/models"
 )
 
 const Table = "django_admin_log"
@@ -11,14 +12,14 @@ const pkgName = "models/historylogs"
 
 // LogLog is an object representing the database table.
 type HistoryLog struct {
-	ID            int       `json:"id" yaml:"id"`
-	ContentTypeID int       `json:"content_type_id" yaml:"content_type_id"`
-	ObjectID      string    `json:"object_id" yaml:"object_id"`
-	ActionFlag    int       `json:"action_flag" yaml:"action_flag"`
-	ObjectRepr    string    `json:"object_repr" yaml:"object_repr"`
-	ChangeMessage string    `json:"change_message" yaml:"change_message"`
-	UserID        int       `json:"user_id" yaml:"user_id"`
-	ActionTime    time.Time `json:"action_time" yaml:"action_time"`
+	ID            int       `db:"id" json:"id" yaml:"id"`
+	ContentTypeID int       `db:"content_type_id" json:"content_type_id" yaml:"content_type_id"`
+	ObjectID      string    `db:"object_id" json:"object_id" yaml:"object_id"`
+	ActionFlag    int       `db:"action_flag" json:"action_flag" yaml:"action_flag"`
+	ObjectRepr    string    `db:"object_repr" json:"object_repr" yaml:"object_repr"`
+	ChangeMessage string    `db:"change_message" json:"change_message" yaml:"change_message"`
+	UserID        int       `db:"user_id" json:"user_id" yaml:"user_id"`
+	ActionTime    time.Time `db:"action_time" json:"action_time" yaml:"action_time"`
 
 	db db.Repository `db:"-" json:"-"`
 }
@@ -38,27 +39,7 @@ func (model HistoryLog) ToMap() map[string]any {
 }
 
 func (model HistoryLog) Fields() []string {
-	// ToDo
-	// Fix
-	return []string{
-		"ID",
-		"ContentTypeID",
-		"MSGID",
-		"ObjectID",
-		"StatusCode",
-		"Path",
-		"RequestHeaders",
-		"RequestData",
-		"ResponseHeaders",
-		"ResponseData",
-		"Service",
-		"Type",
-		"RequestID",
-		"MetaData",
-		"RequestCreatedAt",
-		"CreatedAt",
-		"UpdatedAt",
-	}
+	return models.DefaultFields(&model)
 }
 
 func (model HistoryLog) Table() string {

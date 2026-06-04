@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/pkg/errors"
+	"github.com/webdevelop-pro/i-models/models"
 )
 
 type OfferFilerT string
@@ -133,10 +134,10 @@ func (e NullOfferFilerT) Value() (any, error) {
 
 // OfferOfferFiler is an object representing the database table.
 type OfferOfferFiler struct {
-	ID      int             `json:"id" yaml:"id"`
-	OfferID int             `json:"offer_id,omitempty" yaml:"offer_id,omitempty"`
-	FilerID int             `json:"filer_id,omitempty" yaml:"filer_id,omitempty"`
-	Type    NullOfferFilerT `json:"type,omitempty" yaml:"type,omitempty"`
+	ID      int             `db:"id" json:"id" yaml:"id"`
+	OfferID int             `db:"offer_id" json:"offer_id,omitempty" yaml:"offer_id,omitempty"`
+	FilerID int             `db:"filer_id" json:"filer_id,omitempty" yaml:"filer_id,omitempty"`
+	Type    NullOfferFilerT `db:"type" json:"type,omitempty" yaml:"type,omitempty"`
 }
 
 func (model OfferOfferFiler) ToJSON() map[string]any {
@@ -149,12 +150,7 @@ func (model OfferOfferFiler) ToJSON() map[string]any {
 }
 
 func (model OfferOfferFiler) Fields() []string {
-	return []string{
-		"ID",
-		"OfferID",
-		"FilerID",
-		"Type",
-	}
+	return models.DefaultFields(&model)
 }
 
 func (model OfferOfferFiler) Table() string {
