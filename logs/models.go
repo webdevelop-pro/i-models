@@ -12,8 +12,8 @@ import (
 	"github.com/webdevelop-pro/go-common/context/keys"
 	"github.com/webdevelop-pro/go-common/db"
 	"github.com/webdevelop-pro/go-common/logger"
-	"github.com/webdevelop-pro/i-models/models"
-	"github.com/webdevelop-pro/i-models/pgtype"
+	"github.com/webdevelop-pro/go-common/orm"
+	"github.com/webdevelop-pro/go-common/orm/pgtype"
 )
 
 type ContextKey rune
@@ -261,7 +261,7 @@ func (model LogLog) ToJSON() map[string]any {
 }
 
 func (model LogLog) Fields() []string {
-	return models.DefaultFields(&model)
+	return orm.DefaultFields(&model)
 }
 
 func (model LogLog) Table() string {
@@ -270,4 +270,12 @@ func (model LogLog) Table() string {
 
 func (model LogLog) GetID() any {
 	return model.ID
+}
+
+func (model *LogLog) SetID(id any) {
+	model.ID = id.(int)
+}
+
+func (model *LogLog) SetDB(db db.Repository) {
+	_ = db
 }

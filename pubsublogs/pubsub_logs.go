@@ -1,8 +1,12 @@
 package pubsublogs
 
 import (
-	"github.com/webdevelop-pro/i-models/models"
-	"github.com/webdevelop-pro/i-models/pgtype"
+	"context"
+
+	sq "github.com/Masterminds/squirrel"
+	"github.com/webdevelop-pro/go-common/db"
+	"github.com/webdevelop-pro/go-common/orm"
+	"github.com/webdevelop-pro/go-common/orm/pgtype"
 )
 
 // PubsubLog is an object representing the database table.
@@ -15,6 +19,7 @@ type PubsubLog struct {
 	Executed  int                `db:"executed" json:"executed,omitempty" yaml:"executed,omitempty"`
 	CreatedAt pgtype.Timestamptz `db:"created_at" json:"created_at" yaml:"created_at"`
 	UpdatedAt pgtype.Timestamptz `db:"updated_at" json:"updated_at" yaml:"updated_at"`
+	db        db.Repository      `db:"-" json:"-"`
 }
 
 func (model PubsubLog) ToJSON() map[string]any {
@@ -31,7 +36,7 @@ func (model PubsubLog) ToJSON() map[string]any {
 }
 
 func (model PubsubLog) Fields() []string {
-	return models.DefaultFields(&model)
+	return orm.DefaultFields(&model)
 }
 
 func (model PubsubLog) Table() string {
@@ -40,4 +45,39 @@ func (model PubsubLog) Table() string {
 
 func (model PubsubLog) GetID() any {
 	return model.ID
+}
+
+func (model *PubsubLog) SetID(id any) {
+	model.ID = id.(int)
+}
+
+func (model *PubsubLog) SetDB(db db.Repository) {
+	model.db = db
+}
+
+func Create(ctx context.Context, pg db.Repository, topic string, msg any, attr any, msgID string) (*PubsubLog, error) {
+	return orm.Create[PubsubLog](ctx, pg, map[string]any{
+		"topic":  topic,
+		"msg":    msg,
+		"attr":   attr,
+		"msg_id": msgID,
+	})
+}
+
+func IncrementExecuted(ctx context.Context, pg db.Repository, msgID string) (bool, error) {
+	sql, args, err := sq.Update(PubsubLog{}.Table()).
+		Set("executed", sq.Expr("executed+1")).
+		Where(sq.Eq{"msg_id": msgID}).
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+	if err != nil {
+		return false, err
+	}
+
+	res, err := pg.Exec(ctx, sql, args...)
+	if err != nil {
+		return false, err
+	}
+
+	return res.RowsAffected() == 1, nil
 }

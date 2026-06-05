@@ -97,9 +97,11 @@ func NewNullOfferT(v OfferT, valid bool) NullOfferT {
 
 // UnmarshalJSON implements json.Unmarshaler.
 func (e *NullOfferT) UnmarshalJSON(data []byte) error {
-	e.Val = ""
-	e.Valid = false
-	return nil
+	if string(data) == "null" {
+		e.Val = ""
+		e.Valid = false
+		return nil
+	}
 
 	if err := json.Unmarshal(data, &e.Val); err != nil {
 		return err

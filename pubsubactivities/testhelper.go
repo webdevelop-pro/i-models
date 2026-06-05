@@ -39,7 +39,12 @@ func NewCleanFixtures(ctx context.Context) tests.FixturesManager {
 		panic(err)
 	}
 
-	return cleanFixtures{db: db.New(ctx)}
+	dbInstance, err := db.New(ctx)
+	if err != nil {
+		panic(err)
+	}
+
+	return cleanFixtures{db: dbInstance}
 }
 
 func (f cleanFixtures) CleanAndApply() error {

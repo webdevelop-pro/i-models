@@ -6,9 +6,9 @@ import (
 	"github.com/pkg/errors"
 	"github.com/webdevelop-pro/go-common/db"
 	"github.com/webdevelop-pro/go-common/logger"
+	"github.com/webdevelop-pro/go-common/orm"
+	"github.com/webdevelop-pro/go-common/orm/pgtype"
 	"github.com/webdevelop-pro/go-common/queue/pclient"
-	"github.com/webdevelop-pro/i-models/models"
-	"github.com/webdevelop-pro/i-models/pgtype"
 )
 
 // Wallet is an object representing the database table.
@@ -106,7 +106,7 @@ func (model Wallet) ToJSON() map[string]any {
 }
 
 func (model Wallet) Fields() []string {
-	return models.DefaultFields(&model)
+	return orm.DefaultFields(&model)
 }
 
 func (model Wallet) Table() string {
@@ -127,8 +127,8 @@ func (model *Wallet) SetDB(db db.Repository) {
 
 func (model Wallet) Save(ctx context.Context, postUpdate func(ctx context.Context, msg pclient.Event) error) error {
 	if model.ID == 0 {
-		err := errors.Errorf("%s: Wallet %d", models.ErrIDEmpty, model.ID)
-		logger.FromCtx(ctx, pkgName).Error().Stack().Err(err).Msg(models.ErrIDEmpty)
+		err := errors.Errorf("%s: Wallet %d", orm.ErrEmptyID, model.ID)
+		logger.FromCtx(ctx, pkgName).Error().Stack().Err(err).Msg(orm.ErrEmptyID.Error())
 		return err
 	}
 
@@ -136,7 +136,7 @@ func (model Wallet) Save(ctx context.Context, postUpdate func(ctx context.Contex
 	for _, field := range model.updatedFields {
 		updates[field] = model.GetValueByTag(field)
 	}
-	updated, err := models.Update[Wallet](
+	updated, err := orm.Update[Wallet](
 		ctx,
 		model.db,
 		map[string]any{
@@ -149,8 +149,8 @@ func (model Wallet) Save(ctx context.Context, postUpdate func(ctx context.Contex
 		return err
 	}
 	if updated == false {
-		err := errors.Errorf("%s: Wallet %d", models.ErrNotUpdated, model.ID)
-		logger.FromCtx(ctx, pkgName).Error().Stack().Err(err).Msg(models.ErrNotUpdated)
+		err := errors.Errorf("%s: Wallet %d", orm.ErrNoRowsAffected, model.ID)
+		logger.FromCtx(ctx, pkgName).Error().Stack().Err(err).Msg(orm.ErrNoRowsAffected.Error())
 		return err
 	} else {
 		postUpdate(ctx, pclient.Event{

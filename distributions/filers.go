@@ -1,6 +1,6 @@
 package distributions
 
-import "github.com/webdevelop-pro/i-models/models"
+import "github.com/webdevelop-pro/go-common/orm"
 
 // DistributionDistributionFiler is an object representing the database table.
 type DistributionDistributionFiler struct {
@@ -20,7 +20,7 @@ func (model DistributionDistributionFiler) ToJSON() map[string]any {
 }
 
 func (model DistributionDistributionFiler) Fields() []string {
-	return models.DefaultFields(&model)
+	return orm.DefaultFields(&model)
 }
 
 func (model DistributionDistributionFiler) Table() string {

@@ -76,31 +76,28 @@ as the repository argument.
 
 ## Generic Queries
 
-The shared query helper names intentionally use the current misspelling:
-`RetriveOne` and `RetriveAll`. Use those exact names unless renaming the API
-across all consumers.
+Use the shared query helpers `RetrieveOne` and `RetrieveAll`.
 
 ```go
-file, err := models.RetriveOne[filers.FilerFiler](
+file, err := models.RetrieveOne[filers.FilerFiler](
 	ctx,
 	repo,
-	map[string]any{"id": fileID},
+	sq.Eq{"id": fileID},
 )
 if err != nil {
 	return nil, err
 }
 ```
 
-Use `RetriveAll` for lists. Extra string parameters are appended to the SQL, so
-only pass trusted static fragments such as ordering or limits.
+Use `RetrieveAll` for lists. Pass Squirrel expressions for filtering and
+suffixes such as ordering or limits.
 
 ```go
-files, err := models.RetriveAll[filers.FilerFiler](
+files, err := models.RetrieveAll[filers.FilerFiler](
 	ctx,
 	repo,
-	map[string]any{"user_id": userID},
-	"ORDER BY created_at DESC",
-	"LIMIT 50",
+	sq.Eq{"user_id": userID},
+	sq.Expr("ORDER BY created_at DESC LIMIT ?", 50),
 )
 ```
 
@@ -136,7 +133,7 @@ if err != nil {
 	return err
 }
 if !updated {
-	return models.ErrNotFound
+	return orm.ErrNoRowsAffected
 }
 ```
 
@@ -158,8 +155,8 @@ tx, err := transactions.Get(ctx, repo, map[string]any{"entity_id": entityID})
 offer, err := offers.Get(ctx, repo, map[string]any{"slug": slug})
 ```
 
-Use `errors.Is(err, pgx.ErrNoRows)` for not-found checks from retrieval helpers;
-`ErrNotFound` wraps `pgx.ErrNoRows` for stack preservation.
+Use `errors.Is(err, models.ErrRecordNotFound)` or `errors.Is(err, pgx.ErrNoRows)`
+for not-found checks from retrieval helpers.
 
 ## Model Mutations
 
@@ -218,11 +215,11 @@ enum scanner/marshaler logic in the same package.
 
 ## PostgreSQL Types
 
-Use `github.com/webdevelop-pro/i-models/pgtype` types when a model field already
-uses them. Most timestamp columns use `pgtype.Timestamptz`; JSON/JSONB and array
-columns may use local pgtype wrappers. Do not replace these with `time.Time`,
-`map[string]any`, or pgx native types unless every scanner/encoder consumer is
-updated.
+Use `github.com/webdevelop-pro/go-common/orm/pgtype` types when a model field
+needs the shared pgtype wrappers. Most timestamp columns use
+`pgtype.Timestamptz`; JSON/JSONB columns may use the shared wrappers. Do not
+replace these with `time.Time`, `map[string]any`, or pgx native types unless
+every scanner/encoder consumer is updated.
 
 ```go
 type Row struct {

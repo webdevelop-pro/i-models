@@ -2,8 +2,8 @@ package filers
 
 import (
 	"github.com/webdevelop-pro/go-common/db"
-	"github.com/webdevelop-pro/i-models/models"
-	"github.com/webdevelop-pro/i-models/pgtype"
+	"github.com/webdevelop-pro/go-common/orm"
+	"github.com/webdevelop-pro/go-common/orm/pgtype"
 )
 
 // FilerFiler is an object representing the database table.
@@ -53,7 +53,7 @@ func (model FilerFiler) ToJSON() map[string]any {
 }
 
 func (model FilerFiler) Fields() []string {
-	return models.DefaultFields(&model)
+	return orm.DefaultFields(&model)
 }
 
 func (model FilerFiler) Table() string {

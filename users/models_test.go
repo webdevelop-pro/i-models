@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/webdevelop-pro/i-models/pgtype"
+	"github.com/webdevelop-pro/go-common/orm/pgtype"
 	"gopkg.in/yaml.v3"
 )
 

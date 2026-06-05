@@ -6,8 +6,8 @@ import (
 	sq "github.com/Masterminds/squirrel"
 	"github.com/pkg/errors"
 	"github.com/webdevelop-pro/go-common/db"
-	"github.com/webdevelop-pro/i-models/models"
-	"github.com/webdevelop-pro/i-models/pgtype"
+	"github.com/webdevelop-pro/go-common/orm"
+	"github.com/webdevelop-pro/go-common/orm/pgtype"
 )
 
 type OfferOffer struct {
@@ -183,7 +183,7 @@ func (model *OfferOffer) SetDB(db db.Repository) {
 }
 
 func Get(ctx context.Context, db db.Repository, where map[string]any) (*OfferOffer, error) {
-	model, err := models.RetriveOne[OfferOffer](
+	model, err := orm.RetrieveOne[OfferOffer](
 		ctx,
 		db,
 		sq.Eq(where),

@@ -2,7 +2,7 @@ package emails
 
 import (
 	"github.com/webdevelop-pro/go-common/db"
-	"github.com/webdevelop-pro/i-models/pgtype"
+	"github.com/webdevelop-pro/go-common/orm/pgtype"
 )
 
 // EmailEmail is an object representing the database table.

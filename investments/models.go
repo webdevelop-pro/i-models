@@ -1,8 +1,8 @@
 package investments
 
 import (
-	"github.com/webdevelop-pro/i-models/models"
-	"github.com/webdevelop-pro/i-models/pgtype"
+	"github.com/webdevelop-pro/go-common/orm"
+	"github.com/webdevelop-pro/go-common/orm/pgtype"
 )
 
 // InvestmentInvestment is an object representing the database table.
@@ -72,7 +72,7 @@ func (model InvestmentInvestment) ToJSON() map[string]any {
 }
 
 func (model InvestmentInvestment) Fields() []string {
-	return models.DefaultFields(&model)
+	return orm.DefaultFields(&model)
 }
 
 func (model InvestmentInvestment) Table() string {

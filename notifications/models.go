@@ -1,7 +1,7 @@
 package notifications
 
 import (
-	"github.com/webdevelop-pro/i-models/pgtype"
+	"github.com/webdevelop-pro/go-common/orm/pgtype"
 
 	"github.com/webdevelop-pro/go-common/db"
 )

@@ -1,8 +1,8 @@
 package distributions
 
 import (
-	"github.com/webdevelop-pro/i-models/models"
-	"github.com/webdevelop-pro/i-models/pgtype"
+	"github.com/webdevelop-pro/go-common/orm"
+	"github.com/webdevelop-pro/go-common/orm/pgtype"
 )
 
 // DistributionDistributionReport is an object representing the database table.
@@ -33,7 +33,7 @@ func (model DistributionDistributionReport) ToJSON() map[string]any {
 }
 
 func (model DistributionDistributionReport) Fields() []string {
-	return models.DefaultFields(&model)
+	return orm.DefaultFields(&model)
 }
 
 func (model DistributionDistributionReport) Table() string {

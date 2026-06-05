@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/webdevelop-pro/go-common/db"
-	"github.com/webdevelop-pro/i-models/models"
+	"github.com/webdevelop-pro/go-common/orm"
 )
 
 const Table = "django_admin_log"
@@ -39,7 +39,7 @@ func (model HistoryLog) ToMap() map[string]any {
 }
 
 func (model HistoryLog) Fields() []string {
-	return models.DefaultFields(&model)
+	return orm.DefaultFields(&model)
 }
 
 func (model HistoryLog) Table() string {

@@ -2,8 +2,8 @@ package evmwalletoperations
 
 import (
 	"github.com/webdevelop-pro/go-common/db"
-	"github.com/webdevelop-pro/i-models/models"
-	"github.com/webdevelop-pro/i-models/pgtype"
+	"github.com/webdevelop-pro/go-common/orm"
+	"github.com/webdevelop-pro/go-common/orm/pgtype"
 )
 
 // WalletOperation is the canonical unified transaction record.
@@ -52,7 +52,7 @@ type WalletOperation struct {
 }
 
 func (model WalletOperation) Fields() []string {
-	return models.DefaultFields(&model)
+	return orm.DefaultFields(&model)
 }
 
 func (model WalletOperation) Table() string {

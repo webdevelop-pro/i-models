@@ -1,10 +1,10 @@
 package users
 
 import (
-	"github.com/webdevelop-pro/i-models/models"
+	"github.com/webdevelop-pro/go-common/orm"
 
 	"github.com/webdevelop-pro/go-common/db"
-	"github.com/webdevelop-pro/i-models/pgtype"
+	"github.com/webdevelop-pro/go-common/orm/pgtype"
 )
 
 const Table = "user_users"
@@ -76,7 +76,7 @@ func (model UserUser) ToJSON() map[string]any {
 }
 
 func (user UserUser) Fields() []string {
-	return models.DefaultFields(&user)
+	return orm.DefaultFields(&user)
 }
 
 func (model UserUser) Table() string {

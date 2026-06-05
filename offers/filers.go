@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/pkg/errors"
-	"github.com/webdevelop-pro/i-models/models"
+	"github.com/webdevelop-pro/go-common/orm"
 )
 
 type OfferFilerT string
@@ -150,7 +150,7 @@ func (model OfferOfferFiler) ToJSON() map[string]any {
 }
 
 func (model OfferOfferFiler) Fields() []string {
-	return models.DefaultFields(&model)
+	return orm.DefaultFields(&model)
 }
 
 func (model OfferOfferFiler) Table() string {

@@ -48,7 +48,7 @@
 ## Key Changes
 - Query API:
   - Add `RetrieveOne[T](ctx, repo, where sq.Sqlizer, suffixes ...sq.Sqlizer)` and `RetrieveAll[T](ctx, repo, where sq.Sqlizer, suffixes ...sq.Sqlizer)`.
-  - Keep `RetriveOne/RetriveAll` as deprecated wrappers with the new signature.
+  - Superseded by `go-common/tasks/orm.md`: remove `RetriveOne/RetriveAll` wrappers instead of keeping deprecated aliases.
   - Apply `where` with Squirrel `Where`; apply trailing clauses with `SuffixExpr`, e.g. `sq.Expr("ORDER BY id LIMIT 1")`.
 - Errors:
   - Add `models.ErrRecordNotFound`, wrapping `pgx.ErrNoRows` so both sentinels work during migration.

@@ -6,9 +6,9 @@ import (
 	"github.com/pkg/errors"
 	"github.com/webdevelop-pro/go-common/db"
 	"github.com/webdevelop-pro/go-common/logger"
+	"github.com/webdevelop-pro/go-common/orm"
+	"github.com/webdevelop-pro/go-common/orm/pgtype"
 	"github.com/webdevelop-pro/go-common/queue/pclient"
-	"github.com/webdevelop-pro/i-models/models"
-	"github.com/webdevelop-pro/i-models/pgtype"
 )
 
 // Transfer is an object representing the database table.
@@ -107,7 +107,7 @@ func (model Transfer) ToJSON() map[string]any {
 }
 
 func (model Transfer) Fields() []string {
-	return models.DefaultFields(&model)
+	return orm.DefaultFields(&model)
 }
 
 func (model Transfer) Table() string {
@@ -128,8 +128,8 @@ func (model *Transfer) SetDB(db db.Repository) {
 
 func (model Transfer) Save(ctx context.Context, postUpdate func(ctx context.Context, msg pclient.Event) error) error {
 	if model.ID == 0 {
-		err := errors.Errorf("%s: Transfer %d", models.ErrIDEmpty, model.ID)
-		logger.FromCtx(ctx, pkgName).Error().Stack().Err(err).Msg(models.ErrIDEmpty)
+		err := errors.Errorf("%s: Transfer %d", orm.ErrEmptyID, model.ID)
+		logger.FromCtx(ctx, pkgName).Error().Stack().Err(err).Msg(orm.ErrEmptyID.Error())
 		return err
 	}
 
@@ -137,7 +137,7 @@ func (model Transfer) Save(ctx context.Context, postUpdate func(ctx context.Cont
 	for _, field := range model.updatedFields {
 		updates[field] = model.GetValueByTag(field)
 	}
-	updated, err := models.Update[Transfer](
+	updated, err := orm.Update[Transfer](
 		ctx,
 		model.db,
 		map[string]any{
@@ -150,8 +150,8 @@ func (model Transfer) Save(ctx context.Context, postUpdate func(ctx context.Cont
 		return err
 	}
 	if updated == false {
-		err := errors.Errorf("%s: Transfer %d", models.ErrNotUpdated, model.ID)
-		logger.FromCtx(ctx, pkgName).Error().Stack().Err(err).Msg(models.ErrNotUpdated)
+		err := errors.Errorf("%s: Transfer %d", orm.ErrNoRowsAffected, model.ID)
+		logger.FromCtx(ctx, pkgName).Error().Stack().Err(err).Msg(orm.ErrNoRowsAffected.Error())
 		return err
 	} else {
 		postUpdate(ctx, pclient.Event{

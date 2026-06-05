@@ -2,8 +2,8 @@ package evmchainaccounts
 
 import (
 	"github.com/webdevelop-pro/go-common/db"
-	"github.com/webdevelop-pro/i-models/models"
-	"github.com/webdevelop-pro/i-models/pgtype"
+	"github.com/webdevelop-pro/go-common/orm"
+	"github.com/webdevelop-pro/go-common/orm/pgtype"
 )
 
 // EvmChainAccount is an object representing the database table.
@@ -110,7 +110,7 @@ func (model EvmChainAccount) ToJSON() map[string]any {
 }
 
 func (model EvmChainAccount) Fields() []string {
-	return models.DefaultFields(&model)
+	return orm.DefaultFields(&model)
 }
 
 func (model EvmChainAccount) Table() string {

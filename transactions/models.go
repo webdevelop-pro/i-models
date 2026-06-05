@@ -9,12 +9,12 @@ import (
 	"github.com/pkg/errors"
 	"github.com/webdevelop-pro/go-common/db"
 	"github.com/webdevelop-pro/go-common/logger"
+	"github.com/webdevelop-pro/go-common/orm"
+	"github.com/webdevelop-pro/go-common/orm/pgtype"
 	"github.com/webdevelop-pro/go-common/queue/pclient"
 	"github.com/webdevelop-pro/i-models/historylogs"
 	"github.com/webdevelop-pro/i-models/logs"
-	"github.com/webdevelop-pro/i-models/models"
 	"github.com/webdevelop-pro/i-models/notifications"
-	"github.com/webdevelop-pro/i-models/pgtype"
 )
 
 const Table = "wallet_transactions"
@@ -136,8 +136,8 @@ func (model *Transaction) SetEntityID(val *string) {
 
 func (model Transaction) Save(ctx context.Context, postUpdate func(ctx context.Context, msg pclient.Event) error) error {
 	if model.ID == 0 {
-		err := errors.Errorf("%s: Transaction %d", models.ErrIDEmpty, model.ID)
-		logger.FromCtx(ctx, pkgName).Error().Stack().Err(err).Msg(models.ErrIDEmpty)
+		err := errors.Errorf("%s: Transaction %d", orm.ErrEmptyID, model.ID)
+		logger.FromCtx(ctx, pkgName).Error().Stack().Err(err).Msg(orm.ErrEmptyID.Error())
 		return err
 	}
 
@@ -145,7 +145,7 @@ func (model Transaction) Save(ctx context.Context, postUpdate func(ctx context.C
 	for _, field := range model.updatedFields {
 		updates[field] = model.GetValueByTag(field)
 	}
-	updated, err := models.Update[Transaction](
+	updated, err := orm.Update[Transaction](
 		ctx,
 		model.db,
 		map[string]any{
@@ -158,8 +158,8 @@ func (model Transaction) Save(ctx context.Context, postUpdate func(ctx context.C
 		return err
 	}
 	if updated == false {
-		err := errors.Errorf("%s: Transaction %d", models.ErrNotUpdated, model.ID)
-		logger.FromCtx(ctx, pkgName).Error().Stack().Err(err).Msg(models.ErrNotUpdated)
+		err := errors.Errorf("%s: Transaction %d", orm.ErrNoRowsAffected, model.ID)
+		logger.FromCtx(ctx, pkgName).Error().Stack().Err(err).Msg(orm.ErrNoRowsAffected.Error())
 		return err
 	} else {
 		postUpdate(ctx, pclient.Event{
@@ -174,7 +174,7 @@ func (model Transaction) Save(ctx context.Context, postUpdate func(ctx context.C
 }
 
 func Get(ctx context.Context, db db.Repository, where map[string]any) (*Transaction, error) {
-	model, err := models.RetriveOne[Transaction](
+	model, err := orm.RetrieveOne[Transaction](
 		ctx,
 		db,
 		sq.Eq(where),
@@ -189,7 +189,7 @@ func Get(ctx context.Context, db db.Repository, where map[string]any) (*Transact
 }
 
 func GetByID(ctx context.Context, db db.Repository, id int) (*Transaction, error) {
-	model, err := models.RetriveOne[Transaction](
+	model, err := orm.RetrieveOne[Transaction](
 		ctx,
 		db,
 		sq.Eq{
@@ -261,7 +261,7 @@ func (model *Transaction) NotificationUserUpdate(ctx context.Context, userID int
 		}
 
 		if len(notifData) > 0 {
-			_, err := models.Create[notifications.Notification](
+			_, err := orm.Create[notifications.Notification](
 				ctx,
 				model.db,
 				map[string]any{
@@ -303,7 +303,7 @@ func (model *Transaction) HistoryLogUpdate(ctx context.Context, userID int, data
 			"object_id":       fmt.Sprintf("%d", model.ID),
 		}
 
-		_, err = models.Create[historylogs.HistoryLog](
+		_, err = orm.Create[historylogs.HistoryLog](
 			ctx,
 			model.db,
 			data,
