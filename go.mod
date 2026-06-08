@@ -6,13 +6,13 @@ require (
 	github.com/Masterminds/squirrel v1.5.4
 	github.com/jackc/pgx/v5 v5.10.0
 	github.com/pkg/errors v0.9.1
-	github.com/webdevelop-pro/go-common/configurator v1.0.20
-	github.com/webdevelop-pro/go-common/context v1.0.18
-	github.com/webdevelop-pro/go-common/db v1.0.32
-	github.com/webdevelop-pro/go-common/logger v1.0.21
-	github.com/webdevelop-pro/go-common/orm v0.0.0
-	github.com/webdevelop-pro/go-common/queue v1.0.33
-	github.com/webdevelop-pro/go-common/tests v1.0.23
+	github.com/webdevelop-pro/go-common/configurator v1.0.21-0.20260607130039-ad7c41678597
+	github.com/webdevelop-pro/go-common/context v1.0.19-0.20260607130039-ad7c41678597
+	github.com/webdevelop-pro/go-common/db v1.0.35-0.20260607130039-ad7c41678597
+	github.com/webdevelop-pro/go-common/logger v1.0.22-0.20260607130039-ad7c41678597
+	github.com/webdevelop-pro/go-common/orm v0.0.0-20260607130039-ad7c41678597
+	github.com/webdevelop-pro/go-common/queue v1.0.35-0.20260607130039-ad7c41678597
+	github.com/webdevelop-pro/go-common/tests v1.0.24-0.20260607130039-ad7c41678597
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -51,10 +51,10 @@ require (
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/rs/zerolog v1.35.1 // indirect
 	github.com/stretchr/testify v1.11.1 // indirect
-	github.com/webdevelop-pro/go-common/httputils v1.0.20 // indirect
-	github.com/webdevelop-pro/go-common/response v1.0.19 // indirect
-	github.com/webdevelop-pro/go-common/validator v1.0.22 // indirect
-	github.com/webdevelop-pro/go-common/verser v1.0.19 // indirect
+	github.com/webdevelop-pro/go-common/httputils v1.0.21-0.20260607130039-ad7c41678597 // indirect
+	github.com/webdevelop-pro/go-common/response v1.0.20-0.20260607130039-ad7c41678597 // indirect
+	github.com/webdevelop-pro/go-common/validator v1.0.23-0.20260607130039-ad7c41678597 // indirect
+	github.com/webdevelop-pro/go-common/verser v1.0.20-0.20260607130039-ad7c41678597 // indirect
 	go.opencensus.io v0.24.0 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.69.0 // indirect
@@ -76,27 +76,3 @@ require (
 	google.golang.org/grpc v1.81.1 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
 )
-
-replace github.com/webdevelop-pro/i-models => ../i-models
-
-replace github.com/webdevelop-pro/go-common/configurator => ../go-common/configurator
-
-replace github.com/webdevelop-pro/go-common/context => ../go-common/context
-
-replace github.com/webdevelop-pro/go-common/db => ../go-common/db
-
-replace github.com/webdevelop-pro/go-common/httputils => ../go-common/httputils
-
-replace github.com/webdevelop-pro/go-common/logger => ../go-common/logger
-
-replace github.com/webdevelop-pro/go-common/orm => ../go-common/orm
-
-replace github.com/webdevelop-pro/go-common/queue => ../go-common/queue
-
-replace github.com/webdevelop-pro/go-common/response => ../go-common/response
-
-replace github.com/webdevelop-pro/go-common/tests => ../go-common/tests
-
-replace github.com/webdevelop-pro/go-common/validator => ../go-common/validator
-
-replace github.com/webdevelop-pro/go-common/verser => ../go-common/verser

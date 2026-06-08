@@ -1,9 +1,13 @@
 package users
 
 import (
+	"context"
+	"errors"
+
+	"github.com/jackc/pgx/v5"
+	"github.com/webdevelop-pro/go-common/db"
 	"github.com/webdevelop-pro/go-common/orm"
 
-	"github.com/webdevelop-pro/go-common/db"
 	"github.com/webdevelop-pro/go-common/orm/pgtype"
 )
 
@@ -26,6 +30,7 @@ type UserUser struct {
 	IsSuperuser bool               `db:"-" json:"is_superuser" yaml:"is_superuser"`
 	IsActive    bool               `db:"-" json:"is_active" yaml:"is_active"`
 	IdentityID  string             `db:"identity_id" json:"identity_id" yaml:"identity_id"`
+	SiteID      *int               `db:"site_id" json:"site_id,omitempty" yaml:"site_id,omitempty"`
 	FacebookID  string             `db:"-" json:"facebook_id" yaml:"facebook_id"`
 	LinkedinID  string             `db:"-" json:"linkedin_id" yaml:"linkedin_id"`
 	GoogleID    string             `db:"-" json:"google_id" yaml:"google_id"`
@@ -59,6 +64,7 @@ func (model UserUser) ToJSON() map[string]any {
 		"is_superuser":  model.IsSuperuser,
 		"is_active":     model.IsActive,
 		"identity_id":   model.IdentityID,
+		"site_id":       model.SiteID,
 		"facebook_id":   model.FacebookID,
 		"linkedin_id":   model.LinkedinID,
 		"google_id":     model.GoogleID,
@@ -93,4 +99,34 @@ func (model *UserUser) SetID(id any) {
 
 func (model *UserUser) SetDB(db db.Repository) {
 	model.db = db
+}
+
+// HasGroup reports whether the user belongs to an auth_group by name.
+func (model UserUser) HasGroup(ctx context.Context, repo db.Repository, groupName string) (bool, error) {
+	if model.ID == 0 {
+		return false, nil
+	}
+
+	var exists int
+	err := repo.QueryRow(
+		ctx,
+		`
+			SELECT 1
+			FROM auth_group t1
+			JOIN user_users_groups t2 ON t2.group_id = t1.id
+			WHERE t2.account_id = $1 AND t1.name = $2
+			LIMIT 1
+		`,
+		model.ID,
+		groupName,
+	).Scan(&exists)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return false, nil
+		}
+
+		return false, err
+	}
+
+	return true, nil
 }

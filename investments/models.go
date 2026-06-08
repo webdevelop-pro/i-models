@@ -11,6 +11,7 @@ type InvestmentInvestment struct {
 	UserID            int                `db:"user_id" json:"user_id,omitempty" yaml:"user_id,omitempty"`
 	OfferID           int                `db:"offer_id" json:"offer_id,omitempty" yaml:"offer_id,omitempty"`
 	ProfileID         int                `db:"profile_id" json:"profile_id,omitempty" yaml:"profile_id,omitempty"`
+	SiteID            *int               `db:"site_id" json:"site_id,omitempty" yaml:"site_id,omitempty"`
 	Amount            float64            `db:"amount" json:"amount" yaml:"amount"`
 	PricePerShare     float64            `db:"price_per_share" json:"price_per_share" yaml:"price_per_share"`
 	NumberOfShares    int                `db:"number_of_shares" json:"number_of_shares" yaml:"number_of_shares"`
@@ -19,20 +20,20 @@ type InvestmentInvestment struct {
 	FundingType       FundingT           `db:"funding_type" json:"funding_type" yaml:"funding_type"`
 	FundingStatus     FundingS           `db:"funding_status" json:"funding_status" yaml:"funding_status"`
 	Status            InvestmentT        `db:"status" json:"status" yaml:"status"`
-	PrevStatus        InvestmentT        `db:"-" json:"prev_status" yaml:"prev_status"`
-	Step              InvestmentStepT    `db:"-" json:"step" yaml:"step"`
-	Commission        float64            `db:"-" json:"commission" yaml:"commission"`
-	CancelationReason string             `db:"-" json:"cancelation_reason" yaml:"cancelation_reason"`
-	EntityID          *string            `db:"-" json:"entity_id,omitempty" yaml:"entity_id,omitempty"`
-	TransactionRef    *string            `db:"-" json:"transaction_ref,omitempty" yaml:"transaction_ref,omitempty"`
+	PrevStatus        InvestmentT        `db:"prev_status" json:"prev_status" yaml:"prev_status"`
+	Step              InvestmentStepT    `db:"step" json:"step" yaml:"step"`
+	Commission        float64            `db:"commission" json:"commission" yaml:"commission"`
+	CancelationReason string             `db:"cancelation_reason" json:"cancelation_reason" yaml:"cancelation_reason"`
+	EntityID          *string            `db:"entity_id" json:"entity_id,omitempty" yaml:"entity_id,omitempty"`
+	TransactionRef    *string            `db:"transaction_ref" json:"transaction_ref,omitempty" yaml:"transaction_ref,omitempty"`
 	EscrowData        map[string]any     `db:"escrow_data" json:"escrow_data" yaml:"escrow_data"`
 	SignatureData     map[string]any     `db:"signature_data" json:"signature_data" yaml:"signature_data"`
 	PaymentData       map[string]any     `db:"payment_data" json:"payment_data" yaml:"payment_data"`
-	CanceledAt        pgtype.Timestamptz `db:"-" json:"canceled_at" yaml:"canceled_at"`
-	SubmitedAt        pgtype.Timestamptz `db:"-" json:"submited_at" yaml:"submited_at"`
-	ClosedAt          pgtype.Timestamptz `db:"-" json:"closed_at" yaml:"closed_at"`
-	CreatedAt         pgtype.Timestamptz `db:"-" json:"created_at" yaml:"created_at"`
-	UpdatedAt         pgtype.Timestamptz `db:"-" json:"updated_at" yaml:"updated_at"`
+	CanceledAt        pgtype.Timestamptz `db:"canceled_at" json:"canceled_at" yaml:"canceled_at"`
+	SubmitedAt        pgtype.Timestamptz `db:"submited_at" json:"submited_at" yaml:"submited_at"`
+	ClosedAt          pgtype.Timestamptz `db:"closed_at" json:"closed_at" yaml:"closed_at"`
+	CreatedAt         pgtype.Timestamptz `db:"created_at" json:"created_at" yaml:"created_at"`
+	UpdatedAt         pgtype.Timestamptz `db:"updated_at" json:"updated_at" yaml:"updated_at"`
 }
 
 // IsFundingTypeWire temporary fix for https://github.com/Joker/jade/issues/59
@@ -46,6 +47,7 @@ func (model InvestmentInvestment) ToJSON() map[string]any {
 		"user_id":            model.UserID,
 		"offer_id":           model.OfferID,
 		"profile_id":         model.ProfileID,
+		"site_id":            model.SiteID,
 		"amount":             model.Amount,
 		"price_per_share":    model.PricePerShare,
 		"number_of_shares":   model.NumberOfShares,
