@@ -9,14 +9,15 @@ import (
 // FilerFiler is an object representing the database table.
 type FilerFiler struct {
 	ID          int                `db:"id" json:"id" yaml:"id"`
-	UserID      int                `db:"user_id" json:"user_id,omitempty" yaml:"user_id,omitempty"`
-	GroupID     int                `db:"group_id" json:"group_id,omitempty" yaml:"group_id,omitempty"`
+	UserID      *int               `db:"user_id" json:"user_id,omitempty" yaml:"user_id,omitempty"`
+	GroupID     *int               `db:"group_id" json:"group_id,omitempty" yaml:"group_id,omitempty"`
 	Filename    string             `db:"filename" json:"filename" yaml:"filename"`
 	URL         string             `db:"url" json:"url" yaml:"url"`
 	Mime        string             `db:"mime" json:"mime" yaml:"mime"`
 	Name        string             `db:"name" json:"name" yaml:"name"`
 	Description string             `db:"description" json:"description" yaml:"description"`
 	MetaData    map[string]any     `db:"meta_data" json:"meta_data" yaml:"meta_data"`
+	CreatedBy   *int               `db:"created_by" json:"created_by,omitempty" yaml:"created_by,omitempty"`
 	CreatedAt   pgtype.Timestamptz `db:"created_at" json:"created_at" yaml:"created_at"`
 	UpdatedAt   pgtype.Timestamptz `db:"updated_at" json:"updated_at" yaml:"updated_at"`
 
@@ -43,6 +44,7 @@ func (model FilerFiler) ToJSON() map[string]any {
 		"name":        model.Name,
 		"description": model.Description,
 		"meta_data":   model.MetaData,
+		"created_by":  model.CreatedBy,
 		"created_at":  model.CreatedAt,
 		"updated_at":  model.UpdatedAt,
 	}
