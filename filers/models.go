@@ -16,8 +16,6 @@ type FilerFiler struct {
 	Mime        string             `db:"mime" json:"mime" yaml:"mime"`
 	Name        string             `db:"name" json:"name" yaml:"name"`
 	Description string             `db:"description" json:"description" yaml:"description"`
-	BucketName  string             `db:"bucket_name" json:"bucket_name" yaml:"bucket_name"`
-	BucketPath  string             `db:"bucket_path" json:"bucket_path" yaml:"bucket_path"`
 	MetaData    map[string]any     `db:"meta_data" json:"meta_data" yaml:"meta_data"`
 	CreatedAt   pgtype.Timestamptz `db:"created_at" json:"created_at" yaml:"created_at"`
 	UpdatedAt   pgtype.Timestamptz `db:"updated_at" json:"updated_at" yaml:"updated_at"`
@@ -44,8 +42,6 @@ func (model FilerFiler) ToJSON() map[string]any {
 		"mime":        model.Mime,
 		"name":        model.Name,
 		"description": model.Description,
-		"bucket_name": model.BucketName,
-		"bucket_path": model.BucketPath,
 		"meta_data":   model.MetaData,
 		"created_at":  model.CreatedAt,
 		"updated_at":  model.UpdatedAt,
