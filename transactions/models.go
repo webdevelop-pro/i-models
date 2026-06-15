@@ -31,6 +31,7 @@ type Transaction struct {
 	Type            TransactionsTypeT   `json:"type" yaml:"type"`
 	Amount          float64             `json:"amount" yaml:"amount"`
 	Status          TransactionsStatusT `json:"status" yaml:"status"`
+	Data            map[string]any      `json:"data" yaml:"data"`
 	CreatedAt       pgtype.Timestamptz  `json:"created_at" yaml:"created_at"`
 	UpdatedAt       pgtype.Timestamptz  `json:"updated_at" yaml:"updated_at"`
 
@@ -57,6 +58,7 @@ func (model Transaction) Fields() []string {
 		"type",
 		"amount",
 		"status",
+		"data",
 		"created_at",
 		"updated_at",
 	}
@@ -82,6 +84,8 @@ func (model Transaction) GetField(field string) any {
 		return model.Amount
 	case "Status":
 		return model.Status
+	case "Data":
+		return model.Data
 	case "CreatedAt":
 		return model.CreatedAt
 	case "UpdatedAt":
@@ -110,6 +114,8 @@ func (model Transaction) GetValueByTag(field string) any {
 		return model.Amount
 	case "status":
 		return model.Status
+	case "data":
+		return model.Data
 	case "created_at":
 		return model.CreatedAt
 	case "updated_at":
@@ -224,6 +230,7 @@ func (model Transaction) mapFields() []string {
 		"type",
 		"amount",
 		"status",
+		"data",
 		"created_at",
 		"updated_at",
 	}

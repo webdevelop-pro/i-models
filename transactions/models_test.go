@@ -16,6 +16,9 @@ func TestTransactionToMapUsesDatabaseKeys(t *testing.T) {
 		Type:            TransactionsTypeTInvestment,
 		Amount:          10.5,
 		Status:          TransactionsStatusTProcessed,
+		Data: map[string]any{
+			"dwolla_created_transfer_id": "created-1",
+		},
 	}
 
 	got := model.ToMap()
@@ -30,6 +33,9 @@ func TestTransactionToMapUsesDatabaseKeys(t *testing.T) {
 	}
 	if got["type"] != TransactionsTypeTInvestment {
 		t.Fatalf("unexpected type: %#v", got["type"])
+	}
+	if got["data"].(map[string]any)["dwolla_created_transfer_id"] != "created-1" {
+		t.Fatalf("unexpected data: %#v", got["data"])
 	}
 	if _, ok := got["COALESCE(source_wallet_id, 0) AS source_wallet_id"]; ok {
 		t.Fatalf("ToMap returned select expression key: %#v", got)
