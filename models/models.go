@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/webdevelop-pro/go-common/db"
-	"github.com/webdevelop-pro/go-common/orm"
+	"github.com/global-torque/go-common/db/v2"
+	"github.com/global-torque/go-common/orm/v2"
 	"github.com/webdevelop-pro/go-common/queue/pclient"
 )
 
@@ -33,18 +33,30 @@ func DefaultFields(obj any) []string {
 	return orm.DefaultFields(obj)
 }
 
-func RetriveOne[T any, PT queryModel[T]](ctx context.Context, repo db.Repository, where map[string]any) (*T, error) {
+func RetrieveOne[T any, PT queryModel[T]](ctx context.Context, repo db.Repository, where map[string]any) (*T, error) {
 	obj, err := orm.RetrieveOne[T, PT](ctx, repo, sq.Eq(where))
 	setDBIfSupported(obj, repo)
 	return obj, err
 }
 
-func RetriveAll[T any, PT queryModel[T]](ctx context.Context, repo db.Repository, where map[string]any) ([]*T, error) {
+func RetrieveAll[T any, PT queryModel[T]](ctx context.Context, repo db.Repository, where map[string]any) ([]*T, error) {
 	results, err := orm.RetrieveAll[T, PT](ctx, repo, sq.Eq(where))
 	for _, item := range results {
 		setDBIfSupported(item, repo)
 	}
 	return results, err
+}
+
+// RetriveOne is retained for downstream source compatibility.
+// Deprecated: use RetrieveOne.
+func RetriveOne[T any, PT queryModel[T]](ctx context.Context, repo db.Repository, where map[string]any) (*T, error) {
+	return RetrieveOne[T, PT](ctx, repo, where)
+}
+
+// RetriveAll is retained for downstream source compatibility.
+// Deprecated: use RetrieveAll.
+func RetriveAll[T any, PT queryModel[T]](ctx context.Context, repo db.Repository, where map[string]any) ([]*T, error) {
+	return RetrieveAll[T, PT](ctx, repo, where)
 }
 
 func Create[T any, PT queryModel[T]](ctx context.Context, repo db.Repository, data map[string]any) (*T, error) {

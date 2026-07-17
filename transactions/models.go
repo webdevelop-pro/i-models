@@ -6,34 +6,37 @@ import (
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
+	"github.com/global-torque/go-common/db/v2"
+	"github.com/global-torque/go-common/orm/v2"
+	"github.com/global-torque/go-common/orm/v2/pgtype"
 	"github.com/pkg/errors"
-	"github.com/webdevelop-pro/go-common/db"
 	"github.com/webdevelop-pro/go-common/logger"
-	"github.com/webdevelop-pro/go-common/orm"
-	"github.com/webdevelop-pro/go-common/orm/pgtype"
 	"github.com/webdevelop-pro/go-common/queue/pclient"
 	"github.com/webdevelop-pro/i-models/historylogs"
 	"github.com/webdevelop-pro/i-models/logs"
 	"github.com/webdevelop-pro/i-models/notifications"
 )
 
-const Table = "wallet_transactions"
-const pkgName = "models/transactions"
+const (
+	Table   = "wallet_transactions"
+	pkgName = "models/transactions"
+)
 
 // Transaction is an object representing the database table.
 type Transaction struct {
-	ID              int                 `json:"id" yaml:"id"`
-	SourceWalletID  int                 `json:"source_wallet_id" yaml:"source_wallet_id,omitempty"`
-	DestWalletID    int                 `json:"dest_wallet_id" yaml:"dest_wallet_id,omitempty"`
-	SourceFundingID *int                `json:"source_funding_id,omitempty" yaml:"source_wallet_id,omitempty"`
-	DestFundingID   *int                `json:"dest_funding_id,omitempty" yaml:"dest_wallet_id,omitempty"`
-	EntityID        *string             `json:"entity_id,omitempty" yaml:"entity_id,omitempty"`
-	Type            TransactionsTypeT   `json:"type" yaml:"type"`
-	Amount          float64             `json:"amount" yaml:"amount"`
-	Status          TransactionsStatusT `json:"status" yaml:"status"`
-	Data            map[string]any      `json:"data" yaml:"data"`
-	CreatedAt       pgtype.Timestamptz  `json:"created_at" yaml:"created_at"`
-	UpdatedAt       pgtype.Timestamptz  `json:"updated_at" yaml:"updated_at"`
+	ID              int                 `db:"id" json:"id" yaml:"id"`
+	SourceWalletID  *int                `db:"source_wallet_id" json:"source_wallet_id,omitempty" yaml:"source_wallet_id,omitempty"`
+	DestWalletID    *int                `db:"dest_wallet_id" json:"dest_wallet_id,omitempty" yaml:"dest_wallet_id,omitempty"`
+	SourceFundingID *int                `db:"source_funding_id" json:"source_funding_id,omitempty" yaml:"source_wallet_id,omitempty"`
+	DestFundingID   *int                `db:"dest_funding_id" json:"dest_funding_id,omitempty" yaml:"dest_wallet_id,omitempty"`
+	InvestmentID    *int                `db:"investment_id" json:"investment_id,omitempty" yaml:"investment_id,omitempty"`
+	EntityID        *string             `db:"entity_id" json:"entity_id,omitempty" yaml:"entity_id,omitempty"`
+	Type            TransactionsTypeT   `db:"type" json:"type" yaml:"type"`
+	Amount          float64             `db:"amount" json:"amount" yaml:"amount"`
+	Status          TransactionsStatusT `db:"status" json:"status" yaml:"status"`
+	Data            map[string]any      `db:"data" json:"data" yaml:"data"`
+	CreatedAt       pgtype.Timestamptz  `db:"created_at" json:"created_at" yaml:"created_at"`
+	UpdatedAt       pgtype.Timestamptz  `db:"updated_at" json:"updated_at" yaml:"updated_at"`
 
 	updatedFields []string       `db:"-" json:"-"`
 	fns           map[string]any `db:"-" json:"-"`
@@ -54,6 +57,7 @@ func (model Transaction) Fields() []string {
 		"COALESCE(dest_wallet_id, 0) AS dest_wallet_id",
 		"source_funding_id",
 		"dest_funding_id",
+		"investment_id",
 		"entity_id",
 		"type",
 		"amount",
@@ -76,6 +80,8 @@ func (model Transaction) GetField(field string) any {
 		return model.SourceFundingID
 	case "DestFundingID":
 		return model.DestFundingID
+	case "InvestmentID":
+		return model.InvestmentID
 	case "EntityID":
 		return model.EntityID
 	case "Type":
@@ -106,6 +112,8 @@ func (model Transaction) GetValueByTag(field string) any {
 		return model.SourceFundingID
 	case "dest_funding_id":
 		return model.DestFundingID
+	case "investment_id":
+		return model.InvestmentID
 	case "entity_id":
 		return model.EntityID
 	case "type":
@@ -288,7 +296,7 @@ func (model *Transaction) HistoryLogUpdate(ctx context.Context, userID int, data
 	// cannot save anything without userID
 	if userID != -1 {
 		upFields := ""
-		for key, _ := range data {
+		for key := range data {
 			upFields = fmt.Sprintf("%s%s,", upFields, key)
 		}
 		if len(upFields) > 0 {

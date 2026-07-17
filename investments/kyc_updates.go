@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/webdevelop-pro/go-common/db"
+	"github.com/global-torque/go-common/db/v2"
 	"github.com/webdevelop-pro/i-models/profiles"
 )
 
@@ -23,7 +23,8 @@ func MarkLegallyConfirmedForProfile(ctx context.Context, repo db.Repository, pro
 		sql = `
 			UPDATE investment_investments as ii SET status=$1
 			FROM investment_profiles AS ip
-			WHERE ii.user_id=$2 and ii.status=$3
+			WHERE ii.profile_id=ip.id
+			AND ii.user_id=$2 and ii.status=$3
 			AND ip.type in ('individual', 'sdira', 'solo401k')
 			RETURNING ii.id,ii.status`
 		args = []any{

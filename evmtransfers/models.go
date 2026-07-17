@@ -3,28 +3,28 @@ package evmtransfers
 import (
 	"context"
 
+	"github.com/global-torque/go-common/db/v2"
+	"github.com/global-torque/go-common/orm/v2"
+	"github.com/global-torque/go-common/orm/v2/pgtype"
 	"github.com/pkg/errors"
-	"github.com/webdevelop-pro/go-common/db"
 	"github.com/webdevelop-pro/go-common/logger"
-	"github.com/webdevelop-pro/go-common/orm"
-	"github.com/webdevelop-pro/go-common/orm/pgtype"
 	"github.com/webdevelop-pro/go-common/queue/pclient"
 )
 
 // Transfer is an object representing the database table.
 type Transfer struct {
 	ID             int  `db:"id" json:"id" yaml:"id"`
-	UserID         int  `db:"user_id" json:"user_id" yaml:"user_id"`
+	UserID         *int `db:"user_id" json:"user_id,omitempty" yaml:"user_id,omitempty"`
 	TokenID        *int `db:"token_id" json:"token_id" yaml:"token_id"`
 	DestWalletID   *int `db:"dest_wallet_id" json:"dest_wallet_id" yaml:"dest_wallet_id"`
 	SourceWalletID *int `db:"source_wallet_id" json:"source_wallet_id" yaml:"source_wallet_id"`
 	InvestmentID   *int `db:"investment_id" json:"investment_id" yaml:"investment_id"`
 
-	Type          string `db:"type" json:"type" yaml:"type"`
-	Amount        string `db:"amount" json:"amount" yaml:"amount"`
-	Network       string `db:"network" json:"network" yaml:"network"`
-	Status        string `db:"status" json:"status" yaml:"status"`
-	TransactionTX string `db:"transaction_tx" json:"transaction_tx" yaml:"transaction_tx"`
+	Type          string  `db:"type" json:"type" yaml:"type"`
+	Amount        string  `db:"amount" json:"amount" yaml:"amount"`
+	Network       string  `db:"network" json:"network" yaml:"network"`
+	Status        *string `db:"status" json:"status,omitempty" yaml:"status,omitempty"`
+	TransactionTX string  `db:"transaction_tx" json:"transaction_tx" yaml:"transaction_tx"`
 
 	CreatedAt pgtype.Timestamptz `db:"created_at" json:"created_at" yaml:"created_at"`
 	UpdatedAt pgtype.Timestamptz `db:"updated_at" json:"updated_at" yaml:"updated_at"`
@@ -107,7 +107,11 @@ func (model Transfer) ToJSON() map[string]any {
 }
 
 func (model Transfer) Fields() []string {
-	return orm.DefaultFields(&model)
+	return []string{
+		"id", "user_id", "token_id", "dest_wallet_id", "source_wallet_id",
+		"investment_id", "type", "amount", "network", "status", "transaction_tx",
+		"created_at", "updated_at",
+	}
 }
 
 func (model Transfer) Table() string {

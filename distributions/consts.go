@@ -7,14 +7,34 @@ import (
 )
 
 type DistributionT string
+type DistributionReportT string
 
 // Enum values for DistributionT
 const (
-	DistributionTNew         DistributionT = "new"
-	DistributionTInProgress  DistributionT = "in_progress"
-	DistributionTSuccess     DistributionT = "success"
-	DistributionTSystemError DistributionT = "system_error"
+	DistributionTNew                  DistributionT = "new"
+	DistributionTInProgress           DistributionT = "in_progress"
+	DistributionTSuccess              DistributionT = "success"
+	DistributionTSystemError          DistributionT = "system_error"
+	DistributionTRequiresManualReview DistributionT = "requires_manual_review"
 )
+
+const (
+	DistributionReportTDraft     DistributionReportT = "draft"
+	DistributionReportTApproved  DistributionReportT = "approved"
+	DistributionReportTExecuting DistributionReportT = "executing"
+	DistributionReportTCompleted DistributionReportT = "completed"
+	DistributionReportTFailed    DistributionReportT = "failed"
+)
+
+func AllDistributionReportT() []DistributionReportT {
+	return []DistributionReportT{
+		DistributionReportTDraft,
+		DistributionReportTApproved,
+		DistributionReportTExecuting,
+		DistributionReportTCompleted,
+		DistributionReportTFailed,
+	}
+}
 
 func AllDistributionT() []DistributionT {
 	return []DistributionT{
@@ -22,12 +42,13 @@ func AllDistributionT() []DistributionT {
 		DistributionTInProgress,
 		DistributionTSuccess,
 		DistributionTSystemError,
+		DistributionTRequiresManualReview,
 	}
 }
 
 func (e DistributionT) IsValid() error {
 	switch e {
-	case DistributionTNew, DistributionTInProgress, DistributionTSuccess, DistributionTSystemError:
+	case DistributionTNew, DistributionTInProgress, DistributionTSuccess, DistributionTSystemError, DistributionTRequiresManualReview:
 		return nil
 	default:
 		return errors.New("enum is not valid")

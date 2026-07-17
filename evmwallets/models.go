@@ -3,31 +3,55 @@ package evmwallets
 import (
 	"context"
 
+	"github.com/global-torque/go-common/db/v2"
+	"github.com/global-torque/go-common/orm/v2"
+	"github.com/global-torque/go-common/orm/v2/pgtype"
 	"github.com/pkg/errors"
-	"github.com/webdevelop-pro/go-common/db"
 	"github.com/webdevelop-pro/go-common/logger"
-	"github.com/webdevelop-pro/go-common/orm"
-	"github.com/webdevelop-pro/go-common/orm/pgtype"
 	"github.com/webdevelop-pro/go-common/queue/pclient"
 )
 
 // Wallet is an object representing the database table.
 type Wallet struct {
-	ID     int `db:"id" json:"id" yaml:"id"`
-	UserID int `db:"user_id" json:"user_id" yaml:"user_id"`
+	ID            int    `db:"id" json:"id" yaml:"id"`
+	ContentTypeID int    `db:"content_type_id" json:"content_type_id" yaml:"content_type_id"`
+	UserID        *int   `db:"user_id" json:"user_id,omitempty" yaml:"user_id,omitempty"`
+	ObjectID      string `db:"object_id" json:"object_id" yaml:"object_id"`
 
-	PublicKey  string `db:"public_key" json:"public_key" yaml:"public_key"`
-	PrivateKey string `db:"private_key" json:"-" yaml:"-"`
+	PublicKey  *string `db:"public_key" json:"public_key,omitempty" yaml:"public_key,omitempty"`
+	PrivateKey string  `db:"-" json:"-" yaml:"-"`
 
-	Balance    float64            `db:"balance" json:"balance" yaml:"balance"`
-	IncBalance float64            `db:"inc_balance" json:"inc_balance" yaml:"inc_balance"`
-	OutBalance float64            `db:"out_balance" json:"out_balance" yaml:"out_balance"`
-	Status     WalletStatusT      `db:"status" json:"status" yaml:"status"`
-	CreatedAt  pgtype.Timestamptz `db:"created_at" json:"created_at" yaml:"created_at"`
-	UpdatedAt  pgtype.Timestamptz `db:"updated_at" json:"updated_at" yaml:"updated_at"`
-
-	ObjectID      string `db:"-" json:"object_id" yaml:"object_id"`
-	ContentTypeID int    `db:"-" json:"content_type_id" yaml:"content_type_id"`
+	Balance                                         float64            `db:"balance" json:"balance" yaml:"balance"`
+	IncBalance                                      float64            `db:"inc_balance" json:"inc_balance" yaml:"inc_balance"`
+	OutBalance                                      float64            `db:"out_balance" json:"out_balance" yaml:"out_balance"`
+	Status                                          WalletStatusT      `db:"status" json:"status" yaml:"status"`
+	CreatedAt                                       pgtype.Timestamptz `db:"created_at" json:"created_at" yaml:"created_at"`
+	UpdatedAt                                       pgtype.Timestamptz `db:"updated_at" json:"updated_at" yaml:"updated_at"`
+	ProviderName                                    string             `db:"provider_name" json:"provider_name" yaml:"provider_name"`
+	ProviderUserID                                  string             `db:"provider_user_id" json:"-" yaml:"-"`
+	MFANotifiedAt                                   pgtype.Timestamptz `db:"mfa_notified_at" json:"-" yaml:"-"`
+	TurnkeyOrgID                                    string             `db:"turnkey_org_id" json:"-" yaml:"-"`
+	TurnkeySubOrgID                                 string             `db:"turnkey_sub_org_id" json:"-" yaml:"-"`
+	TurnkeyUserID                                   string             `db:"turnkey_user_id" json:"-" yaml:"-"`
+	TurnkeyWalletID                                 string             `db:"turnkey_wallet_id" json:"-" yaml:"-"`
+	TurnkeyDelegatedUserID                          string             `db:"turnkey_delegated_user_id" json:"-" yaml:"-"`
+	TurnkeyDelegatedAPIKeyPublicKey                 string             `db:"turnkey_delegated_api_key_public_key" json:"-" yaml:"-"`
+	TurnkeyAccountKey                               string             `db:"turnkey_account_key" json:"-" yaml:"-"`
+	TurnkeyDelegatedCredentialFingerprint           string             `db:"turnkey_delegated_credential_fingerprint" json:"-" yaml:"-"`
+	TurnkeyDelegatedCredentialVersion               int64              `db:"turnkey_delegated_credential_version" json:"-" yaml:"-"`
+	TurnkeyDelegatedNonRootVerifiedAt               pgtype.Timestamptz `db:"turnkey_delegated_non_root_verified_at" json:"-" yaml:"-"`
+	TurnkeyDelegatedNonRootVerificationVersion      int                `db:"turnkey_delegated_non_root_verification_version" json:"-" yaml:"-"`
+	TurnkeyExecutionQuarantined                     bool               `db:"turnkey_execution_quarantined" json:"-" yaml:"-"`
+	TurnkeyExecutionQuarantinedAt                   pgtype.Timestamptz `db:"turnkey_execution_quarantined_at" json:"-" yaml:"-"`
+	TurnkeyExecutionQuarantineReason                string             `db:"turnkey_execution_quarantine_reason" json:"-" yaml:"-"`
+	TurnkeyExecutionAllowlisted                     bool               `db:"turnkey_execution_allowlisted" json:"-" yaml:"-"`
+	TurnkeyExecutionAllowlistedAt                   pgtype.Timestamptz `db:"turnkey_execution_allowlisted_at" json:"-" yaml:"-"`
+	TurnkeyExecutionAllowlistVersion                int                `db:"turnkey_execution_allowlist_version" json:"-" yaml:"-"`
+	TurnkeyExecutionAllowlistApprovalID             string             `db:"turnkey_execution_allowlist_approval_id" json:"-" yaml:"-"`
+	TurnkeyExecutionInventoryAuditSHA256            string             `db:"turnkey_execution_inventory_audit_sha256" json:"-" yaml:"-"`
+	TurnkeyExecutionLifecycleEvidenceSHA256         string             `db:"turnkey_execution_lifecycle_evidence_sha256" json:"-" yaml:"-"`
+	TurnkeyRotationTargetDelegatedFingerprint       string             `db:"turnkey_rotation_target_delegated_fingerprint" json:"-" yaml:"-"`
+	TurnkeyRotationTargetDelegatedCredentialVersion int64              `db:"turnkey_rotation_target_delegated_credential_version" json:"-" yaml:"-"`
 
 	updatedFields []string       `db:"-" json:"-"`
 	fns           map[string]any `db:"-" json:"-"`
@@ -106,7 +130,10 @@ func (model Wallet) ToJSON() map[string]any {
 }
 
 func (model Wallet) Fields() []string {
-	return orm.DefaultFields(&model)
+	return []string{
+		"id", "user_id", "public_key", "balance", "inc_balance",
+		"out_balance", "status", "created_at", "updated_at",
+	}
 }
 
 func (model Wallet) Table() string {

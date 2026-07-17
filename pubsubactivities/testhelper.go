@@ -4,14 +4,21 @@ import (
 	"context"
 	"os"
 
-	"github.com/webdevelop-pro/go-common/configurator"
-	"github.com/webdevelop-pro/go-common/db"
-	"github.com/webdevelop-pro/go-common/tests"
+	"github.com/global-torque/go-common/db/v2"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
+
+// FixturesManager is the structural fixture contract used by both legacy and
+// v2 test runners. Keeping it local avoids importing a test-framework module
+// into the released models module.
+type FixturesManager interface {
+	CleanAndApply() error
+	SetCTX(context.Context) context.Context
+}
 
 // cleanFixtures is a tests.FixturesManager that wipes pubsub_activities.
 type cleanFixtures struct {
-	db *db.DB
+	db *pgxpool.Pool
 }
 
 // NewCleanFixtures returns a tests.FixturesManager that deletes every
@@ -31,20 +38,15 @@ type cleanFixtures struct {
 //	    qtests.NewFixturesManager(ctx, ...),
 //	    pubsubactivities.NewCleanFixtures(ctx),
 //	}
-func NewCleanFixtures(ctx context.Context) tests.FixturesManager {
+func NewCleanFixtures(ctx context.Context) FixturesManager {
 	_ = os.Setenv("TZ", "UTC")
 
-	cfg := db.Config{}
-	if err := configurator.NewConfiguration(&cfg, "DB"); err != nil {
-		panic(err)
-	}
-
-	dbInstance, err := db.New(ctx)
+	pool, err := db.NewPool(ctx)
 	if err != nil {
 		panic(err)
 	}
 
-	return cleanFixtures{db: dbInstance}
+	return cleanFixtures{db: pool}
 }
 
 func (f cleanFixtures) CleanAndApply() error {

@@ -1,9 +1,8 @@
 package evmwalletoperations
 
 import (
-	"github.com/webdevelop-pro/go-common/db"
-	"github.com/webdevelop-pro/go-common/orm"
-	"github.com/webdevelop-pro/go-common/orm/pgtype"
+	"github.com/global-torque/go-common/db/v2"
+	"github.com/global-torque/go-common/orm/v2/pgtype"
 )
 
 // WalletOperation is the canonical unified transaction record.
@@ -13,46 +12,85 @@ import (
 // BlockTimestamp is pgtype.Timestamptz so it can be NULL until the
 // webhook resolves it from the block.
 type WalletOperation struct {
-	ID                  int                `db:"id" json:"id"`
-	UserID              int                `db:"user_id" json:"user_id"`
-	ProfileID           int                `db:"profile_id" json:"profile_id"`
-	InvestmentID        *int               `db:"investment_id" json:"investment_id"`
-	TokenID             *int               `db:"token_id" json:"token_id"`
-	WalletAddress       string             `db:"wallet_address" json:"wallet_address"`
-	Chain               string             `db:"chain" json:"chain"`
-	Source              string             `db:"source" json:"source"`
-	Type                string             `db:"type" json:"type"`
-	Status              string             `db:"status" json:"status"`
-	Amount              string             `db:"amount" json:"amount"`
-	AmountRaw           string             `db:"amount_raw" json:"amount_raw"`
-	PriceUSD            string             `db:"price_usd" json:"price_usd"`
-	AmountUSD           string             `db:"amount_usd" json:"amount_usd"`
-	TokenTicker         string             `db:"token_ticker" json:"token_ticker"`
-	TokenAddress        string             `db:"token_address" json:"token_address"`
-	TokenName           string             `db:"token_name" json:"token_name"`
-	TokenLogo           string             `db:"token_logo" json:"token_logo"`
-	TokenDecimals       int                `db:"token_decimals" json:"token_decimals"`
-	CounterpartyAddress string             `db:"counterparty_address" json:"counterparty_address"`
-	TxHash              pgtype.Text        `db:"tx_hash" json:"tx_hash"`
-	ExternalID          string             `db:"external_id" json:"external_id"`
-	IdempotencyKey      string             `db:"idempotency_key" json:"idempotency_key"`
-	ProviderEventID     string             `db:"provider_event_id" json:"provider_event_id"`
-	FailureReason       string             `db:"failure_reason" json:"failure_reason"`
-	BlockNumber         int64              `db:"block_number" json:"block_number"`
-	BlockTimestamp      pgtype.Timestamptz `db:"block_timestamp" json:"block_timestamp"`
-	ConfirmationCount   int                `db:"confirmation_count" json:"confirmation_count"`
-	ConfirmationTarget  int                `db:"confirmation_target" json:"confirmation_target"`
-	ReorgCount          int                `db:"reorg_count" json:"reorg_count"`
-	LastSeenBlock       int64              `db:"last_seen_block" json:"last_seen_block"`
-	RemovedAt           pgtype.Timestamptz `db:"removed_at" json:"removed_at"`
-	CreatedAt           pgtype.Timestamptz `db:"created_at" json:"created_at"`
-	UpdatedAt           pgtype.Timestamptz `db:"updated_at" json:"updated_at"`
+	ID                                   int                `db:"id" json:"id"`
+	UserID                               *int               `db:"user_id" json:"user_id,omitempty"`
+	ProfileID                            *int               `db:"profile_id" json:"profile_id,omitempty"`
+	InvestmentID                         *int               `db:"investment_id" json:"investment_id"`
+	TokenID                              *int               `db:"token_id" json:"token_id"`
+	WalletAddress                        string             `db:"wallet_address" json:"wallet_address"`
+	Chain                                string             `db:"chain" json:"chain"`
+	Source                               OperationSourceT   `db:"source" json:"source"`
+	Type                                 OperationTypeT     `db:"type" json:"type"`
+	Status                               OperationStatusT   `db:"status" json:"status"`
+	Amount                               string             `db:"amount" json:"amount"`
+	AmountRaw                            string             `db:"amount_raw" json:"amount_raw"`
+	PriceUSD                             string             `db:"price_usd" json:"price_usd"`
+	AmountUSD                            string             `db:"amount_usd" json:"amount_usd"`
+	TokenTicker                          string             `db:"token_ticker" json:"token_ticker"`
+	TokenAddress                         string             `db:"token_address" json:"token_address"`
+	TokenName                            string             `db:"token_name" json:"token_name"`
+	TokenLogo                            string             `db:"token_logo" json:"token_logo"`
+	TokenDecimals                        int                `db:"token_decimals" json:"token_decimals"`
+	CounterpartyAddress                  string             `db:"counterparty_address" json:"counterparty_address"`
+	TxHash                               pgtype.Text        `db:"tx_hash" json:"tx_hash"`
+	ExternalID                           string             `db:"external_id" json:"external_id"`
+	IdempotencyKey                       string             `db:"idempotency_key" json:"idempotency_key"`
+	ProviderEventID                      string             `db:"provider_event_id" json:"provider_event_id"`
+	FailureReason                        string             `db:"failure_reason" json:"failure_reason"`
+	BlockNumber                          int64              `db:"block_number" json:"block_number"`
+	BlockTimestamp                       pgtype.Timestamptz `db:"block_timestamp" json:"block_timestamp"`
+	ConfirmationCount                    int                `db:"confirmation_count" json:"confirmation_count"`
+	ConfirmationTarget                   int                `db:"confirmation_target" json:"confirmation_target"`
+	ReorgCount                           int                `db:"reorg_count" json:"reorg_count"`
+	LastSeenBlock                        int64              `db:"last_seen_block" json:"last_seen_block"`
+	RemovedAt                            pgtype.Timestamptz `db:"removed_at" json:"removed_at"`
+	ProviderName                         string             `db:"provider_name" json:"provider_name"`
+	WalletSessionID                      *int               `db:"wallet_session_id" json:"-"`
+	TurnkeyActivityID                    string             `db:"turnkey_activity_id" json:"-"`
+	TurnkeyOrgID                         string             `db:"turnkey_org_id" json:"-"`
+	TurnkeySubOrgID                      string             `db:"turnkey_sub_org_id" json:"-"`
+	SubmissionStatus                     string             `db:"submission_status" json:"-"`
+	ExternalTxHash                       string             `db:"external_tx_hash" json:"external_tx_hash,omitempty"`
+	TurnkeyCredentialRole                string             `db:"turnkey_credential_role" json:"-"`
+	TurnkeyCredentialFingerprint         string             `db:"turnkey_credential_fingerprint" json:"-"`
+	TurnkeyCredentialVersion             int64              `db:"turnkey_credential_version" json:"-"`
+	TurnkeyRequestTimestampMS            int64              `db:"turnkey_request_timestamp_ms" json:"-"`
+	TurnkeyRequestBodyHash               string             `db:"turnkey_request_body_hash" json:"-"`
+	ReconciliationAttemptCount           int                `db:"reconciliation_attempt_count" json:"-"`
+	ReconciliationNextRetryAt            pgtype.Timestamptz `db:"reconciliation_next_retry_at" json:"-"`
+	ReconciliationLastErrorCode          string             `db:"reconciliation_last_error_code" json:"-"`
+	ComplianceStatus                     string             `db:"compliance_status" json:"-"`
+	ComplianceCheckedAt                  pgtype.Timestamptz `db:"compliance_checked_at" json:"-"`
+	ComplianceDecisionVersion            int                `db:"compliance_decision_version" json:"-"`
+	CompliancePolicySHA256               string             `db:"compliance_policy_sha256" json:"-"`
+	ExchangeRWAOperationID               *int               `db:"exchange_rwa_operation_id" json:"-"`
+	PreparedTxRaw                        string             `db:"prepared_tx_raw" json:"-"`
+	PreparedTxNonce                      *int64             `db:"prepared_tx_nonce" json:"-"`
+	TransactionPreparedAt                pgtype.Timestamptz `db:"transaction_prepared_at" json:"-"`
+	TransactionBroadcastAt               pgtype.Timestamptz `db:"transaction_broadcast_at" json:"-"`
+	TransactionBroadcastAttemptCount     int                `db:"transaction_broadcast_attempt_count" json:"-"`
+	TransactionBroadcastLastError        string             `db:"transaction_broadcast_last_error" json:"-"`
+	ExchangePayoutAttemptNumber          int                `db:"exchange_payout_attempt_number" json:"-"`
+	ExchangePayoutCompensationStatus     string             `db:"exchange_payout_compensation_status" json:"-"`
+	ExchangePayoutCompensationRequiredAt pgtype.Timestamptz `db:"exchange_payout_compensation_required_at" json:"-"`
+	ExchangeRedemptionApprovalReference  string             `db:"exchange_redemption_approval_reference" json:"-"`
+	ExchangeRedemptionApprovedAt         pgtype.Timestamptz `db:"exchange_redemption_approved_at" json:"-"`
+	CreatedAt                            pgtype.Timestamptz `db:"created_at" json:"created_at"`
+	UpdatedAt                            pgtype.Timestamptz `db:"updated_at" json:"updated_at"`
 
 	db db.Repository `db:"-" json:"-"`
 }
 
 func (model WalletOperation) Fields() []string {
-	return orm.DefaultFields(&model)
+	return []string{
+		"id", "user_id", "profile_id", "investment_id", "token_id", "wallet_address",
+		"chain", "source", "type", "status", "amount", "amount_raw", "price_usd",
+		"amount_usd", "token_ticker", "token_address", "token_name", "token_logo",
+		"token_decimals", "counterparty_address", "tx_hash", "external_id",
+		"idempotency_key", "provider_event_id", "failure_reason", "block_number",
+		"block_timestamp", "confirmation_count", "confirmation_target", "reorg_count",
+		"last_seen_block", "removed_at", "created_at", "updated_at",
+	}
 }
 
 func (model WalletOperation) Table() string {

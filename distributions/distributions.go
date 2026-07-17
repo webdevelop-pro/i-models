@@ -1,17 +1,16 @@
 package distributions
 
 import (
-	"github.com/webdevelop-pro/go-common/orm"
-	"github.com/webdevelop-pro/go-common/orm/pgtype"
+	"github.com/global-torque/go-common/orm/v2/pgtype"
 )
 
 // DistributionDistribution is an object representing the database table.
 type DistributionDistribution struct {
 	ID           int                `db:"id" json:"id" yaml:"id"`
-	UserID       int                `db:"user_id" json:"user_id,omitempty" yaml:"user_id,omitempty"`
-	ProfileID    int                `db:"profile_id" json:"profile_id,omitempty" yaml:"profile_id,omitempty"`
-	InvestmentID int                `db:"investment_id" json:"investment_id,omitempty" yaml:"investment_id,omitempty"`
-	ReportID     int                `db:"report_id" json:"report_id,omitempty" yaml:"report_id,omitempty"`
+	UserID       *int               `db:"user_id" json:"user_id,omitempty" yaml:"user_id,omitempty"`
+	ProfileID    *int               `db:"profile_id" json:"profile_id,omitempty" yaml:"profile_id,omitempty"`
+	InvestmentID *int               `db:"investment_id" json:"investment_id,omitempty" yaml:"investment_id,omitempty"`
+	ReportID     *int               `db:"report_id" json:"report_id,omitempty" yaml:"report_id,omitempty"`
 	Amount       float64            `db:"amount" json:"amount" yaml:"amount"`
 	Status       DistributionT      `db:"status" json:"status" yaml:"status"`
 	Data         any                `db:"data" json:"data" yaml:"data"`
@@ -37,7 +36,10 @@ func (model DistributionDistribution) ToJSON() map[string]any {
 }
 
 func (model DistributionDistribution) Fields() []string {
-	return orm.DefaultFields(&model)
+	return []string{
+		"id", "user_id", "profile_id", "investment_id", "report_id", "amount",
+		"status", "data", "submited_at", "created_at", "updated_at",
+	}
 }
 
 func (model DistributionDistribution) Table() string {
@@ -46,4 +48,8 @@ func (model DistributionDistribution) Table() string {
 
 func (model DistributionDistribution) GetID() any {
 	return model.ID
+}
+
+func (model *DistributionDistribution) SetID(id any) {
+	model.ID = id.(int)
 }

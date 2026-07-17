@@ -1,15 +1,14 @@
 package offers
 
 import (
-	"github.com/webdevelop-pro/go-common/orm"
-	"github.com/webdevelop-pro/go-common/orm/pgtype"
+	"github.com/global-torque/go-common/orm/v2/pgtype"
 )
 
 // OfferComment is an object representing the database table.
 type OfferComment struct {
 	ID         int                 `db:"id" json:"id" yaml:"id"`
-	UserID     int                 `db:"user_id" json:"user_id,omitempty" yaml:"user_id,omitempty"`
-	OfferID    int                 `db:"offer_id" json:"offer_id,omitempty" yaml:"offer_id,omitempty"`
+	UserID     *int                `db:"user_id" json:"user_id,omitempty" yaml:"user_id,omitempty"`
+	OfferID    *int                `db:"offer_id" json:"offer_id,omitempty" yaml:"offer_id,omitempty"`
 	Comment    string              `db:"comment" json:"comment" yaml:"comment"`
 	Related    NullCommentRelatedT `db:"related" json:"related,omitempty" yaml:"related,omitempty"`
 	Status     NullCommentStatusT  `db:"status" json:"status,omitempty" yaml:"status,omitempty"`
@@ -33,7 +32,10 @@ func (model OfferComment) ToJSON() map[string]any {
 }
 
 func (model OfferComment) Fields() []string {
-	return orm.DefaultFields(&model)
+	return []string{
+		"id", "user_id", "offer_id", "comment", "related", "status",
+		"approved_at", "created_at", "updated_at",
+	}
 }
 
 func (model OfferComment) Table() string {

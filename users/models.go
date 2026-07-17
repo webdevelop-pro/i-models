@@ -4,11 +4,10 @@ import (
 	"context"
 	"errors"
 
+	"github.com/global-torque/go-common/db/v2"
 	"github.com/jackc/pgx/v5"
-	"github.com/webdevelop-pro/go-common/db"
-	"github.com/webdevelop-pro/go-common/orm"
 
-	"github.com/webdevelop-pro/go-common/orm/pgtype"
+	"github.com/global-torque/go-common/orm/v2/pgtype"
 )
 
 const Table = "user_users"
@@ -22,28 +21,28 @@ type UserData struct {
 // UserUser is an object representing the database table.
 type UserUser struct {
 	ID          int                `db:"id" json:"id" yaml:"id"`
-	Password    string             `db:"-" json:"-" yaml:"-"`
+	Password    string             `db:"password" json:"-" yaml:"-"`
 	Email       string             `db:"email" json:"email" yaml:"email"`
 	FirstName   string             `db:"first_name" json:"first_name" yaml:"first_name"`
 	LastName    string             `db:"last_name" json:"last_name" yaml:"last_name"`
-	IsStaff     bool               `db:"-" json:"is_staff" yaml:"is_staff"`
-	IsSuperuser bool               `db:"-" json:"is_superuser" yaml:"is_superuser"`
-	IsActive    bool               `db:"-" json:"is_active" yaml:"is_active"`
+	IsStaff     bool               `db:"is_staff" json:"is_staff" yaml:"is_staff"`
+	IsSuperuser bool               `db:"is_superuser" json:"is_superuser" yaml:"is_superuser"`
+	IsActive    bool               `db:"is_active" json:"is_active" yaml:"is_active"`
 	IdentityID  string             `db:"identity_id" json:"identity_id" yaml:"identity_id"`
 	SiteID      *int               `db:"site_id" json:"site_id,omitempty" yaml:"site_id,omitempty"`
-	FacebookID  string             `db:"-" json:"facebook_id" yaml:"facebook_id"`
-	LinkedinID  string             `db:"-" json:"linkedin_id" yaml:"linkedin_id"`
-	GoogleID    string             `db:"-" json:"google_id" yaml:"google_id"`
+	FacebookID  string             `db:"facebook_id" json:"facebook_id" yaml:"facebook_id"`
+	LinkedinID  string             `db:"linkedin_id" json:"linkedin_id" yaml:"linkedin_id"`
+	GoogleID    string             `db:"google_id" json:"google_id" yaml:"google_id"`
 	Phone       string             `db:"phone" json:"phone" yaml:"phone"`
-	IPAddress   string             `db:"-" json:"ip_address" yaml:"ip_address"`
-	UserAgent   string             `db:"-" json:"user_agent" yaml:"user_agent"`
-	Timezone    string             `db:"-" json:"timezone" yaml:"timezone"`
-	Social      string             `db:"-" json:"social" yaml:"social"`
-	Data        UserData           `db:"-" json:"data" yaml:"data"`
-	LastLogin   pgtype.Timestamptz `db:"-" json:"last_login" yaml:"last_login"`
-	CreatedAt   pgtype.Timestamptz `db:"-" json:"created_at" yaml:"created_at"`
-	UpdatedAt   pgtype.Timestamptz `db:"-" json:"updated_at" yaml:"updated_at"`
-	ImageLinkID int                `db:"-" json:"image_link_id,omitempty" yaml:"image_link_id,omitempty"`
+	IPAddress   string             `db:"ip_address" json:"ip_address" yaml:"ip_address"`
+	UserAgent   string             `db:"user_agent" json:"user_agent" yaml:"user_agent"`
+	Timezone    string             `db:"timezone" json:"timezone" yaml:"timezone"`
+	Social      string             `db:"social" json:"social" yaml:"social"`
+	Data        UserData           `db:"data" json:"data" yaml:"data"`
+	LastLogin   pgtype.Timestamptz `db:"last_login" json:"last_login" yaml:"last_login"`
+	CreatedAt   pgtype.Timestamptz `db:"created_at" json:"created_at" yaml:"created_at"`
+	UpdatedAt   pgtype.Timestamptz `db:"updated_at" json:"updated_at" yaml:"updated_at"`
+	ImageLinkID *int               `db:"image_link_id" json:"image_link_id,omitempty" yaml:"image_link_id,omitempty"`
 
 	db db.Repository `db:"-" json:"-"`
 }
@@ -82,7 +81,7 @@ func (model UserUser) ToJSON() map[string]any {
 }
 
 func (user UserUser) Fields() []string {
-	return orm.DefaultFields(&user)
+	return []string{"id", "email", "first_name", "last_name", "identity_id", "site_id", "phone"}
 }
 
 func (model UserUser) Table() string {

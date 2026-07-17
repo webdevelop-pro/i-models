@@ -1,24 +1,28 @@
 package evmchainaccounts
 
 import (
-	"github.com/webdevelop-pro/go-common/db"
-	"github.com/webdevelop-pro/go-common/orm"
-	"github.com/webdevelop-pro/go-common/orm/pgtype"
+	"github.com/global-torque/go-common/db/v2"
+	"github.com/global-torque/go-common/orm/v2/pgtype"
 )
 
 // EvmChainAccount is an object representing the database table.
 type EvmChainAccount struct {
-	ID        int `db:"id" json:"id" yaml:"id"`
-	UserID    int `db:"user_id" json:"user_id" yaml:"user_id"`
-	WalletID  int `db:"wallet_id" json:"wallet_id" yaml:"wallet_id"`
-	ProfileID int `db:"profile_id" json:"profile_id" yaml:"profile_id"`
+	ID        int  `db:"id" json:"id" yaml:"id"`
+	UserID    *int `db:"user_id" json:"user_id,omitempty" yaml:"user_id,omitempty"`
+	WalletID  int  `db:"wallet_id" json:"wallet_id" yaml:"wallet_id"`
+	ProfileID *int `db:"profile_id" json:"profile_id,omitempty" yaml:"profile_id,omitempty"`
 
-	Chain         string `db:"chain" json:"chain" yaml:"chain"`
-	AccountMode   string `db:"account_mode" json:"account_mode" yaml:"account_mode"`
-	Address       string `db:"address" json:"address" yaml:"address"`
-	SignerAddress string `db:"signer_address" json:"signer_address" yaml:"signer_address"`
-	MonitoringID  string `db:"monitoring_id" json:"monitoring_id" yaml:"monitoring_id"`
-	Status        string `db:"status" json:"status" yaml:"status"`
+	Chain              ChainT       `db:"chain" json:"chain" yaml:"chain"`
+	AccountMode        AccountModeT `db:"account_mode" json:"account_mode" yaml:"account_mode"`
+	Address            string       `db:"address" json:"address" yaml:"address"`
+	SignerAddress      string       `db:"signer_address" json:"signer_address" yaml:"signer_address"`
+	AlchemyOwnerID     string       `db:"alchemy_owner_id" json:"-" yaml:"-"`
+	AlchemyAccountID   string       `db:"alchemy_account_id" json:"-" yaml:"-"`
+	MonitoringID       string       `db:"monitoring_id" json:"monitoring_id" yaml:"monitoring_id"`
+	Status             StatusT      `db:"status" json:"status" yaml:"status"`
+	ProviderName       string       `db:"provider_name" json:"provider_name" yaml:"provider_name"`
+	TurnkeyAccountID   string       `db:"turnkey_account_id" json:"-" yaml:"-"`
+	MonitoringProvider string       `db:"monitoring_provider" json:"-" yaml:"-"`
 
 	ActivatedAt pgtype.Timestamptz `db:"activated_at" json:"activated_at" yaml:"activated_at"`
 	CreatedAt   pgtype.Timestamptz `db:"created_at" json:"created_at" yaml:"created_at"`
@@ -110,7 +114,11 @@ func (model EvmChainAccount) ToJSON() map[string]any {
 }
 
 func (model EvmChainAccount) Fields() []string {
-	return orm.DefaultFields(&model)
+	return []string{
+		"id", "user_id", "wallet_id", "profile_id", "chain", "account_mode",
+		"address", "signer_address", "monitoring_id", "status", "activated_at",
+		"created_at", "updated_at",
+	}
 }
 
 func (model EvmChainAccount) Table() string {

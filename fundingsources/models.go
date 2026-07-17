@@ -1,16 +1,16 @@
 package fundingsources
 
 import (
-	"github.com/webdevelop-pro/go-common/orm/pgtype"
+	"github.com/global-torque/go-common/orm/v2/pgtype"
 	"github.com/webdevelop-pro/i-models/wallets"
 
-	"github.com/webdevelop-pro/go-common/db"
+	"github.com/global-torque/go-common/db/v2"
 )
 
 // WalletFundingSource is an object representing the database table.
 type WalletFundingSource struct {
 	ID        int                   `db:"id" json:"id" yaml:"id"`
-	WalletID  int                   `db:"wallet_id" json:"wallet_id,omitempty" yaml:"wallet_id,omitempty"`
+	WalletID  *int                  `db:"wallet_id" json:"wallet_id,omitempty" yaml:"wallet_id,omitempty"`
 	EntityID  string                `db:"entity_id" json:"entity_id" yaml:"entity_id"`
 	Type      FoundingSourceT       `db:"type" json:"type" yaml:"type"`
 	BankName  string                `db:"bank_name" json:"bank_name" yaml:"bank_name"`

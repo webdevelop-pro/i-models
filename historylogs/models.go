@@ -3,8 +3,7 @@ package historylogs
 import (
 	"time"
 
-	"github.com/webdevelop-pro/go-common/db"
-	"github.com/webdevelop-pro/go-common/orm"
+	"github.com/global-torque/go-common/db/v2"
 )
 
 const Table = "django_admin_log"
@@ -13,8 +12,8 @@ const pkgName = "models/historylogs"
 // LogLog is an object representing the database table.
 type HistoryLog struct {
 	ID            int       `db:"id" json:"id" yaml:"id"`
-	ContentTypeID int       `db:"content_type_id" json:"content_type_id" yaml:"content_type_id"`
-	ObjectID      string    `db:"object_id" json:"object_id" yaml:"object_id"`
+	ContentTypeID *int      `db:"content_type_id" json:"content_type_id,omitempty" yaml:"content_type_id,omitempty"`
+	ObjectID      *string   `db:"object_id" json:"object_id,omitempty" yaml:"object_id,omitempty"`
 	ActionFlag    int       `db:"action_flag" json:"action_flag" yaml:"action_flag"`
 	ObjectRepr    string    `db:"object_repr" json:"object_repr" yaml:"object_repr"`
 	ChangeMessage string    `db:"change_message" json:"change_message" yaml:"change_message"`
@@ -39,7 +38,10 @@ func (model HistoryLog) ToMap() map[string]any {
 }
 
 func (model HistoryLog) Fields() []string {
-	return orm.DefaultFields(&model)
+	return []string{
+		"id", "content_type_id", "object_id", "action_flag", "object_repr",
+		"change_message", "user_id", "action_time",
+	}
 }
 
 func (model HistoryLog) Table() string {

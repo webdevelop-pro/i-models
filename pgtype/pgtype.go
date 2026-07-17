@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"time"
 
+	commonpgtype "github.com/global-torque/go-common/orm/v2/pgtype"
 	pgxpgtype "github.com/jackc/pgx/v5/pgtype"
-	commonpgtype "github.com/webdevelop-pro/go-common/orm/pgtype"
 )
 
 type Status = commonpgtype.Status

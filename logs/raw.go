@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/webdevelop-pro/go-common/db"
+	"github.com/global-torque/go-common/db/v2"
 )
 
 // RawEntry is a normalized third-party request/response log entry.
