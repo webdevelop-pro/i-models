@@ -5,15 +5,15 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/webdevelop-pro/go-common/orm/pgtype"
+	"github.com/global-torque/go-common/orm/v2/pgtype"
 	"gopkg.in/yaml.v3"
 )
 
 func TestWalletToJSONUsesDatabaseKeysAndExcludesPrivateKey(t *testing.T) {
 	model := Wallet{
 		ID:         7,
-		UserID:     8,
-		PublicKey:  "public",
+		UserID:     ptr(8),
+		PublicKey:  ptr("public"),
 		PrivateKey: "secret",
 		Balance:    10.5,
 		Status:     WalletStatusTVerified,
@@ -23,7 +23,7 @@ func TestWalletToJSONUsesDatabaseKeysAndExcludesPrivateKey(t *testing.T) {
 	if got["id"] != 7 {
 		t.Fatalf("unexpected id: %#v", got["id"])
 	}
-	if got["public_key"] != "public" {
+	if got["public_key"] != model.PublicKey {
 		t.Fatalf("unexpected public_key: %#v", got["public_key"])
 	}
 	if _, ok := got["private_key"]; ok {
@@ -37,7 +37,7 @@ func TestWalletToJSONUsesDatabaseKeysAndExcludesPrivateKey(t *testing.T) {
 func TestWalletSerializationExcludesPrivateKey(t *testing.T) {
 	nullTime := pgtype.Timestamptz{Status: pgtype.Null}
 	model := Wallet{
-		PublicKey:  "public",
+		PublicKey:  ptr("public"),
 		PrivateKey: "secret",
 		CreatedAt:  nullTime,
 		UpdatedAt:  nullTime,
@@ -59,3 +59,5 @@ func TestWalletSerializationExcludesPrivateKey(t *testing.T) {
 		t.Fatalf("yaml payload includes private key: %s", yamlPayload)
 	}
 }
+
+func ptr[T any](value T) *T { return &value }

@@ -193,6 +193,7 @@ const (
 	OfferSecurityTypeTEquityWarrants   OfferSecurityTypeT = "equity-warrants"
 	OfferSecurityTypeTConvertibleBonds OfferSecurityTypeT = "convertible-bonds"
 	OfferSecurityTypeTPreferenceShares OfferSecurityTypeT = "preference-shares"
+	OfferSecurityTypeTConvertibleNote  OfferSecurityTypeT = "convertible-note"
 )
 
 func AllOfferSecurityTypeT() []OfferSecurityTypeT {
@@ -204,12 +205,13 @@ func AllOfferSecurityTypeT() []OfferSecurityTypeT {
 		OfferSecurityTypeTEquityWarrants,
 		OfferSecurityTypeTConvertibleBonds,
 		OfferSecurityTypeTPreferenceShares,
+		OfferSecurityTypeTConvertibleNote,
 	}
 }
 
 func (e OfferSecurityTypeT) IsValid() error {
 	switch e {
-	case OfferSecurityTypeTEquity, OfferSecurityTypeTPreferredEquity, OfferSecurityTypeTDebt, OfferSecurityTypeTConvertibleDebt, OfferSecurityTypeTEquityWarrants, OfferSecurityTypeTConvertibleBonds, OfferSecurityTypeTPreferenceShares:
+	case OfferSecurityTypeTEquity, OfferSecurityTypeTPreferredEquity, OfferSecurityTypeTDebt, OfferSecurityTypeTConvertibleDebt, OfferSecurityTypeTEquityWarrants, OfferSecurityTypeTConvertibleBonds, OfferSecurityTypeTPreferenceShares, OfferSecurityTypeTConvertibleNote:
 		return nil
 	default:
 		return errors.New("enum is not valid")
@@ -235,6 +237,202 @@ func (e *OfferSecurityTypeT) Scan(value any) error {
 	return nil
 }
 
+type OfferRegTypeT string
+type TokenizationEngineT string
+type TokenizationModelT string
+
+const (
+	TokenizationEngineNone    TokenizationEngineT = "none_not_tokenized"
+	TokenizationEngineERC20   TokenizationEngineT = "ERC-20"
+	TokenizationEngineERC721  TokenizationEngineT = "ERC-721"
+	TokenizationEngineERC3643 TokenizationEngineT = "ERC-3643"
+	TokenizationEngineERC7943 TokenizationEngineT = "ERC-7943"
+)
+
+const (
+	TokenizationModelNone                           TokenizationModelT = "none_not_tokenized"
+	TokenizationModelIssuerSponsoredOnchainRegister TokenizationModelT = "issuer_sponsored_onchain_register"
+	TokenizationModelIssuerAuthorizedOffchain       TokenizationModelT = "issuer_authorized_offchain_register_transfer_instruction"
+	TokenizationModelThirdPartyCustodialEntitlement TokenizationModelT = "third_party_custodial_entitlement"
+	TokenizationModelThirdPartyLinkedSecurity       TokenizationModelT = "third_party_linked_security"
+	TokenizationModelThirdPartySyntheticSwap        TokenizationModelT = "third_party_synthetic_security_based_swap"
+	TokenizationModelPlatformEntitlementOrReceipt   TokenizationModelT = "platform_entitlement_or_receipt"
+	TokenizationModelUnknown                        TokenizationModelT = "unknown"
+)
+
+func AllTokenizationEngineT() []TokenizationEngineT {
+	return []TokenizationEngineT{
+		TokenizationEngineNone,
+		TokenizationEngineERC20,
+		TokenizationEngineERC721,
+		TokenizationEngineERC3643,
+		TokenizationEngineERC7943,
+	}
+}
+
+func AllTokenizationModelT() []TokenizationModelT {
+	return []TokenizationModelT{
+		TokenizationModelNone,
+		TokenizationModelIssuerSponsoredOnchainRegister,
+		TokenizationModelIssuerAuthorizedOffchain,
+		TokenizationModelThirdPartyCustodialEntitlement,
+		TokenizationModelThirdPartyLinkedSecurity,
+		TokenizationModelThirdPartySyntheticSwap,
+		TokenizationModelPlatformEntitlementOrReceipt,
+		TokenizationModelUnknown,
+	}
+}
+
+const (
+	OfferRegTypeTUSRegAPlus              OfferRegTypeT = "US_REG_A_PLUS"
+	OfferRegTypeTUSRegD506B              OfferRegTypeT = "US_REG_D_506B"
+	OfferRegTypeTUSRegD506C              OfferRegTypeT = "US_REG_D_506C"
+	OfferRegTypeTUSRegCF                 OfferRegTypeT = "US_REG_CF"
+	OfferRegTypeTEUECSPCrowdfunding      OfferRegTypeT = "EU_ECSP_CROWDFUNDING"
+	OfferRegTypeTEUMiCAOtherCryptoAsset  OfferRegTypeT = "EU_MICA_OTHER_CRYPTO_ASSET"
+	OfferRegTypeTLUProspectusExempt      OfferRegTypeT = "LU_PROSPECTUS_EXEMPT"
+	OfferRegTypeTDEEWPGCryptoSecurity    OfferRegTypeT = "DE_EWPG_CRYPTO_SECURITY"
+	OfferRegTypeTCHFinSAPrivatePlacement OfferRegTypeT = "CH_FINSA_PRIVATE_PLACEMENT"
+	OfferRegTypeTKYPrivateFund           OfferRegTypeT = "KY_PRIVATE_FUND"
+	OfferRegTypeTKYVASPTokenIssuance     OfferRegTypeT = "KY_VASP_TOKEN_ISSUANCE"
+	OfferRegTypeTKYTokenisedMutualFund   OfferRegTypeT = "KY_TOKENISED_MUTUAL_FUND"
+	OfferRegTypeTKYSIBASecurityToken     OfferRegTypeT = "KY_SIBA_SECURITY_TOKEN"
+)
+
+func AllOfferRegTypeT() []OfferRegTypeT {
+	return []OfferRegTypeT{
+		OfferRegTypeTUSRegAPlus,
+		OfferRegTypeTUSRegD506B,
+		OfferRegTypeTUSRegD506C,
+		OfferRegTypeTUSRegCF,
+		OfferRegTypeTEUECSPCrowdfunding,
+		OfferRegTypeTEUMiCAOtherCryptoAsset,
+		OfferRegTypeTLUProspectusExempt,
+		OfferRegTypeTDEEWPGCryptoSecurity,
+		OfferRegTypeTCHFinSAPrivatePlacement,
+		OfferRegTypeTKYPrivateFund,
+		OfferRegTypeTKYVASPTokenIssuance,
+		OfferRegTypeTKYTokenisedMutualFund,
+		OfferRegTypeTKYSIBASecurityToken,
+	}
+}
+
+func (e OfferRegTypeT) IsValid() error {
+	switch e {
+	case OfferRegTypeTUSRegAPlus, OfferRegTypeTUSRegD506B, OfferRegTypeTUSRegD506C, OfferRegTypeTUSRegCF, OfferRegTypeTEUECSPCrowdfunding, OfferRegTypeTEUMiCAOtherCryptoAsset, OfferRegTypeTLUProspectusExempt, OfferRegTypeTDEEWPGCryptoSecurity, OfferRegTypeTCHFinSAPrivatePlacement, OfferRegTypeTKYPrivateFund, OfferRegTypeTKYVASPTokenIssuance, OfferRegTypeTKYTokenisedMutualFund, OfferRegTypeTKYSIBASecurityToken:
+		return nil
+	default:
+		return errors.New("enum is not valid")
+	}
+}
+
+type OfferJurisdictionT string
+
+const (
+	OfferJurisdictionTUS OfferJurisdictionT = "US"
+	OfferJurisdictionTEU OfferJurisdictionT = "EU"
+	OfferJurisdictionTLU OfferJurisdictionT = "LU"
+	OfferJurisdictionTDE OfferJurisdictionT = "DE"
+	OfferJurisdictionTCH OfferJurisdictionT = "CH"
+	OfferJurisdictionTKY OfferJurisdictionT = "KY"
+)
+
+func AllOfferJurisdictionT() []OfferJurisdictionT {
+	return []OfferJurisdictionT{
+		OfferJurisdictionTUS,
+		OfferJurisdictionTEU,
+		OfferJurisdictionTLU,
+		OfferJurisdictionTDE,
+		OfferJurisdictionTCH,
+		OfferJurisdictionTKY,
+	}
+}
+
+func (e OfferJurisdictionT) IsValid() error {
+	switch e {
+	case OfferJurisdictionTUS, OfferJurisdictionTEU, OfferJurisdictionTLU, OfferJurisdictionTDE, OfferJurisdictionTCH, OfferJurisdictionTKY:
+		return nil
+	default:
+		return errors.New("enum is not valid")
+	}
+}
+
+type InstrumentClassificationT string
+
+const (
+	InstrumentClassificationTEquity             InstrumentClassificationT = "equity"
+	InstrumentClassificationTDebt               InstrumentClassificationT = "debt"
+	InstrumentClassificationTConvertibleNote    InstrumentClassificationT = "convertible_note"
+	InstrumentClassificationTFundInterest       InstrumentClassificationT = "fund_interest"
+	InstrumentClassificationTSecuritisationNote InstrumentClassificationT = "securitisation_note"
+	InstrumentClassificationTAssetToken         InstrumentClassificationT = "asset_token"
+	InstrumentClassificationTPaymentToken       InstrumentClassificationT = "payment_token"
+	InstrumentClassificationTUtilityToken       InstrumentClassificationT = "utility_token"
+	InstrumentClassificationTEMoneyToken        InstrumentClassificationT = "e_money_token"
+	InstrumentClassificationTOtherCryptoAsset   InstrumentClassificationT = "other_crypto_asset"
+	InstrumentClassificationTCryptoSecurity     InstrumentClassificationT = "crypto_security"
+	InstrumentClassificationTDerivative         InstrumentClassificationT = "derivative"
+)
+
+func AllInstrumentClassificationT() []InstrumentClassificationT {
+	return []InstrumentClassificationT{
+		InstrumentClassificationTEquity,
+		InstrumentClassificationTDebt,
+		InstrumentClassificationTConvertibleNote,
+		InstrumentClassificationTFundInterest,
+		InstrumentClassificationTSecuritisationNote,
+		InstrumentClassificationTAssetToken,
+		InstrumentClassificationTPaymentToken,
+		InstrumentClassificationTUtilityToken,
+		InstrumentClassificationTEMoneyToken,
+		InstrumentClassificationTOtherCryptoAsset,
+		InstrumentClassificationTCryptoSecurity,
+		InstrumentClassificationTDerivative,
+	}
+}
+
+func (e InstrumentClassificationT) IsValid() error {
+	switch e {
+	case InstrumentClassificationTEquity, InstrumentClassificationTDebt, InstrumentClassificationTConvertibleNote, InstrumentClassificationTFundInterest, InstrumentClassificationTSecuritisationNote, InstrumentClassificationTAssetToken, InstrumentClassificationTPaymentToken, InstrumentClassificationTUtilityToken, InstrumentClassificationTEMoneyToken, InstrumentClassificationTOtherCryptoAsset, InstrumentClassificationTCryptoSecurity, InstrumentClassificationTDerivative:
+		return nil
+	default:
+		return errors.New("enum is not valid")
+	}
+}
+
+type OfferingModeT string
+
+const (
+	OfferingModeTPublicOffer            OfferingModeT = "public_offer"
+	OfferingModeTPrivatePlacement       OfferingModeT = "private_placement"
+	OfferingModeTProfessionalOnly       OfferingModeT = "professional_only"
+	OfferingModeTQualifiedInvestorsOnly OfferingModeT = "qualified_investors_only"
+	OfferingModeTCrowdfunding           OfferingModeT = "crowdfunding"
+	OfferingModeTOffshore               OfferingModeT = "offshore"
+	OfferingModeTRegistered             OfferingModeT = "registered"
+)
+
+func AllOfferingModeT() []OfferingModeT {
+	return []OfferingModeT{
+		OfferingModeTPublicOffer,
+		OfferingModeTPrivatePlacement,
+		OfferingModeTProfessionalOnly,
+		OfferingModeTQualifiedInvestorsOnly,
+		OfferingModeTCrowdfunding,
+		OfferingModeTOffshore,
+		OfferingModeTRegistered,
+	}
+}
+
+func (e OfferingModeT) IsValid() error {
+	switch e {
+	case OfferingModeTPublicOffer, OfferingModeTPrivatePlacement, OfferingModeTProfessionalOnly, OfferingModeTQualifiedInvestorsOnly, OfferingModeTCrowdfunding, OfferingModeTOffshore, OfferingModeTRegistered:
+		return nil
+	default:
+		return errors.New("enum is not valid")
+	}
+}
+
 type CommentRelatedT string
 
 // Enum values for CommentRelatedT
@@ -243,6 +441,7 @@ const (
 	CommentRelatedTEmployee   CommentRelatedT = "employee"
 	CommentRelatedTAffiliated CommentRelatedT = "affiliated"
 	CommentRelatedTInvestor   CommentRelatedT = "investor"
+	CommentRelatedTNone       CommentRelatedT = "none"
 )
 
 func AllCommentRelatedT() []CommentRelatedT {
@@ -251,12 +450,13 @@ func AllCommentRelatedT() []CommentRelatedT {
 		CommentRelatedTEmployee,
 		CommentRelatedTAffiliated,
 		CommentRelatedTInvestor,
+		CommentRelatedTNone,
 	}
 }
 
 func (e CommentRelatedT) IsValid() error {
 	switch e {
-	case CommentRelatedTAdviser, CommentRelatedTEmployee, CommentRelatedTAffiliated, CommentRelatedTInvestor:
+	case CommentRelatedTAdviser, CommentRelatedTEmployee, CommentRelatedTAffiliated, CommentRelatedTInvestor, CommentRelatedTNone:
 		return nil
 	default:
 		return errors.New("enum is not valid")

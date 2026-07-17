@@ -6,7 +6,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/webdevelop-pro/go-common/db"
+	"github.com/global-torque/go-common/db/v2"
+	"github.com/global-torque/go-common/orm/v2"
 )
 
 const kycTimestampLayout = "2006-01-02 15:04:05-07:00"
@@ -77,8 +78,12 @@ func MergeDataByID(ctx context.Context, repo db.Repository, profileID int, data 
 	const sql = `UPDATE investment_profiles
 		SET data=COALESCE(data, '{}'::jsonb) || $1::jsonb
 		WHERE id=$2`
-	if _, err := repo.Exec(ctx, sql, string(dataJSON), profileID); err != nil {
+	result, err := repo.Exec(ctx, sql, string(dataJSON), profileID)
+	if err != nil {
 		return fmt.Errorf("merge data for profile %d: %w", profileID, err)
+	}
+	if result.RowsAffected() != 1 {
+		return fmt.Errorf("merge data for profile %d: %w", profileID, orm.ErrNoRowsAffected)
 	}
 	return nil
 }

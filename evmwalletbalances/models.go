@@ -1,9 +1,8 @@
 package evmwalletbalances
 
 import (
-	"github.com/webdevelop-pro/go-common/db"
-	"github.com/webdevelop-pro/go-common/orm"
-	"github.com/webdevelop-pro/go-common/orm/pgtype"
+	"github.com/global-torque/go-common/db/v2"
+	"github.com/global-torque/go-common/orm/v2/pgtype"
 )
 
 // WalletBalance is the read-path cache for a managed wallet's token
@@ -20,7 +19,7 @@ type WalletBalance struct {
 }
 
 func (model WalletBalance) Fields() []string {
-	return orm.DefaultFields(&model)
+	return []string{"id", "wallet_address", "chain", "token_address", "balance", "updated_at"}
 }
 
 func (model WalletBalance) Table() string {

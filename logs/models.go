@@ -9,11 +9,10 @@ import (
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
+	"github.com/global-torque/go-common/db/v2"
+	"github.com/global-torque/go-common/orm/v2/pgtype"
 	"github.com/webdevelop-pro/go-common/context/keys"
-	"github.com/webdevelop-pro/go-common/db"
 	"github.com/webdevelop-pro/go-common/logger"
-	"github.com/webdevelop-pro/go-common/orm"
-	"github.com/webdevelop-pro/go-common/orm/pgtype"
 )
 
 type ContextKey rune
@@ -261,7 +260,12 @@ func (model LogLog) ToJSON() map[string]any {
 }
 
 func (model LogLog) Fields() []string {
-	return orm.DefaultFields(&model)
+	return []string{
+		"id", "content_type_id", "msg_id", "object_id", "status_code", "path",
+		"request_headers", "request_data", "response_headers", "response_data",
+		"service", "type", "request_id", "meta_data", "request_created_at",
+		"created_at", "updated_at",
+	}
 }
 
 func (model LogLog) Table() string {

@@ -10,9 +10,9 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/global-torque/go-common/db/v2"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
-	"github.com/webdevelop-pro/go-common/db"
 )
 
 // ErrInProgress tells push handlers to NACK a concurrent delivery. ACKing it

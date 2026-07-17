@@ -10,8 +10,10 @@ const (
 	FolderInvestorUpdates      FolderName = "investor_updates"
 	FolderOther                FolderName = "other"
 
-	TypeFile   Type = "file"
-	TypeFolder Type = "folder"
+	TypeFile          Type = "file"
+	TypeFolder        Type = "folder"
+	TypeLink          Type = "link"
+	TypeFileThumbnail Type = "file_thumbnail"
 
 	AppLabel  = "filer_ltree"
 	ModelName = "filerltree"
@@ -19,3 +21,7 @@ const (
 
 	pkgName = "models/filerltree"
 )
+
+func AllType() []Type {
+	return []Type{TypeFile, TypeFolder, TypeLink, TypeFileThumbnail}
+}

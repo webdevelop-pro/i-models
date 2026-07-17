@@ -1,21 +1,22 @@
 package notifications
 
 import (
-	"github.com/webdevelop-pro/go-common/orm/pgtype"
-
-	"github.com/webdevelop-pro/go-common/db"
+	"github.com/global-torque/go-common/db/v2"
+	"github.com/global-torque/go-common/orm/v2/pgtype"
+	"github.com/google/uuid"
 )
 
 // Notification is an object representing the database table.
 type Notification struct {
-	ID        int                 `json:"id" yaml:"id"`
-	UserID    int                 `json:"user_id,omitempty" yaml:"user_id,omitempty"`
-	Content   string              `json:"content" yaml:"content"`
-	Status    NotificationStatusT `json:"status" yaml:"status"`
-	Type      NotificationTypeT   `json:"type" yaml:"type"`
-	Data      any                 `json:"data" yaml:"data"`
-	CreatedAt pgtype.Timestamptz  `json:"created_at" yaml:"created_at"`
-	UpdatedAt pgtype.Timestamptz  `json:"updated_at" yaml:"updated_at"`
+	ID            int                 `db:"id" json:"id" yaml:"id"`
+	UserID        *int                `db:"user_id" json:"user_id,omitempty" yaml:"user_id,omitempty"`
+	Content       string              `db:"content" json:"content" yaml:"content"`
+	Status        NotificationStatusT `db:"status" json:"status" yaml:"status"`
+	Type          NotificationTypeT   `db:"type" json:"type" yaml:"type"`
+	Data          any                 `db:"data" json:"data" yaml:"data"`
+	CreatedAt     pgtype.Timestamptz  `db:"created_at" json:"created_at" yaml:"created_at"`
+	UpdatedAt     pgtype.Timestamptz  `db:"updated_at" json:"updated_at" yaml:"updated_at"`
+	DomainEventID *uuid.UUID          `db:"domain_event_id" json:"domain_event_id,omitempty" yaml:"domain_event_id,omitempty"`
 
 	db db.Repository `db:"-" json:"-"`
 }
@@ -28,14 +29,15 @@ func New(db db.Repository) *Notification {
 
 func (model Notification) ToJSON() map[string]any {
 	return map[string]any{
-		"id":         model.ID,
-		"user_id":    model.UserID,
-		"content":    model.Content,
-		"status":     model.Status,
-		"type":       model.Type,
-		"data":       model.Data,
-		"created_at": model.CreatedAt,
-		"updated_at": model.UpdatedAt,
+		"id":              model.ID,
+		"user_id":         model.UserID,
+		"content":         model.Content,
+		"status":          model.Status,
+		"type":            model.Type,
+		"data":            model.Data,
+		"created_at":      model.CreatedAt,
+		"updated_at":      model.UpdatedAt,
+		"domain_event_id": model.DomainEventID,
 	}
 }
 

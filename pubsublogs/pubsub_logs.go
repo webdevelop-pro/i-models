@@ -4,9 +4,9 @@ import (
 	"context"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/webdevelop-pro/go-common/db"
-	"github.com/webdevelop-pro/go-common/orm"
-	"github.com/webdevelop-pro/go-common/orm/pgtype"
+	"github.com/global-torque/go-common/db/v2"
+	"github.com/global-torque/go-common/orm/v2"
+	"github.com/global-torque/go-common/orm/v2/pgtype"
 )
 
 // PubsubLog is an object representing the database table.
@@ -14,9 +14,10 @@ type PubsubLog struct {
 	ID        int                `db:"id" json:"id" yaml:"id"`
 	Topic     string             `db:"topic" json:"topic" yaml:"topic"`
 	MSG       any                `db:"msg" json:"msg" yaml:"msg"`
+	Headers   any                `db:"headers" json:"headers,omitempty" yaml:"headers,omitempty"`
 	Attr      any                `db:"attr" json:"attr,omitempty" yaml:"attr,omitempty"`
 	MSGID     *string            `db:"msg_id" json:"msg_id,omitempty" yaml:"msg_id,omitempty"`
-	Executed  int                `db:"executed" json:"executed,omitempty" yaml:"executed,omitempty"`
+	Executed  *int               `db:"executed" json:"executed,omitempty" yaml:"executed,omitempty"`
 	CreatedAt pgtype.Timestamptz `db:"created_at" json:"created_at" yaml:"created_at"`
 	UpdatedAt pgtype.Timestamptz `db:"updated_at" json:"updated_at" yaml:"updated_at"`
 	db        db.Repository      `db:"-" json:"-"`
@@ -36,7 +37,9 @@ func (model PubsubLog) ToJSON() map[string]any {
 }
 
 func (model PubsubLog) Fields() []string {
-	return orm.DefaultFields(&model)
+	return []string{
+		"id", "topic", "msg", "attr", "msg_id", "executed", "created_at", "updated_at",
+	}
 }
 
 func (model PubsubLog) Table() string {

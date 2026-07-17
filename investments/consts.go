@@ -11,6 +11,8 @@ const (
 	PaymentTNorthCapital PaymentT = "north_capital"
 	PaymentTPrimeTrust   PaymentT = "prime_trust"
 	PaymentTApexGroup    PaymentT = "apex_group"
+	PaymentTEVM          PaymentT = "evm"
+	PaymentTSolana       PaymentT = "solana"
 
 	AppLabel  = "investment"
 	ModelName = "investment"
@@ -23,12 +25,14 @@ func AllPaymentT() []PaymentT {
 		PaymentTNorthCapital,
 		PaymentTPrimeTrust,
 		PaymentTApexGroup,
+		PaymentTEVM,
+		PaymentTSolana,
 	}
 }
 
 func (e PaymentT) IsValid() error {
 	switch e {
-	case PaymentTNone, PaymentTDwolla, PaymentTNorthCapital, PaymentTPrimeTrust, PaymentTApexGroup:
+	case PaymentTNone, PaymentTDwolla, PaymentTNorthCapital, PaymentTPrimeTrust, PaymentTApexGroup, PaymentTEVM, PaymentTSolana:
 		return nil
 	default:
 		return errors.New("enum is not valid")

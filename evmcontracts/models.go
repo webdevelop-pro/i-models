@@ -3,25 +3,29 @@ package evmcontracts
 import (
 	"context"
 
+	"github.com/global-torque/go-common/db/v2"
+	"github.com/global-torque/go-common/orm/v2"
+	"github.com/global-torque/go-common/orm/v2/pgtype"
 	"github.com/pkg/errors"
-	"github.com/webdevelop-pro/go-common/db"
 	"github.com/webdevelop-pro/go-common/logger"
-	"github.com/webdevelop-pro/go-common/orm"
-	"github.com/webdevelop-pro/go-common/orm/pgtype"
 	"github.com/webdevelop-pro/go-common/queue/pclient"
 )
 
 // Wallet is an object representing the database table.
 type Contract struct {
-	ID      int `db:"id" json:"id" yaml:"id"`
-	UserID  int `db:"user_id" json:"user_id" yaml:"user_id"`
-	OfferID int `db:"offer_id" json:"offer_id" yaml:"offer_id"`
+	ID      int  `db:"id" json:"id" yaml:"id"`
+	UserID  *int `db:"user_id" json:"user_id,omitempty" yaml:"user_id,omitempty"`
+	OfferID *int `db:"offer_id" json:"offer_id,omitempty" yaml:"offer_id,omitempty"`
 
-	Name          string `db:"name" json:"name" yaml:"name"`
-	Status        string `db:"status" json:"status" yaml:"status"`
-	Symbol        string `db:"symbol" json:"symbol" yaml:"symbol"`
-	Address       string `db:"address" json:"address" yaml:"address"`
-	TransactionTX string `db:"transaction_tx" json:"transaction_tx" yaml:"transaction_tx"`
+	Name                        string             `db:"name" json:"name" yaml:"name"`
+	Status                      *string            `db:"status" json:"status,omitempty" yaml:"status,omitempty"`
+	Symbol                      string             `db:"symbol" json:"symbol" yaml:"symbol"`
+	Address                     string             `db:"address" json:"address" yaml:"address"`
+	TransactionTX               string             `db:"transaction_tx" json:"transaction_tx" yaml:"transaction_tx"`
+	RedemptionEnabled           bool               `db:"redemption_enabled" json:"redemption_enabled" yaml:"redemption_enabled"`
+	RedemptionChain             string             `db:"redemption_chain" json:"redemption_chain" yaml:"redemption_chain"`
+	RedemptionApprovedAt        pgtype.Timestamptz `db:"redemption_approved_at" json:"redemption_approved_at,omitempty" yaml:"redemption_approved_at,omitempty"`
+	RedemptionApprovalReference string             `db:"redemption_approval_reference" json:"redemption_approval_reference,omitempty" yaml:"redemption_approval_reference,omitempty"`
 
 	CreatedAt pgtype.Timestamptz `db:"created_at" json:"created_at" yaml:"created_at"`
 	UpdatedAt pgtype.Timestamptz `db:"updated_at" json:"updated_at" yaml:"updated_at"`
@@ -94,7 +98,10 @@ func (model Contract) ToJSON() map[string]any {
 }
 
 func (model Contract) Fields() []string {
-	return orm.DefaultFields(&model)
+	return []string{
+		"id", "user_id", "offer_id", "name", "status", "symbol", "address",
+		"transaction_tx", "created_at", "updated_at",
+	}
 }
 
 func (model Contract) Table() string {

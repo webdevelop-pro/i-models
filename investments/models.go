@@ -1,16 +1,15 @@
 package investments
 
 import (
-	"github.com/webdevelop-pro/go-common/orm"
-	"github.com/webdevelop-pro/go-common/orm/pgtype"
+	"github.com/global-torque/go-common/orm/v2/pgtype"
 )
 
 // InvestmentInvestment is an object representing the database table.
 type InvestmentInvestment struct {
 	ID                int                `db:"id" json:"id" yaml:"id"`
-	UserID            int                `db:"user_id" json:"user_id,omitempty" yaml:"user_id,omitempty"`
-	OfferID           int                `db:"offer_id" json:"offer_id,omitempty" yaml:"offer_id,omitempty"`
-	ProfileID         int                `db:"profile_id" json:"profile_id,omitempty" yaml:"profile_id,omitempty"`
+	UserID            *int               `db:"user_id" json:"user_id,omitempty" yaml:"user_id,omitempty"`
+	OfferID           *int               `db:"offer_id" json:"offer_id,omitempty" yaml:"offer_id,omitempty"`
+	ProfileID         *int               `db:"profile_id" json:"profile_id,omitempty" yaml:"profile_id,omitempty"`
 	SiteID            *int               `db:"site_id" json:"site_id,omitempty" yaml:"site_id,omitempty"`
 	Amount            float64            `db:"amount" json:"amount" yaml:"amount"`
 	PricePerShare     float64            `db:"price_per_share" json:"price_per_share" yaml:"price_per_share"`
@@ -74,7 +73,14 @@ func (model InvestmentInvestment) ToJSON() map[string]any {
 }
 
 func (model InvestmentInvestment) Fields() []string {
-	return orm.DefaultFields(&model)
+	return []string{
+		"id", "user_id", "offer_id", "profile_id", "site_id", "amount",
+		"price_per_share", "number_of_shares", "payment_type", "escrow_type",
+		"funding_type", "funding_status", "status", "prev_status", "step",
+		"commission", "cancelation_reason", "entity_id", "transaction_ref",
+		"escrow_data", "signature_data", "payment_data", "canceled_at",
+		"submited_at", "closed_at", "created_at", "updated_at",
+	}
 }
 
 func (model InvestmentInvestment) Table() string {
@@ -92,7 +98,7 @@ func (model *InvestmentInvestment) SetID(id any) {
 // InvestmentProfile is an object representing the database table.
 type InvestmentProfile struct {
 	ID                  int                `db:"id" json:"id" yaml:"id"`
-	UserID              int                `db:"user_id" json:"user_id,omitempty" yaml:"user_id,omitempty"`
+	UserID              *int               `db:"user_id" json:"user_id,omitempty" yaml:"user_id,omitempty"`
 	Type                ProfileT           `db:"type" json:"type" yaml:"type"`
 	Data                any                `db:"data" json:"data" yaml:"data"`
 	KycID               *string            `db:"kyc_id" json:"kyc_id,omitempty" yaml:"kyc_id,omitempty"`
@@ -102,8 +108,8 @@ type InvestmentProfile struct {
 	AccreditationStatus AccreditationT     `db:"accreditation_status" json:"accreditation_status" yaml:"accreditation_status"`
 	AccreditationData   any                `db:"accreditation_data" json:"accreditation_data" yaml:"accreditation_data"`
 	EscrowID            string             `db:"escrow_id" json:"escrow_id" yaml:"escrow_id"`
-	KycAt               pgtype.Timestamptz `db:"-" json:"kyc_at,omitempty" yaml:"kyc_at,omitempty"`
-	AccreditationAt     pgtype.Timestamptz `db:"-" json:"accreditation_at,omitempty" yaml:"accreditation_at,omitempty"`
+	KycAt               pgtype.Timestamptz `db:"kyc_at" json:"kyc_at,omitempty" yaml:"kyc_at,omitempty"`
+	AccreditationAt     pgtype.Timestamptz `db:"accreditation_at" json:"accreditation_at,omitempty" yaml:"accreditation_at,omitempty"`
 	CreatedAt           pgtype.Timestamptz `db:"created_at" json:"created_at,omitempty" yaml:"created_at,omitempty"`
 	UpdatedAt           pgtype.Timestamptz `db:"updated_at" json:"updated_at,omitempty" yaml:"updated_at,omitempty"`
 	WalletID            int                `db:"-" json:"wallet_id,omitempty" yaml:"wallet_id,omitempty"`
