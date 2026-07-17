@@ -15,28 +15,7 @@ func MarkLegallyConfirmedForProfile(ctx context.Context, repo db.Repository, pro
 		return nil, fmt.Errorf("profile is nil")
 	}
 
-	var (
-		sql  string
-		args []any
-	)
-	if profile.Type == profiles.Individual {
-		sql = `
-			UPDATE investment_investments as ii SET status=$1
-			FROM investment_profiles AS ip
-			WHERE ii.user_id=$2 and ii.status=$3
-			AND ip.type in ('individual', 'sdira', 'solo401k')
-			RETURNING ii.id,ii.status`
-		args = []any{
-			InvestmentTLegallyConfirmed, profile.UserID, InvestmentTConfirmed,
-		}
-	} else {
-		sql = `
-			UPDATE investment_investments SET status=$1 WHERE profile_id=$2 and status=$3
-			RETURNING id,status`
-		args = []any{
-			InvestmentTLegallyConfirmed, profile.ID, InvestmentTConfirmed,
-		}
-	}
+	sql, args := markLegallyConfirmedQuery(profile)
 
 	rows, err := repo.Query(ctx, sql, args...)
 	if err != nil {
@@ -57,4 +36,25 @@ func MarkLegallyConfirmedForProfile(ctx context.Context, repo db.Repository, pro
 	}
 
 	return investments, nil
+}
+
+func markLegallyConfirmedQuery(profile *profiles.Profile) (string, []any) {
+	if profile.Type == profiles.Individual {
+		return `
+			UPDATE investment_investments as ii SET status=$1
+			FROM investment_profiles AS ip
+			WHERE ii.profile_id=ip.id
+			AND ip.id=$2
+			AND ii.user_id=$3 and ii.status=$4
+			AND ip.type in ('individual', 'sdira', 'solo401k')
+			RETURNING ii.id,ii.status`, []any{
+				InvestmentTLegallyConfirmed, profile.ID, profile.UserID, InvestmentTConfirmed,
+			}
+	}
+
+	return `
+		UPDATE investment_investments SET status=$1 WHERE profile_id=$2 and status=$3
+		RETURNING id,status`, []any{
+			InvestmentTLegallyConfirmed, profile.ID, InvestmentTConfirmed,
+		}
 }
