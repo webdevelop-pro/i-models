@@ -64,6 +64,39 @@ func RecordDomainDelivery(
 	return nil
 }
 
+// RecordFailedDelivery stores a permanently invalid delivery without first
+// claiming it for domain processing. This is used at transport boundaries
+// where a trusted Pub/Sub message ID exists but payload validation failed.
+func RecordFailedDelivery(
+	ctx context.Context,
+	repo db.Repository,
+	msgID, service, topic string,
+	attempt int,
+	lastErr string,
+) error {
+	if msgID == "" {
+		return nil
+	}
+	if len(lastErr) > maxLastError {
+		lastErr = lastErr[:maxLastError]
+	}
+
+	_, err := repo.Exec(ctx, `
+INSERT INTO pubsub_activities (msg_id, service, status, topic, attempt, last_error)
+VALUES ($1, $2, 'failed', $3, $4, $5)
+ON CONFLICT (msg_id, service) DO UPDATE
+   SET status     = 'failed',
+       topic      = EXCLUDED.topic,
+       attempt    = GREATEST(pubsub_activities.attempt, EXCLUDED.attempt),
+       last_error = EXCLUDED.last_error,
+       updated_at = now()
+`, msgID, service, topic, attempt, lastErr)
+	if err != nil {
+		return fmt.Errorf("record failed pubsub delivery (%s/%s): %w", service, msgID, err)
+	}
+	return nil
+}
+
 // Claim atomically acquires processing ownership of (msgID, service).
 //
 // Returns true when the caller now owns the message: either it was never seen,
