@@ -36,8 +36,8 @@ require (
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.13 // indirect
-	github.com/global-torque/go-common/db/v2 v2.0.1
-	github.com/global-torque/go-common/orm/v2 v2.0.1
+	github.com/global-torque/go-common/db/v2 v2.0.2
+	github.com/global-torque/go-common/orm/v2 v2.0.2
 	github.com/go-logr/logr v1.4.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
@@ -79,7 +79,3 @@ require (
 	google.golang.org/grpc v1.81.1 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
 )
-
-replace github.com/global-torque/go-common/orm/v2 => ../go-common/orm
-
-replace github.com/global-torque/go-common/db/v2 => ../go-common/db

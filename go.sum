@@ -44,10 +44,14 @@ github.com/global-torque/go-common/configurator/v2 v2.0.1 h1:tZAyjrRd+l/rLjQeCDQ
 github.com/global-torque/go-common/configurator/v2 v2.0.1/go.mod h1:1guUksnyWFV8QN+3vakUC8s995H8VgRJ8CDIZk81Vq0=
 github.com/global-torque/go-common/context/v2 v2.0.1 h1:SXk6ywqPfuhns5ltGabNqJVf4rFZuTjYLcikxjfMoTw=
 github.com/global-torque/go-common/context/v2 v2.0.1/go.mod h1:0ph3Uhga88Uf0JPom6mkhbUdXu+WrHi0zIGHVrms7ps=
+github.com/global-torque/go-common/db/v2 v2.0.2 h1:5Qw7FBsm0ZaQ1yKYvLP8Y1FUuIXmOKtFPWZ9zradPHc=
+github.com/global-torque/go-common/db/v2 v2.0.2/go.mod h1:tIsakk9AZ6ZxMXIdcJ1o1dbkH07cU2OEP+v1ln6RTh4=
 github.com/global-torque/go-common/httputils/v2 v2.0.1 h1:tVfXYdpEwRIXjAc48LlgI5CKdQUwgp4BU70gnA8t818=
 github.com/global-torque/go-common/httputils/v2 v2.0.1/go.mod h1:c8P6BPvpbu8xfazgbMs711l6KQ4GJC9ElOQ5ip4LDLU=
 github.com/global-torque/go-common/logger/v2 v2.0.1 h1:r0Kqgk6GGdn+xmLD/HKV77hW6UaiZJVblw7G0Ffx89I=
 github.com/global-torque/go-common/logger/v2 v2.0.1/go.mod h1:tqH+ua7zIVvv3n+MLewXa9lw56H9EctR/61lXNTlqII=
+github.com/global-torque/go-common/orm/v2 v2.0.2 h1:+cZWuIJZN0ltLV80ZBzLLSekSOJFcPLjG+d5nNfCcn0=
+github.com/global-torque/go-common/orm/v2 v2.0.2/go.mod h1:Iw8RgvT3+y/fKCmY/sSKMkNJNmATYBxJAp8R55dgF8Q=
 github.com/global-torque/go-common/tests/v2 v2.0.1 h1:k/YdOw+RO/TTd4zO3mbPs/R8pH7dQvPkuQ+ThbFzI68=
 github.com/global-torque/go-common/tests/v2 v2.0.1/go.mod h1:zUw6yAXrxRdSRZT0jtIVeVcTuuNOUvkPC7gxKnq8euo=
 github.com/go-logr/logr v1.2.2/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=
