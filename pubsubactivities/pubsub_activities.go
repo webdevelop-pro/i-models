@@ -123,7 +123,7 @@ INSERT INTO pubsub_activities (msg_id, service, status, topic, attempt, claim_to
 VALUES ($1, $2, 'processing', $3, $4, $6::uuid)
 ON CONFLICT (msg_id, service) DO UPDATE
    SET status     = 'processing',
-       attempt    = EXCLUDED.attempt,
+       attempt    = GREATEST(pubsub_activities.attempt, EXCLUDED.attempt),
        claim_token = EXCLUDED.claim_token,
        updated_at = now()
    WHERE pubsub_activities.status = 'failed'

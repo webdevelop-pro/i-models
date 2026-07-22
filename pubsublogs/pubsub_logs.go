@@ -1,11 +1,7 @@
 package pubsublogs
 
 import (
-	"context"
-
-	sq "github.com/Masterminds/squirrel"
 	"github.com/global-torque/go-common/db/v2"
-	"github.com/global-torque/go-common/orm/v2"
 	"github.com/global-torque/go-common/orm/v2/pgtype"
 )
 
@@ -17,7 +13,6 @@ type PubsubLog struct {
 	Headers   any                `db:"headers" json:"headers,omitempty" yaml:"headers,omitempty"`
 	Attr      any                `db:"attr" json:"attr,omitempty" yaml:"attr,omitempty"`
 	MSGID     *string            `db:"msg_id" json:"msg_id,omitempty" yaml:"msg_id,omitempty"`
-	Executed  *int               `db:"executed" json:"executed,omitempty" yaml:"executed,omitempty"`
 	CreatedAt pgtype.Timestamptz `db:"created_at" json:"created_at" yaml:"created_at"`
 	UpdatedAt pgtype.Timestamptz `db:"updated_at" json:"updated_at" yaml:"updated_at"`
 	db        db.Repository      `db:"-" json:"-"`
@@ -30,7 +25,6 @@ func (model PubsubLog) ToJSON() map[string]any {
 		"msg":        model.MSG,
 		"attr":       model.Attr,
 		"msg_id":     model.MSGID,
-		"executed":   model.Executed,
 		"created_at": model.CreatedAt,
 		"updated_at": model.UpdatedAt,
 	}
@@ -38,7 +32,7 @@ func (model PubsubLog) ToJSON() map[string]any {
 
 func (model PubsubLog) Fields() []string {
 	return []string{
-		"id", "topic", "msg", "attr", "msg_id", "executed", "created_at", "updated_at",
+		"id", "topic", "msg", "attr", "msg_id", "created_at", "updated_at",
 	}
 }
 
@@ -56,31 +50,4 @@ func (model *PubsubLog) SetID(id any) {
 
 func (model *PubsubLog) SetDB(db db.Repository) {
 	model.db = db
-}
-
-func Create(ctx context.Context, pg db.Repository, topic string, msg any, attr any, msgID string) (*PubsubLog, error) {
-	return orm.Create[PubsubLog](ctx, pg, map[string]any{
-		"topic":  topic,
-		"msg":    msg,
-		"attr":   attr,
-		"msg_id": msgID,
-	})
-}
-
-func IncrementExecuted(ctx context.Context, pg db.Repository, msgID string) (bool, error) {
-	sql, args, err := sq.Update(PubsubLog{}.Table()).
-		Set("executed", sq.Expr("executed+1")).
-		Where(sq.Eq{"msg_id": msgID}).
-		PlaceholderFormat(sq.Dollar).
-		ToSql()
-	if err != nil {
-		return false, err
-	}
-
-	res, err := pg.Exec(ctx, sql, args...)
-	if err != nil {
-		return false, err
-	}
-
-	return res.RowsAffected() == 1, nil
 }
