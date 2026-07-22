@@ -9,11 +9,15 @@ const (
 	StatusTCreated  StatusT = "created"
 	StatusTPending  StatusT = "pending"
 	StatusTDeployed StatusT = "deployed"
+	StatusTVerified StatusT = "verified"
 	StatusTError    StatusT = "error"
 
-	AppLabel  = "evm"
-	ModelName = "contract"
-	TableName = "evm_contracts"
+	AppLabel                              = "evm"
+	ModelName                             = "contract"
+	TableName                             = "evm_contracts"
+	DeploymentOperationsTableName         = "evm_contract_deployment_operations"
+	DeploymentTransactionHistoryTableName = "evm_contract_deployment_transaction_history"
+	SignerNonceReservationsTableName      = "evm_signer_nonce_reservations"
 
 	pkgName = "models/emvcontracts"
 )
@@ -23,13 +27,14 @@ func AllStatusT() []StatusT {
 		StatusTCreated,
 		StatusTPending,
 		StatusTDeployed,
+		StatusTVerified,
 		StatusTError,
 	}
 }
 
 func (e StatusT) IsValid() error {
 	switch e {
-	case StatusTCreated, StatusTPending, StatusTDeployed, StatusTError:
+	case StatusTCreated, StatusTPending, StatusTDeployed, StatusTVerified, StatusTError:
 		return nil
 	default:
 		return errors.New("enum is not valid")

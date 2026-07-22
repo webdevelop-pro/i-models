@@ -22,6 +22,8 @@ type Contract struct {
 	Symbol                      string             `db:"symbol" json:"symbol" yaml:"symbol"`
 	Address                     string             `db:"address" json:"address" yaml:"address"`
 	TransactionTX               string             `db:"transaction_tx" json:"transaction_tx" yaml:"transaction_tx"`
+	DeploymentOperationID       *string            `db:"deployment_operation_id" json:"deployment_operation_id,omitempty" yaml:"deployment_operation_id,omitempty"`
+	DeploymentLeg               *string            `db:"deployment_leg" json:"deployment_leg,omitempty" yaml:"deployment_leg,omitempty"`
 	RedemptionEnabled           bool               `db:"redemption_enabled" json:"redemption_enabled" yaml:"redemption_enabled"`
 	RedemptionChain             string             `db:"redemption_chain" json:"redemption_chain" yaml:"redemption_chain"`
 	RedemptionApprovedAt        pgtype.Timestamptz `db:"redemption_approved_at" json:"redemption_approved_at,omitempty" yaml:"redemption_approved_at,omitempty"`
@@ -54,6 +56,10 @@ func (model Contract) GetField(name string) any {
 		return model.TransactionTX
 	case "Status":
 		return model.Status
+	case "DeploymentOperationID":
+		return model.DeploymentOperationID
+	case "DeploymentLeg":
+		return model.DeploymentLeg
 	case "CreatedAt":
 		return model.CreatedAt
 	case "UpdatedAt":
@@ -80,6 +86,10 @@ func (model Contract) GetValueByTag(name string) any {
 		return model.TransactionTX
 	case "status":
 		return model.Status
+	case "deployment_operation_id":
+		return model.DeploymentOperationID
+	case "deployment_leg":
+		return model.DeploymentLeg
 	case "created_at":
 		return model.CreatedAt
 	case "updated_at":
@@ -100,7 +110,7 @@ func (model Contract) ToJSON() map[string]any {
 func (model Contract) Fields() []string {
 	return []string{
 		"id", "user_id", "offer_id", "name", "status", "symbol", "address",
-		"transaction_tx", "created_at", "updated_at",
+		"transaction_tx", "deployment_operation_id", "deployment_leg", "created_at", "updated_at",
 	}
 }
 
