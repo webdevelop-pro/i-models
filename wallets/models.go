@@ -11,7 +11,6 @@ import (
 	"github.com/global-torque/go-common/orm/v2/pgtype"
 	"github.com/pkg/errors"
 	"github.com/webdevelop-pro/go-common/logger"
-	"github.com/webdevelop-pro/go-common/queue/pclient"
 	"github.com/webdevelop-pro/i-models/historylogs"
 	"github.com/webdevelop-pro/i-models/logs"
 	"github.com/webdevelop-pro/i-models/notifications"
@@ -159,7 +158,7 @@ func (model *Wallet) SetBalance(val float64) {
 	model.updatedFields = append(model.updatedFields, "balance")
 }
 
-func (model Wallet) Save(ctx context.Context, postUpdate func(ctx context.Context, msg pclient.Event) error) error {
+func (model Wallet) Save(ctx context.Context) error {
 	if model.ID == 0 {
 		err := errors.Errorf("%s: wallet %d", orm.ErrEmptyID, model.ID)
 		logger.FromCtx(ctx, pkgName).Error().Stack().Err(err).Msg(orm.ErrEmptyID.Error())
@@ -190,16 +189,9 @@ func (model Wallet) Save(ctx context.Context, postUpdate func(ctx context.Contex
 		err := errors.Errorf("%s: wallet %d", orm.ErrNoRowsAffected, model.ID)
 		logger.FromCtx(ctx, pkgName).Error().Stack().Err(err).Msg(orm.ErrNoRowsAffected.Error())
 		return err
-	} else {
-		postUpdate(ctx, pclient.Event{
-			Action:     pclient.PostUpdate,
-			ObjectID:   model.ID,
-			ObjectName: ModelName,
-			Data:       updates,
-		})
-		if model.UserID != nil {
-			model.DefaultPostUpdate(ctx, *model.UserID, updates)
-		}
+	}
+	if model.UserID != nil {
+		model.DefaultPostUpdate(ctx, *model.UserID, updates)
 	}
 	return nil
 }

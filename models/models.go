@@ -2,12 +2,10 @@ package models
 
 import (
 	"context"
-	"fmt"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/global-torque/go-common/db/v2"
 	"github.com/global-torque/go-common/orm/v2"
-	"github.com/webdevelop-pro/go-common/queue/pclient"
 )
 
 type Repository = db.Repository
@@ -80,36 +78,4 @@ func Exists[T any, PT queryModel[T]](ctx context.Context, repo db.Repository, wh
 
 func Delete[T any, PT queryModel[T]](ctx context.Context, repo db.Repository, where map[string]any) (bool, error) {
 	return orm.Delete[T, PT](ctx, repo, where)
-}
-
-func LogPubSubMessageExecution(ctx context.Context, repo db.Repository, msgID string) error {
-	_, err := repo.Exec(ctx, `UPDATE pubsub_logs SET executed=executed+1 WHERE msg_id=$1`, msgID)
-	if err != nil {
-		return fmt.Errorf("for msg %s: %w", msgID, err)
-	}
-
-	return nil
-}
-
-func LogPubSubMsg(ctx context.Context, repo db.Repository, topic string, msg *pclient.Message) error {
-	msgID := any(msg.ID)
-	if msg.ID == "" {
-		msgID = nil
-	}
-
-	_, err := repo.Exec(
-		ctx,
-		`INSERT INTO pubsub_logs (topic,msg,attr,headers,created_at,msg_id) VALUES ($1,$2,$3,$4,$5,$6)`,
-		topic,
-		msg.Data,
-		msg.Attributes,
-		msg.Headers,
-		msg.PublishTime,
-		msgID,
-	)
-	if err != nil {
-		return fmt.Errorf("log pubsub message %s: %w", topic, err)
-	}
-
-	return nil
 }

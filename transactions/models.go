@@ -11,7 +11,6 @@ import (
 	"github.com/global-torque/go-common/orm/v2/pgtype"
 	"github.com/pkg/errors"
 	"github.com/webdevelop-pro/go-common/logger"
-	"github.com/webdevelop-pro/go-common/queue/pclient"
 	"github.com/webdevelop-pro/i-models/historylogs"
 	"github.com/webdevelop-pro/i-models/logs"
 	"github.com/webdevelop-pro/i-models/notifications"
@@ -148,7 +147,7 @@ func (model *Transaction) SetEntityID(val *string) {
 // 	model.updatedFields = append(model.updatedFields, "fn_inc_balance")
 // }
 
-func (model Transaction) Save(ctx context.Context, postUpdate func(ctx context.Context, msg pclient.Event) error) error {
+func (model Transaction) Save(ctx context.Context) error {
 	if model.ID == 0 {
 		err := errors.Errorf("%s: Transaction %d", orm.ErrEmptyID, model.ID)
 		logger.FromCtx(ctx, pkgName).Error().Stack().Err(err).Msg(orm.ErrEmptyID.Error())
@@ -175,15 +174,8 @@ func (model Transaction) Save(ctx context.Context, postUpdate func(ctx context.C
 		err := errors.Errorf("%s: Transaction %d", orm.ErrNoRowsAffected, model.ID)
 		logger.FromCtx(ctx, pkgName).Error().Stack().Err(err).Msg(orm.ErrNoRowsAffected.Error())
 		return err
-	} else {
-		postUpdate(ctx, pclient.Event{
-			Action:     pclient.PostUpdate,
-			ObjectID:   model.ID,
-			ObjectName: ModelName,
-			Data:       updates,
-		})
-		model.DefaultPostUpdate(ctx, 1, updates)
 	}
+	model.DefaultPostUpdate(ctx, 1, updates)
 	return nil
 }
 

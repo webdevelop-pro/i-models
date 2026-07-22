@@ -8,7 +8,6 @@ import (
 	"github.com/global-torque/go-common/orm/v2/pgtype"
 	"github.com/pkg/errors"
 	"github.com/webdevelop-pro/go-common/logger"
-	"github.com/webdevelop-pro/go-common/queue/pclient"
 )
 
 // Wallet is an object representing the database table.
@@ -130,7 +129,7 @@ func (model *Contract) SetDB(db db.Repository) {
 	model.db = db
 }
 
-func (model Contract) Save(ctx context.Context, postUpdate func(ctx context.Context, msg pclient.Event) error) error {
+func (model Contract) Save(ctx context.Context) error {
 	if model.ID == 0 {
 		err := errors.Errorf("%s: Contract %d", orm.ErrEmptyID, model.ID)
 		logger.FromCtx(ctx, pkgName).Error().Stack().Err(err).Msg(orm.ErrEmptyID.Error())
@@ -157,14 +156,6 @@ func (model Contract) Save(ctx context.Context, postUpdate func(ctx context.Cont
 		err := errors.Errorf("%s: Contract %d", orm.ErrNoRowsAffected, model.ID)
 		logger.FromCtx(ctx, pkgName).Error().Stack().Err(err).Msg(orm.ErrNoRowsAffected.Error())
 		return err
-	} else {
-		postUpdate(ctx, pclient.Event{
-			Action:     pclient.PostUpdate,
-			ObjectID:   model.ID,
-			ObjectName: ModelName,
-			Data:       updates,
-		})
-		// model.DefaultPostUpdate(ctx, 1, updates)
 	}
 	return nil
 }
