@@ -75,17 +75,44 @@ func (fn rowFunc) Scan(dest ...any) error { return fn(dest...) }
 type claimRepository struct {
 	queryRows []pgx.Row
 	execTag   pgconn.CommandTag
+	queries   []string
+	args      [][]any
 }
 
 func (repo *claimRepository) Query(context.Context, string, ...any) (pgx.Rows, error) {
 	return nil, errors.New("unexpected Query")
 }
 
-func (repo *claimRepository) QueryRow(context.Context, string, ...any) pgx.Row {
+func (repo *claimRepository) QueryRow(_ context.Context, query string, args ...any) pgx.Row {
+	repo.queries = append(repo.queries, query)
+	repo.args = append(repo.args, args)
 	row := repo.queryRows[0]
 	repo.queryRows = repo.queryRows[1:]
 
 	return row
+}
+
+func TestClaimLeaseUsesMonotonicAttemptUpsert(t *testing.T) {
+	t.Parallel()
+
+	repo := &claimRepository{queryRows: []pgx.Row{
+		rowFunc(func(dest ...any) error {
+			claimToken := dest[0].(*string)
+			*claimToken = "6d0aaf23-d5ea-4ed5-b020-60fb9ba72155"
+			return nil
+		}),
+	}}
+
+	token, claimed, err := ClaimLease(context.Background(), repo, "event-1", "email", "domain-events", 2)
+	if err != nil || !claimed || token == "" {
+		t.Fatalf("ClaimLease token=%q claimed=%v error=%v", token, claimed, err)
+	}
+	if len(repo.queries) != 1 || !strings.Contains(repo.queries[0], "GREATEST(pubsub_activities.attempt, EXCLUDED.attempt)") {
+		t.Fatalf("claim query does not preserve the greatest attempt: %v", repo.queries)
+	}
+	if len(repo.args[0]) < 4 || repo.args[0][3] != 2 {
+		t.Fatalf("claim attempt args = %#v, want attempt 2", repo.args[0])
+	}
 }
 
 func (repo *claimRepository) Exec(context.Context, string, ...any) (pgconn.CommandTag, error) {
