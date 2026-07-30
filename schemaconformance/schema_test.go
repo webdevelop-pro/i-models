@@ -13,14 +13,16 @@ import (
 
 	"github.com/webdevelop-pro/i-models/distributions"
 	"github.com/webdevelop-pro/i-models/emails"
+	"github.com/webdevelop-pro/i-models/evmallowancesequences"
 	"github.com/webdevelop-pro/i-models/evmchainaccounts"
 	"github.com/webdevelop-pro/i-models/evmcontracts"
-	"github.com/webdevelop-pro/i-models/evmtransfers"
 	"github.com/webdevelop-pro/i-models/evmwalletbalances"
+	"github.com/webdevelop-pro/i-models/evmwalletoperationeffects"
 	"github.com/webdevelop-pro/i-models/evmwalletoperations"
 	"github.com/webdevelop-pro/i-models/evmwallets"
 	"github.com/webdevelop-pro/i-models/filers"
 	"github.com/webdevelop-pro/i-models/fundingsources"
+	"github.com/webdevelop-pro/i-models/fundnavrecords"
 	"github.com/webdevelop-pro/i-models/historylogs"
 	"github.com/webdevelop-pro/i-models/investments"
 	"github.com/webdevelop-pro/i-models/logs"
@@ -49,21 +51,26 @@ type databaseColumn struct {
 	IsNullable string `db:"is_nullable"`
 }
 
+// evmtransfers is intentionally absent: evm_wallet_operations replaced the
+// retired evm_transfers table.
 var persistedModels = []modelSpec{ //nolint:gochecknoglobals // This is the canonical model registry.
 	{name: "DistributionDistribution", model: distributions.DistributionDistribution{}},
 	{name: "DistributionDistributionFiler", model: distributions.DistributionDistributionFiler{}},
 	{name: "DistributionDistributionReport", model: distributions.DistributionDistributionReport{}},
 	{name: "EmailEmail", model: emails.EmailEmail{}},
+	{name: "AllowanceSequence", model: evmallowancesequences.AllowanceSequence{}},
 	{name: "EvmChainAccount", model: evmchainaccounts.EvmChainAccount{}},
 	{name: "Contract", model: evmcontracts.Contract{}},
-	{name: "Transfer", model: evmtransfers.Transfer{}},
 	{name: "WalletBalance", model: evmwalletbalances.WalletBalance{}},
+	{name: "WalletOperationEffect", model: evmwalletoperationeffects.WalletOperationEffect{}},
 	{name: "WalletOperation", model: evmwalletoperations.WalletOperation{}},
 	{name: "EvmWallet", model: evmwallets.Wallet{}},
 	{name: "FilerFiler", model: filers.FilerFiler{}},
 	{name: "WalletFundingSource", model: fundingsources.WalletFundingSource{}},
+	{name: "FundNAVRecord", model: fundnavrecords.FundNAVRecord{}},
 	{name: "HistoryLog", model: historylogs.HistoryLog{}},
 	{name: "InvestmentInvestment", model: investments.InvestmentInvestment{}},
+	{name: "InvestmentRedemption", model: investments.InvestmentRedemption{}},
 	{name: "InvestmentProfile", model: investments.InvestmentProfile{}},
 	{name: "LogLog", model: logs.LogLog{}},
 	{name: "Notification", model: notifications.Notification{}},
@@ -76,45 +83,53 @@ var persistedModels = []modelSpec{ //nolint:gochecknoglobals // This is the cano
 }
 
 var persistedEnums = map[string][]string{ //nolint:gochecknoglobals // PostgreSQL enum contract registry.
-	"accreditation_t":                   enumStrings(investments.AllAccreditationT()),
-	"comment_related_t":                 enumStrings(offers.AllCommentRelatedT()),
-	"comment_status_t":                  enumStrings(offers.AllCommentStatusT()),
-	"distribution_filer_t":              enumStrings(distributions.AllDistributionFilerT()),
-	"distribution_report_t":             enumStrings(distributions.AllDistributionReportT()),
-	"distribution_t":                    enumStrings(distributions.AllDistributionT()),
-	"email_status_t":                    enumStrings(emails.AllEmailStatusT()),
-	"escrow_t":                          enumStrings(investments.AllEscrowT()),
-	"evm_status_t":                      enumStrings(evmwallets.AllWalletStatusT()),
-	"evm_wallet_account_mode_t":         enumStrings(evmchainaccounts.AllAccountModeT()),
-	"evm_wallet_chain_account_status_t": enumStrings(evmchainaccounts.AllStatusT()),
-	"evm_wallet_chain_t":                enumStrings(evmchainaccounts.AllChainT()),
-	"evm_wallet_operation_source_t":     enumStrings(evmwalletoperations.AllOperationSourceT()),
-	"evm_wallet_operation_status_t":     enumStrings(evmwalletoperations.AllOperationStatusT()),
-	"evm_wallet_operation_type_t":       enumStrings(evmwalletoperations.AllOperationTypeT()),
-	"file_type":                         enumStrings(filers.AllType()),
-	"founding_source_t":                 enumStrings(fundingsources.AllFoundingSourceT()),
-	"funding_s":                         enumStrings(investments.AllFundingS()),
-	"funding_t":                         enumStrings(investments.AllFundingT()),
-	"instrument_classification_t":       enumStrings(offers.AllInstrumentClassificationT()),
-	"investment_step_t":                 enumStrings(investments.AllInvestmentStepT()),
-	"investment_t":                      enumStrings(investments.AllInvestmentT()),
-	"kyc_t":                             enumStrings(investments.AllKycT()),
-	"log_type_t":                        enumStrings(logs.AllLogTypeT()),
-	"notification_status_t":             enumStrings(notifications.AllNotificationStatusT()),
-	"notification_type_t":               enumStrings(notifications.AllNotificationTypeT()),
-	"offer_jurisdiction_t":              enumStrings(offers.AllOfferJurisdictionT()),
-	"offer_reg_type_t":                  enumStrings(offers.AllOfferRegTypeT()),
-	"offer_security_type_t":             enumStrings(offers.AllOfferSecurityTypeT()),
-	"offer_t":                           enumStrings(offers.AllOfferT()),
-	"offering_mode_t":                   enumStrings(offers.AllOfferingModeT()),
-	"payment_t":                         enumStrings(investments.AllPaymentT()),
-	"profile_t":                         enumStrings(investments.AllProfileT()),
-	"services_t":                        enumStrings(logs.AllServicesT()),
-	"tokenization_engine_t":             enumStrings(offers.AllTokenizationEngineT()),
-	"tokenization_model_t":              enumStrings(offers.AllTokenizationModelT()),
-	"transactions_status_t":             enumStrings(transactions.AllTransactionsStatusT()),
-	"transactions_type_t":               enumStrings(transactions.AllTransactionsTypeT()),
-	"wallet_status_t":                   enumStrings(wallets.AllWalletStatusT()),
+	"accreditation_t":                         enumStrings(investments.AllAccreditationT()),
+	"comment_related_t":                       enumStrings(offers.AllCommentRelatedT()),
+	"comment_status_t":                        enumStrings(offers.AllCommentStatusT()),
+	"distribution_filer_t":                    enumStrings(distributions.AllDistributionFilerT()),
+	"distribution_report_t":                   enumStrings(distributions.AllDistributionReportT()),
+	"distribution_t":                          enumStrings(distributions.AllDistributionT()),
+	"email_status_t":                          enumStrings(emails.AllEmailStatusT()),
+	"escrow_t":                                enumStrings(investments.AllEscrowT()),
+	"evm_erc20_allowance_sequence_purpose_t":  enumStrings(evmallowancesequences.AllPurposeT()),
+	"evm_status_t":                            enumStrings(evmwallets.AllWalletStatusT()),
+	"evm_wallet_account_mode_t":               enumStrings(evmchainaccounts.AllAccountModeT()),
+	"evm_wallet_chain_account_status_t":       enumStrings(evmchainaccounts.AllStatusT()),
+	"evm_wallet_chain_t":                      enumStrings(evmchainaccounts.AllChainT()),
+	"evm_wallet_operation_source_t":           enumStrings(evmwalletoperations.AllOperationSourceT()),
+	"evm_wallet_operation_status_t":           enumStrings(evmwalletoperations.AllOperationStatusT()),
+	"evm_wallet_operation_type_t":             enumStrings(evmwalletoperations.AllOperationTypeT()),
+	"evm_wallet_operation_effect_direction_t": enumStrings(evmwalletoperationeffects.AllEffectDirectionT()),
+	"evm_wallet_operation_effect_kind_t":      enumStrings(evmwalletoperationeffects.AllEffectKindT()),
+	"file_type":                               enumStrings(filers.AllType()),
+	"founding_source_t":                       enumStrings(fundingsources.AllFoundingSourceT()),
+	"funding_s":                               enumStrings(investments.AllFundingS()),
+	"funding_t":                               enumStrings(investments.AllFundingT()),
+	"fund_structure_t":                        enumStrings(offers.AllFundStructureT()),
+	"instrument_classification_t":             enumStrings(offers.AllInstrumentClassificationT()),
+	"investment_step_t":                       enumStrings(investments.AllInvestmentStepT()),
+	"investment_t":                            enumStrings(investments.AllInvestmentT()),
+	"investment_deposit_price_source_t":       enumStrings(investments.AllDepositPriceSourceT()),
+	"investment_redemption_status_t":          enumStrings(investments.AllRedemptionStatusT()),
+	"investment_vault_pricing_status_t":       enumStrings(investments.AllVaultPricingStatusT()),
+	"investment_vault_request_origin_t":       enumStrings(investments.AllVaultRequestOriginT()),
+	"kyc_t":                                   enumStrings(investments.AllKycT()),
+	"log_type_t":                              enumStrings(logs.AllLogTypeT()),
+	"notification_status_t":                   enumStrings(notifications.AllNotificationStatusT()),
+	"notification_type_t":                     enumStrings(notifications.AllNotificationTypeT()),
+	"offer_jurisdiction_t":                    enumStrings(offers.AllOfferJurisdictionT()),
+	"offer_reg_type_t":                        enumStrings(offers.AllOfferRegTypeT()),
+	"offer_security_type_t":                   enumStrings(offers.AllOfferSecurityTypeT()),
+	"offer_t":                                 enumStrings(offers.AllOfferT()),
+	"offering_mode_t":                         enumStrings(offers.AllOfferingModeT()),
+	"payment_t":                               enumStrings(investments.AllPaymentT()),
+	"profile_t":                               enumStrings(investments.AllProfileT()),
+	"services_t":                              enumStrings(logs.AllServicesT()),
+	"tokenization_engine_t":                   enumStrings(offers.AllTokenizationEngineT()),
+	"tokenization_model_t":                    enumStrings(offers.AllTokenizationModelT()),
+	"transactions_status_t":                   enumStrings(transactions.AllTransactionsStatusT()),
+	"transactions_type_t":                     enumStrings(transactions.AllTransactionsTypeT()),
+	"wallet_status_t":                         enumStrings(wallets.AllWalletStatusT()),
 }
 
 func TestPersistedModelTagsAndDefaults(t *testing.T) {

@@ -40,6 +40,7 @@ type UserUser struct {
 	Social      string             `db:"social" json:"social" yaml:"social"`
 	Data        UserData           `db:"data" json:"data" yaml:"data"`
 	LastLogin   pgtype.Timestamptz `db:"last_login" json:"last_login" yaml:"last_login"`
+	DateJoined  pgtype.Timestamptz `db:"date_joined" json:"date_joined" yaml:"date_joined"`
 	CreatedAt   pgtype.Timestamptz `db:"created_at" json:"created_at" yaml:"created_at"`
 	UpdatedAt   pgtype.Timestamptz `db:"updated_at" json:"updated_at" yaml:"updated_at"`
 	ImageLinkID *int               `db:"image_link_id" json:"image_link_id,omitempty" yaml:"image_link_id,omitempty"`
@@ -74,6 +75,7 @@ func (model UserUser) ToJSON() map[string]any {
 		"social":        model.Social,
 		"data":          model.Data,
 		"last_login":    model.LastLogin,
+		"date_joined":   model.DateJoined,
 		"created_at":    model.CreatedAt,
 		"updated_at":    model.UpdatedAt,
 		"image_link_id": model.ImageLinkID,

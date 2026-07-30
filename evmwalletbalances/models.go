@@ -8,18 +8,23 @@ import (
 // WalletBalance is the read-path cache for a managed wallet's token
 // balance on a given chain.
 type WalletBalance struct {
-	ID            int                `db:"id" json:"id"`
-	WalletAddress string             `db:"wallet_address" json:"wallet_address"`
-	Chain         string             `db:"chain" json:"chain"`
-	TokenAddress  string             `db:"token_address" json:"token_address"`
-	Balance       string             `db:"balance" json:"balance"`
-	UpdatedAt     pgtype.Timestamptz `db:"updated_at" json:"updated_at"`
+	ID                int                `db:"id" json:"id"`
+	WalletAddress     string             `db:"wallet_address" json:"wallet_address"`
+	Chain             string             `db:"chain" json:"chain"`
+	TokenAddress      string             `db:"token_address" json:"token_address"`
+	Balance           string             `db:"balance" json:"balance"`
+	ObservedBlock     int64              `db:"observed_block" json:"observed_block"`
+	ObservedBlockHash string             `db:"observed_block_hash" json:"observed_block_hash"`
+	UpdatedAt         pgtype.Timestamptz `db:"updated_at" json:"updated_at"`
 
 	db db.Repository `db:"-" json:"-"`
 }
 
 func (model WalletBalance) Fields() []string {
-	return []string{"id", "wallet_address", "chain", "token_address", "balance", "updated_at"}
+	return []string{
+		"id", "wallet_address", "chain", "token_address", "balance",
+		"observed_block", "observed_block_hash", "updated_at",
+	}
 }
 
 func (model WalletBalance) Table() string {
@@ -58,6 +63,10 @@ func (model WalletBalance) GetValueByTag(name string) any {
 		return model.TokenAddress
 	case "balance":
 		return model.Balance
+	case "observed_block":
+		return model.ObservedBlock
+	case "observed_block_hash":
+		return model.ObservedBlockHash
 	case "updated_at":
 		return model.UpdatedAt
 	default:

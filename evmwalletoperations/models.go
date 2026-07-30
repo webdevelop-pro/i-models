@@ -46,6 +46,7 @@ type WalletOperation struct {
 	RemovedAt                            pgtype.Timestamptz `db:"removed_at" json:"removed_at"`
 	ProviderName                         string             `db:"provider_name" json:"provider_name"`
 	WalletSessionID                      *int               `db:"wallet_session_id" json:"-"`
+	WalletSessionReservationConsumed     bool               `db:"wallet_session_reservation_consumed" json:"-"`
 	TurnkeyActivityID                    string             `db:"turnkey_activity_id" json:"-"`
 	TurnkeyOrgID                         string             `db:"turnkey_org_id" json:"-"`
 	TurnkeySubOrgID                      string             `db:"turnkey_sub_org_id" json:"-"`
@@ -56,6 +57,7 @@ type WalletOperation struct {
 	TurnkeyCredentialVersion             int64              `db:"turnkey_credential_version" json:"-"`
 	TurnkeyRequestTimestampMS            int64              `db:"turnkey_request_timestamp_ms" json:"-"`
 	TurnkeyRequestBodyHash               string             `db:"turnkey_request_body_hash" json:"-"`
+	ProviderPreparedCallRaw              string             `db:"provider_prepared_call_raw" json:"-"`
 	ReconciliationAttemptCount           int                `db:"reconciliation_attempt_count" json:"-"`
 	ReconciliationNextRetryAt            pgtype.Timestamptz `db:"reconciliation_next_retry_at" json:"-"`
 	ReconciliationLastErrorCode          string             `db:"reconciliation_last_error_code" json:"-"`
@@ -75,6 +77,15 @@ type WalletOperation struct {
 	ExchangePayoutCompensationRequiredAt pgtype.Timestamptz `db:"exchange_payout_compensation_required_at" json:"-"`
 	ExchangeRedemptionApprovalReference  string             `db:"exchange_redemption_approval_reference" json:"-"`
 	ExchangeRedemptionApprovedAt         pgtype.Timestamptz `db:"exchange_redemption_approved_at" json:"-"`
+	InvestmentRedemptionID               *int64             `db:"investment_redemption_id" json:"investment_redemption_id,omitempty"`
+	FundNAVRecordID                      *int64             `db:"fund_nav_record_id" json:"fund_nav_record_id,omitempty"`
+	TransactionToAddress                 *string            `db:"transaction_to_address" json:"transaction_to_address,omitempty"`
+	CallTargetAddress                    *string            `db:"call_target_address" json:"call_target_address,omitempty"`
+	ContractID                           *int               `db:"contract_id" json:"contract_id,omitempty"`
+	ContractFunctionSelector             *string            `db:"contract_function_selector" json:"contract_function_selector,omitempty"`
+	CallData                             *string            `db:"call_data" json:"-"`
+	TransactionCallData                  *string            `db:"transaction_call_data" json:"-"`
+	ReceiptBlockHash                     *string            `db:"receipt_block_hash" json:"receipt_block_hash,omitempty"`
 	CreatedAt                            pgtype.Timestamptz `db:"created_at" json:"created_at"`
 	UpdatedAt                            pgtype.Timestamptz `db:"updated_at" json:"updated_at"`
 
@@ -90,6 +101,10 @@ func (model WalletOperation) Fields() []string {
 		"idempotency_key", "provider_event_id", "failure_reason", "block_number",
 		"block_timestamp", "confirmation_count", "confirmation_target", "reorg_count",
 		"last_seen_block", "removed_at", "created_at", "updated_at",
+		"investment_redemption_id", "fund_nav_record_id", "transaction_to_address",
+		"call_target_address", "contract_id", "contract_function_selector",
+		"call_data", "transaction_call_data", "receipt_block_hash",
+		"provider_prepared_call_raw", "wallet_session_reservation_consumed",
 	}
 }
 
@@ -100,6 +115,10 @@ func (model WalletOperation) Table() string {
 func (model WalletOperation) ToJSON() map[string]any {
 	res := map[string]any{}
 	for _, field := range model.Fields() {
+		if field == "provider_prepared_call_raw" ||
+			field == "wallet_session_reservation_consumed" {
+			continue
+		}
 		res[field] = model.GetValueByTag(field)
 	}
 	return res
@@ -183,6 +202,28 @@ func (model WalletOperation) GetValueByTag(name string) any {
 		return model.LastSeenBlock
 	case "removed_at":
 		return model.RemovedAt
+	case "investment_redemption_id":
+		return model.InvestmentRedemptionID
+	case "fund_nav_record_id":
+		return model.FundNAVRecordID
+	case "transaction_to_address":
+		return model.TransactionToAddress
+	case "call_target_address":
+		return model.CallTargetAddress
+	case "contract_id":
+		return model.ContractID
+	case "contract_function_selector":
+		return model.ContractFunctionSelector
+	case "call_data":
+		return model.CallData
+	case "transaction_call_data":
+		return model.TransactionCallData
+	case "receipt_block_hash":
+		return model.ReceiptBlockHash
+	case "provider_prepared_call_raw":
+		return model.ProviderPreparedCallRaw
+	case "wallet_session_reservation_consumed":
+		return model.WalletSessionReservationConsumed
 	case "created_at":
 		return model.CreatedAt
 	case "updated_at":

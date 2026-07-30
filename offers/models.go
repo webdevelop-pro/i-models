@@ -12,7 +12,7 @@ import (
 
 type OfferOffer struct {
 	ID                       int                       `db:"id" json:"id" yaml:"id"`
-	UserID                   *int                      `db:"user_id" json:"user_id,omitempty" yaml:"user_id,omitempty"`
+	UserID                   int                       `db:"user_id" json:"user_id" yaml:"user_id"`
 	Name                     string                    `db:"name" json:"name" yaml:"name"`
 	Slug                     string                    `db:"slug" json:"slug" yaml:"slug"`
 	MinInvestment            int                       `db:"min_investment" json:"min_investment" yaml:"min_investment"`
@@ -20,13 +20,13 @@ type OfferOffer struct {
 	Title                    string                    `db:"title" json:"title" yaml:"title"`
 	Highlights               string                    `db:"highlights" json:"highlights" yaml:"highlights"`
 	Valuation                float64                   `db:"valuation" json:"valuation" yaml:"valuation"`
-	TotalShares              int                       `db:"total_shares" json:"total_shares" yaml:"total_shares"`
-	PricePerShare            float64                   `db:"price_per_share" json:"price_per_share" yaml:"price_per_share"`
+	TotalShares              string                    `db:"total_shares" json:"total_shares" yaml:"total_shares"`
+	PricePerShare            string                    `db:"price_per_share" json:"price_per_share" yaml:"price_per_share"`
 	Status                   NullOfferT                `db:"status" json:"status,omitempty" yaml:"status,omitempty"`
 	SecurityType             OfferSecurityTypeT        `db:"security_type" json:"security_type" yaml:"security_type"`
 	Notes                    string                    `db:"notes" json:"notes" yaml:"notes"`
-	SubscribedShares         int                       `db:"subscribed_shares" json:"subscribed_shares" yaml:"subscribed_shares"`
-	ConfirmedShares          int                       `db:"confirmed_shares" json:"confirmed_shares" yaml:"confirmed_shares"`
+	SubscribedShares         string                    `db:"subscribed_shares" json:"subscribed_shares" yaml:"subscribed_shares"`
+	ConfirmedShares          string                    `db:"confirmed_shares" json:"confirmed_shares" yaml:"confirmed_shares"`
 	AdditionalDetails        string                    `db:"additional_details" json:"additional_details" yaml:"additional_details"`
 	SeoTitle                 string                    `db:"seo_title" json:"seo_title" yaml:"seo_title"`
 	SeoDescription           string                    `db:"seo_description" json:"seo_description" yaml:"seo_description"`
@@ -61,6 +61,8 @@ type OfferOffer struct {
 	LegalRepresentativeID    *int                      `db:"legal_representative_id" json:"legal_representative_id,omitempty" yaml:"legal_representative_id,omitempty"`
 	PlatformRepresentativeID *int                      `db:"platform_representative_id" json:"platform_representative_id,omitempty" yaml:"platform_representative_id,omitempty"`
 	SiteID                   *int                      `db:"site_id" json:"site_id,omitempty" yaml:"site_id,omitempty"`
+	DataRoomGroupID          *int                      `db:"data_room_group_id" json:"data_room_group_id,omitempty" yaml:"data_room_group_id,omitempty"`
+	FundStructure            FundStructureT            `db:"fund_structure" json:"fund_structure" yaml:"fund_structure"`
 	RegType                  OfferRegTypeT             `db:"reg_type" json:"reg_type" yaml:"reg_type"`
 	OfferJurisdiction        OfferJurisdictionT        `db:"offer_jurisdiction" json:"offer_jurisdiction" yaml:"offer_jurisdiction"`
 	InstrumentClassification InstrumentClassificationT `db:"instrument_classification" json:"instrument_classification" yaml:"instrument_classification"`
@@ -135,6 +137,8 @@ func (model OfferOffer) ToJSON() map[string]any {
 		"legal_representative_id":    model.LegalRepresentativeID,
 		"platform_representative_id": model.PlatformRepresentativeID,
 		"site_id":                    model.SiteID,
+		"data_room_group_id":         model.DataRoomGroupID,
+		"fund_structure":             model.FundStructure,
 		"reg_type":                   model.RegType,
 		"offer_jurisdiction":         model.OfferJurisdiction,
 		"instrument_classification":  model.InstrumentClassification,
@@ -177,6 +181,8 @@ func (model OfferOffer) Fields() []string {
 		"country",
 		"entity_id",
 		"data",
+		"security_info",
+		"ticker",
 		"start_at",
 		"close_at",
 		"approved_at",
@@ -192,6 +198,13 @@ func (model OfferOffer) Fields() []string {
 		"linkedin",
 		"mastodon",
 		"esign_id",
+		"risk_disclosures",
+		"tokenization_engine",
+		"legal_representative_id",
+		"platform_representative_id",
+		"site_id",
+		"data_room_group_id",
+		"fund_structure",
 		"reg_type",
 		"offer_jurisdiction",
 		"instrument_classification",
@@ -200,6 +213,7 @@ func (model OfferOffer) Fields() []string {
 		"investor_eligibility",
 		"marketed_jurisdictions",
 		"regulated_activities",
+		"tokenization_model",
 	}
 }
 

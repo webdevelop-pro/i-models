@@ -98,7 +98,7 @@ func AllFundingT() []FundingT {
 
 func (e FundingT) IsValid() error {
 	switch e {
-	case FundingTNone, FundingTWire, FundingTAch, FundingTWallet:
+	case FundingTNone, FundingTWire, FundingTAch, FundingTWallet, FundingTCryptoWallet:
 		return nil
 	default:
 		return errors.New("enum is not valid")
@@ -117,7 +117,7 @@ const (
 	FundingSNew             FundingS = "new"
 	FundingSInitialize      FundingS = "initialize"
 	FundingSInProgress      FundingS = "in_progress"
-	FundingSRecieved        FundingS = "recieved"
+	FundingSReceived        FundingS = "received"
 	FundingSSettled         FundingS = "settled"
 	FundingSFailed          FundingS = "failed"
 	FundingSSentBackPending FundingS = "sent_back_pending"
@@ -131,7 +131,7 @@ func AllFundingS() []FundingS {
 		FundingSNew,
 		FundingSInitialize,
 		FundingSInProgress,
-		FundingSRecieved,
+		FundingSReceived,
 		FundingSSettled,
 		FundingSFailed,
 		FundingSSentBackPending,
@@ -142,7 +142,7 @@ func AllFundingS() []FundingS {
 
 func (e FundingS) IsValid() error {
 	switch e {
-	case FundingSCreationError, FundingSNew, FundingSInitialize, FundingSInProgress, FundingSRecieved, FundingSSettled, FundingSFailed, FundingSSentBackPending, FundingSSentBackSettled, FundingSCanceled:
+	case FundingSCreationError, FundingSNew, FundingSInitialize, FundingSInProgress, FundingSReceived, FundingSSettled, FundingSFailed, FundingSSentBackPending, FundingSSentBackSettled, FundingSCanceled:
 		return nil
 	default:
 		return errors.New("enum is not valid")
@@ -160,7 +160,6 @@ const (
 	InvestmentTNew                       InvestmentT = "new"
 	InvestmentTConfirmed                 InvestmentT = "confirmed"
 	InvestmentTLegallyConfirmed          InvestmentT = "legally_confirmed"
-	InvestmentTClosedUnsucessfully       InvestmentT = "closed_unsucessfully"
 	InvestmentTClosedSuccessfully        InvestmentT = "closed_successfully"
 	InvestmentTCancelledDuringInvestment InvestmentT = "cancelled_during_investment"
 	InvestmentTCancelledAfterInvestment  InvestmentT = "cancelled_after_investment"
@@ -175,7 +174,6 @@ func AllInvestmentT() []InvestmentT {
 		InvestmentTNew,
 		InvestmentTConfirmed,
 		InvestmentTLegallyConfirmed,
-		InvestmentTClosedUnsucessfully,
 		InvestmentTClosedSuccessfully,
 		InvestmentTCancelledDuringInvestment,
 		InvestmentTCancelledAfterInvestment,
@@ -188,7 +186,7 @@ func AllInvestmentT() []InvestmentT {
 
 func (e InvestmentT) IsValid() error {
 	switch e {
-	case InvestmentTNew, InvestmentTConfirmed, InvestmentTLegallyConfirmed, InvestmentTClosedUnsucessfully, InvestmentTClosedSuccessfully, InvestmentTCancelledDuringInvestment, InvestmentTCancelledAfterInvestment, InvestmentTCancelledByManager, InvestmentTSold, InvestmentTExited, InvestmentTSystemError:
+	case InvestmentTNew, InvestmentTConfirmed, InvestmentTLegallyConfirmed, InvestmentTClosedSuccessfully, InvestmentTCancelledDuringInvestment, InvestmentTCancelledAfterInvestment, InvestmentTCancelledByManager, InvestmentTSold, InvestmentTExited, InvestmentTSystemError:
 		return nil
 	default:
 		return errors.New("enum is not valid")
@@ -236,6 +234,108 @@ func (e InvestmentStepT) IsValid() error {
 }
 
 func (e InvestmentStepT) String() string {
+	return string(e)
+}
+
+type VaultRequestOriginT string
+
+const (
+	VaultRequestOriginApplication VaultRequestOriginT = "application"
+	VaultRequestOriginChain       VaultRequestOriginT = "chain"
+)
+
+func AllVaultRequestOriginT() []VaultRequestOriginT {
+	return []VaultRequestOriginT{VaultRequestOriginApplication, VaultRequestOriginChain}
+}
+
+func (e VaultRequestOriginT) IsValid() error {
+	switch e {
+	case VaultRequestOriginApplication, VaultRequestOriginChain:
+		return nil
+	default:
+		return errors.New("enum is not valid")
+	}
+}
+
+func (e VaultRequestOriginT) String() string {
+	return string(e)
+}
+
+type VaultPricingStatusT string
+
+const (
+	VaultPricingStatusAwaitingDealingNAV VaultPricingStatusT = "awaiting_dealing_nav"
+	VaultPricingStatusPriced             VaultPricingStatusT = "priced"
+)
+
+func AllVaultPricingStatusT() []VaultPricingStatusT {
+	return []VaultPricingStatusT{VaultPricingStatusAwaitingDealingNAV, VaultPricingStatusPriced}
+}
+
+func (e VaultPricingStatusT) IsValid() error {
+	switch e {
+	case VaultPricingStatusAwaitingDealingNAV, VaultPricingStatusPriced:
+		return nil
+	default:
+		return errors.New("enum is not valid")
+	}
+}
+
+func (e VaultPricingStatusT) String() string {
+	return string(e)
+}
+
+type DepositPriceSourceT string
+
+const (
+	DepositPriceSourceOfferDeck       DepositPriceSourceT = "offer_deck"
+	DepositPriceSourceFinalizedNAV    DepositPriceSourceT = "finalized_nav"
+	DepositPriceSourceChainForwardNAV DepositPriceSourceT = "chain_forward_nav"
+)
+
+func AllDepositPriceSourceT() []DepositPriceSourceT {
+	return []DepositPriceSourceT{
+		DepositPriceSourceOfferDeck,
+		DepositPriceSourceFinalizedNAV,
+		DepositPriceSourceChainForwardNAV,
+	}
+}
+
+func (e DepositPriceSourceT) IsValid() error {
+	switch e {
+	case DepositPriceSourceOfferDeck, DepositPriceSourceFinalizedNAV, DepositPriceSourceChainForwardNAV:
+		return nil
+	default:
+		return errors.New("enum is not valid")
+	}
+}
+
+func (e DepositPriceSourceT) String() string {
+	return string(e)
+}
+
+type RedemptionStatusT string
+
+const (
+	RedemptionStatusOpen      RedemptionStatusT = "open"
+	RedemptionStatusCompleted RedemptionStatusT = "completed"
+	RedemptionStatusCancelled RedemptionStatusT = "cancelled"
+)
+
+func AllRedemptionStatusT() []RedemptionStatusT {
+	return []RedemptionStatusT{RedemptionStatusOpen, RedemptionStatusCompleted, RedemptionStatusCancelled}
+}
+
+func (e RedemptionStatusT) IsValid() error {
+	switch e {
+	case RedemptionStatusOpen, RedemptionStatusCompleted, RedemptionStatusCancelled:
+		return nil
+	default:
+		return errors.New("enum is not valid")
+	}
+}
+
+func (e RedemptionStatusT) String() string {
 	return string(e)
 }
 

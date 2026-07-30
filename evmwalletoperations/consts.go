@@ -5,9 +5,10 @@ type OperationStatusT string
 type OperationSourceT string
 
 const (
-	OperationTypeDeposit    OperationTypeT = "deposit"
-	OperationTypeWithdrawal OperationTypeT = "withdrawal"
-	OperationTypeInvestment OperationTypeT = "investment"
+	OperationTypeDeposit      OperationTypeT = "deposit"
+	OperationTypeWithdrawal   OperationTypeT = "withdrawal"
+	OperationTypeInvestment   OperationTypeT = "investment"
+	OperationTypeContractCall OperationTypeT = "contract_call"
 )
 
 const (
@@ -20,10 +21,16 @@ const (
 const (
 	OperationSourceWebhook  OperationSourceT = "webhook"
 	OperationSourcePlatform OperationSourceT = "platform"
+	OperationSourceChain    OperationSourceT = "chain"
 )
 
 func AllOperationTypeT() []OperationTypeT {
-	return []OperationTypeT{OperationTypeDeposit, OperationTypeWithdrawal, OperationTypeInvestment}
+	return []OperationTypeT{
+		OperationTypeDeposit,
+		OperationTypeWithdrawal,
+		OperationTypeInvestment,
+		OperationTypeContractCall,
+	}
 }
 
 func AllOperationStatusT() []OperationStatusT {
@@ -36,7 +43,7 @@ func AllOperationStatusT() []OperationStatusT {
 }
 
 func AllOperationSourceT() []OperationSourceT {
-	return []OperationSourceT{OperationSourceWebhook, OperationSourcePlatform}
+	return []OperationSourceT{OperationSourceWebhook, OperationSourcePlatform, OperationSourceChain}
 }
 
 const (

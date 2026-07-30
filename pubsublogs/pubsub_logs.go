@@ -13,6 +13,7 @@ type PubsubLog struct {
 	Headers   any                `db:"headers" json:"headers,omitempty" yaml:"headers,omitempty"`
 	Attr      any                `db:"attr" json:"attr,omitempty" yaml:"attr,omitempty"`
 	MSGID     *string            `db:"msg_id" json:"msg_id,omitempty" yaml:"msg_id,omitempty"`
+	Executed  *int               `db:"executed" json:"executed,omitempty" yaml:"executed,omitempty"`
 	CreatedAt pgtype.Timestamptz `db:"created_at" json:"created_at" yaml:"created_at"`
 	UpdatedAt pgtype.Timestamptz `db:"updated_at" json:"updated_at" yaml:"updated_at"`
 	db        db.Repository      `db:"-" json:"-"`
@@ -25,6 +26,7 @@ func (model PubsubLog) ToJSON() map[string]any {
 		"msg":        model.MSG,
 		"attr":       model.Attr,
 		"msg_id":     model.MSGID,
+		"executed":   model.Executed,
 		"created_at": model.CreatedAt,
 		"updated_at": model.UpdatedAt,
 	}
@@ -32,7 +34,7 @@ func (model PubsubLog) ToJSON() map[string]any {
 
 func (model PubsubLog) Fields() []string {
 	return []string{
-		"id", "topic", "msg", "attr", "msg_id", "created_at", "updated_at",
+		"id", "topic", "msg", "attr", "msg_id", "executed", "created_at", "updated_at",
 	}
 }
 

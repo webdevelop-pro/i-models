@@ -10,15 +10,15 @@ type OfferT string
 
 // Enum values for OfferT
 const (
-	OfferTNew                 OfferT = "new"
-	OfferTDraft               OfferT = "draft"
-	OfferTLegalReview         OfferT = "legal-review"
-	OfferTLegalDeclined       OfferT = "legal-declined"
-	OfferTLegalAccepted       OfferT = "legal-accepted"
-	OfferTPublished           OfferT = "published"
-	OfferTLegalClosed         OfferT = "legal-closed"
-	OfferTClosedSuccessfully  OfferT = "closed-successfully"
-	OfferTClosedUnsuccesfully OfferT = "closed-unsuccesfully"
+	OfferTNew                  OfferT = "new"
+	OfferTDraft                OfferT = "draft"
+	OfferTLegalReview          OfferT = "legal_review"
+	OfferTLegalDeclined        OfferT = "legal_declined"
+	OfferTLegalAccepted        OfferT = "legal_accepted"
+	OfferTPublished            OfferT = "published"
+	OfferTLegalClosed          OfferT = "legal_closed"
+	OfferTClosedSuccessfully   OfferT = "closed_successfully"
+	OfferTClosedUnsuccessfully OfferT = "closed_unsuccessfully"
 
 	OfferAppLabel  = "offer"
 	OfferModelName = "offer"
@@ -36,13 +36,13 @@ func AllOfferT() []OfferT {
 		OfferTPublished,
 		OfferTLegalClosed,
 		OfferTClosedSuccessfully,
-		OfferTClosedUnsuccesfully,
+		OfferTClosedUnsuccessfully,
 	}
 }
 
 func (e OfferT) IsValid() error {
 	switch e {
-	case OfferTNew, OfferTDraft, OfferTLegalReview, OfferTLegalDeclined, OfferTLegalAccepted, OfferTPublished, OfferTLegalClosed, OfferTClosedSuccessfully, OfferTClosedUnsuccesfully:
+	case OfferTNew, OfferTDraft, OfferTLegalReview, OfferTLegalDeclined, OfferTLegalAccepted, OfferTPublished, OfferTLegalClosed, OfferTClosedSuccessfully, OfferTClosedUnsuccessfully:
 		return nil
 	default:
 		return errors.New("enum is not valid")
@@ -240,6 +240,32 @@ func (e *OfferSecurityTypeT) Scan(value any) error {
 type OfferRegTypeT string
 type TokenizationEngineT string
 type TokenizationModelT string
+type FundStructureT string
+
+const (
+	FundStructureOpenEnded   FundStructureT = "open_ended"
+	FundStructureClosedEnded FundStructureT = "closed_ended"
+)
+
+func AllFundStructureT() []FundStructureT {
+	return []FundStructureT{
+		FundStructureOpenEnded,
+		FundStructureClosedEnded,
+	}
+}
+
+func (e FundStructureT) IsValid() error {
+	switch e {
+	case FundStructureOpenEnded, FundStructureClosedEnded:
+		return nil
+	default:
+		return errors.New("enum is not valid")
+	}
+}
+
+func (e FundStructureT) String() string {
+	return string(e)
+}
 
 const (
 	TokenizationEngineNone    TokenizationEngineT = "none_not_tokenized"
