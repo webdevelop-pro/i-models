@@ -2,6 +2,7 @@ package schemaconformance_test
 
 import (
 	"context"
+	"encoding/json"
 	"os"
 	"testing"
 
@@ -11,6 +12,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/webdevelop-pro/go-common/logger"
 
+	"github.com/webdevelop-pro/i-models/evmwalletoperationeffects"
 	"github.com/webdevelop-pro/i-models/fundnavrecords"
 	"github.com/webdevelop-pro/i-models/investments"
 	"github.com/webdevelop-pro/i-models/offers"
@@ -248,6 +250,88 @@ func TestOfferProjectionAgainstPostgreSQL(t *testing.T) {
 		t.Fatalf(
 			"redemption exact/share-derived Claimable projection mismatch: %#v",
 			redemption,
+		)
+	}
+
+	const (
+		scopedCallSignature = "0xdcd240c0b26ed449aae1a951dc6b5047eda64e79ebeea2186944a090f1fd3c8f"
+		scopedCallDigest    = "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+		executorTopic       = "0x0000000000000000000000001111111111111111111111111111111111111111"
+		targetTopic         = "0x0000000000000000000000002222222222222222222222222222222222222222"
+		executorAddress     = "0x1111111111111111111111111111111111111111"
+		targetAddress       = "0x2222222222222222222222222222222222222222"
+		zeroValueData       = "0x0000000000000000000000000000000000000000000000000000000000000000"
+	)
+	var operationID int
+	err = tx.QueryRow(ctx, `
+		INSERT INTO evm_wallet_operations(
+			id, user_id, profile_id, chain, wallet_address, token_ticker,
+			token_address, token_decimals, amount, amount_raw, type, status,
+			source, submission_status, counterparty_address, reorg_count,
+			idempotency_key
+		) VALUES (
+			-700001, $1, $2, 'ethereum-sepolia', $3, 'USDC',
+			$4, 6, 0, '0', 'deposit', 'submitted',
+			'chain', 'submitted', $4, 3, 'projection-scoped-call'
+		)
+		RETURNING id
+	`, userID, profileID, executorAddress, targetAddress).Scan(&operationID)
+	if err != nil {
+		t.Fatalf("insert ScopedCallExecuted parent operation: %v", err)
+	}
+
+	var effectID int64
+	err = tx.QueryRow(ctx, `
+		INSERT INTO evm_wallet_operation_effects(
+			id, operation_id, chain, effect_kind, effect_index,
+			wallet_address, contract_address, event_signature, event_topics,
+			event_data, subject_address, receipt_generation, canonical
+		) VALUES (
+			-700001, $1, 'ethereum-sepolia', 'contract_event', 17,
+			$2, $2, $3::text, jsonb_build_array(
+				$3::text, $4::text, $5::text, $6::text
+			),
+			$7, $2, 3, true
+		)
+		RETURNING id
+	`,
+		operationID,
+		executorAddress,
+		scopedCallSignature,
+		scopedCallDigest,
+		executorTopic,
+		targetTopic,
+		zeroValueData,
+	).Scan(&effectID)
+	if err != nil {
+		t.Fatalf("insert ScopedCallExecuted effect: %v", err)
+	}
+
+	effect, err := orm.RetrieveOne[
+		evmwalletoperationeffects.WalletOperationEffect,
+		*evmwalletoperationeffects.WalletOperationEffect,
+	](ctx, repo, sq.Eq{"id": effectID})
+	if err != nil {
+		t.Fatalf("retrieve ScopedCallExecuted effect: %v", err)
+	}
+	topicsJSON, err := json.Marshal(effect.EventTopics)
+	if err != nil {
+		t.Fatalf("marshal projected ScopedCallExecuted topics: %v", err)
+	}
+	wantTopicsJSON := `["` + scopedCallSignature + `","` + scopedCallDigest +
+		`","` + executorTopic + `","` + targetTopic + `"]`
+	if effect.EffectIndex != 17 ||
+		effect.ReceiptGeneration != 3 ||
+		!effect.Canonical ||
+		effect.EventSignature == nil ||
+		*effect.EventSignature != scopedCallSignature ||
+		effect.EventData == nil ||
+		*effect.EventData != zeroValueData ||
+		string(topicsJSON) != wantTopicsJSON {
+		t.Fatalf(
+			"ScopedCallExecuted evidence did not project exactly: effect=%#v topics=%s",
+			effect,
+			topicsJSON,
 		)
 	}
 }
