@@ -13,6 +13,7 @@ import (
 	"github.com/webdevelop-pro/go-common/logger"
 
 	"github.com/webdevelop-pro/i-models/evmwalletoperationeffects"
+	"github.com/webdevelop-pro/i-models/evmwalletoperations"
 	"github.com/webdevelop-pro/i-models/fundnavrecords"
 	"github.com/webdevelop-pro/i-models/investments"
 	"github.com/webdevelop-pro/i-models/offers"
@@ -268,16 +269,31 @@ func TestOfferProjectionAgainstPostgreSQL(t *testing.T) {
 			id, user_id, profile_id, chain, wallet_address, token_ticker,
 			token_address, token_decimals, amount, amount_raw, type, status,
 			source, submission_status, counterparty_address, reorg_count,
-			idempotency_key
+			idempotency_key, transaction_from_address
 		) VALUES (
 			-700001, $1, $2, 'ethereum-sepolia', $3, 'USDC',
 			$4, 6, 0, '0', 'deposit', 'submitted',
-			'chain', 'submitted', $4, 3, 'projection-scoped-call'
+			'chain', 'submitted', $4, 3, 'projection-scoped-call', $3
 		)
 		RETURNING id
 	`, userID, profileID, executorAddress, targetAddress).Scan(&operationID)
 	if err != nil {
 		t.Fatalf("insert ScopedCallExecuted parent operation: %v", err)
+	}
+
+	operation, err := orm.RetrieveOne[
+		evmwalletoperations.WalletOperation,
+		*evmwalletoperations.WalletOperation,
+	](ctx, repo, sq.Eq{"id": operationID})
+	if err != nil {
+		t.Fatalf("retrieve transaction sender projection: %v", err)
+	}
+	if operation.TransactionFromAddress == nil ||
+		*operation.TransactionFromAddress != executorAddress {
+		t.Fatalf(
+			"transaction sender did not project exactly: %#v",
+			operation.TransactionFromAddress,
+		)
 	}
 
 	var effectID int64

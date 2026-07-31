@@ -22,3 +22,27 @@ func TestWalletSessionReservationConsumptionIsInternal(t *testing.T) {
 		)
 	}
 }
+
+func TestTransactionFromAddressProjection(t *testing.T) {
+	t.Parallel()
+
+	fromAddress := "0x1111111111111111111111111111111111111111"
+	operation := WalletOperation{TransactionFromAddress: &fromAddress}
+
+	if got := operation.GetValueByTag(
+		"transaction_from_address",
+	); got != operation.TransactionFromAddress {
+		t.Fatalf(
+			"GetValueByTag(transaction_from_address) = %#v, want %#v",
+			got,
+			operation.TransactionFromAddress,
+		)
+	}
+	if got := operation.ToJSON()["transaction_from_address"]; got != operation.TransactionFromAddress {
+		t.Fatalf(
+			"ToJSON transaction_from_address = %#v, want %#v",
+			got,
+			operation.TransactionFromAddress,
+		)
+	}
+}

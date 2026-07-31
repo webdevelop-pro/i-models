@@ -79,6 +79,7 @@ type WalletOperation struct {
 	ExchangeRedemptionApprovedAt         pgtype.Timestamptz `db:"exchange_redemption_approved_at" json:"-"`
 	InvestmentRedemptionID               *int64             `db:"investment_redemption_id" json:"investment_redemption_id,omitempty"`
 	FundNAVRecordID                      *int64             `db:"fund_nav_record_id" json:"fund_nav_record_id,omitempty"`
+	TransactionFromAddress               *string            `db:"transaction_from_address" json:"transaction_from_address,omitempty"`
 	TransactionToAddress                 *string            `db:"transaction_to_address" json:"transaction_to_address,omitempty"`
 	CallTargetAddress                    *string            `db:"call_target_address" json:"call_target_address,omitempty"`
 	ContractID                           *int               `db:"contract_id" json:"contract_id,omitempty"`
@@ -101,9 +102,9 @@ func (model WalletOperation) Fields() []string {
 		"idempotency_key", "provider_event_id", "failure_reason", "block_number",
 		"block_timestamp", "confirmation_count", "confirmation_target", "reorg_count",
 		"last_seen_block", "removed_at", "created_at", "updated_at",
-		"investment_redemption_id", "fund_nav_record_id", "transaction_to_address",
-		"call_target_address", "contract_id", "contract_function_selector",
-		"call_data", "transaction_call_data", "receipt_block_hash",
+		"investment_redemption_id", "fund_nav_record_id", "transaction_from_address",
+		"transaction_to_address", "call_target_address", "contract_id",
+		"contract_function_selector", "call_data", "transaction_call_data", "receipt_block_hash",
 		"provider_prepared_call_raw", "wallet_session_reservation_consumed",
 	}
 }
@@ -206,6 +207,8 @@ func (model WalletOperation) GetValueByTag(name string) any {
 		return model.InvestmentRedemptionID
 	case "fund_nav_record_id":
 		return model.FundNAVRecordID
+	case "transaction_from_address":
+		return model.TransactionFromAddress
 	case "transaction_to_address":
 		return model.TransactionToAddress
 	case "call_target_address":
