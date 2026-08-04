@@ -30,6 +30,7 @@ import (
 	"github.com/webdevelop-pro/i-models/offers"
 	"github.com/webdevelop-pro/i-models/pubsublogs"
 	"github.com/webdevelop-pro/i-models/transactions"
+	"github.com/webdevelop-pro/i-models/userinvitations"
 	"github.com/webdevelop-pro/i-models/users"
 	"github.com/webdevelop-pro/i-models/wallets"
 )
@@ -78,6 +79,7 @@ var persistedModels = []modelSpec{ //nolint:gochecknoglobals // This is the cano
 	{name: "OfferOffer", model: offers.OfferOffer{}},
 	{name: "PubsubLog", model: pubsublogs.PubsubLog{}},
 	{name: "Transaction", model: transactions.Transaction{}},
+	{name: "UserInvitation", model: userinvitations.UserInvitation{}},
 	{name: "UserUser", model: users.UserUser{}},
 	{name: "Wallet", model: wallets.Wallet{}},
 }
@@ -129,6 +131,8 @@ var persistedEnums = map[string][]string{ //nolint:gochecknoglobals // PostgreSQ
 	"tokenization_model_t":                    enumStrings(offers.AllTokenizationModelT()),
 	"transactions_status_t":                   enumStrings(transactions.AllTransactionsStatusT()),
 	"transactions_type_t":                     enumStrings(transactions.AllTransactionsTypeT()),
+	"user_user_invitation_role_t":             enumStrings(userinvitations.AllRoles()),
+	"user_user_invitation_status_t":           enumStrings(userinvitations.AllStatuses()),
 	"wallet_status_t":                         enumStrings(wallets.AllWalletStatusT()),
 }
 
