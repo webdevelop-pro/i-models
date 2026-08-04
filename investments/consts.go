@@ -201,7 +201,6 @@ type InvestmentStepT string
 
 // Enum values for InvestmentStepT
 const (
-	InvestmentStepTNone          InvestmentStepT = "none"
 	InvestmentStepTNew           InvestmentStepT = "new"
 	InvestmentStepTAmount        InvestmentStepT = "amount"
 	InvestmentStepTOwnership     InvestmentStepT = "ownership"
@@ -214,7 +213,6 @@ const (
 
 func AllInvestmentStepT() []InvestmentStepT {
 	return []InvestmentStepT{
-		InvestmentStepTNone,
 		InvestmentStepTNew,
 		InvestmentStepTAmount,
 		InvestmentStepTOwnership,
@@ -228,7 +226,7 @@ func AllInvestmentStepT() []InvestmentStepT {
 
 func (e InvestmentStepT) IsValid() error {
 	switch e {
-	case InvestmentStepTNone, InvestmentStepTNew, InvestmentStepTAmount, InvestmentStepTOwnership, InvestmentStepTSignature, InvestmentStepTFunding, InvestmentStepTAccreditation, InvestmentStepTConfirmation, InvestmentStepTReview:
+	case InvestmentStepTNew, InvestmentStepTAmount, InvestmentStepTOwnership, InvestmentStepTSignature, InvestmentStepTFunding, InvestmentStepTAccreditation, InvestmentStepTConfirmation, InvestmentStepTReview:
 		return nil
 	default:
 		return errors.New("enum is not valid")

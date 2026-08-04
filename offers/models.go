@@ -15,7 +15,7 @@ type OfferOffer struct {
 	UserID                   int                       `db:"user_id" json:"user_id" yaml:"user_id"`
 	Name                     string                    `db:"name" json:"name" yaml:"name"`
 	Slug                     string                    `db:"slug" json:"slug" yaml:"slug"`
-	MinInvestment            int                       `db:"min_investment" json:"min_investment" yaml:"min_investment"`
+	MinInvestment            string                    `db:"min_investment" json:"min_investment" yaml:"min_investment"`
 	Description              string                    `db:"description" json:"description" yaml:"description"`
 	Title                    string                    `db:"title" json:"title" yaml:"title"`
 	Highlights               string                    `db:"highlights" json:"highlights" yaml:"highlights"`

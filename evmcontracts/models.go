@@ -17,9 +17,9 @@ type Contract struct {
 	UserID  *int `db:"user_id" json:"user_id,omitempty" yaml:"user_id,omitempty"`
 	OfferID *int `db:"offer_id" json:"offer_id,omitempty" yaml:"offer_id,omitempty"`
 
-	Name                         *string            `db:"name" json:"name,omitempty" yaml:"name,omitempty"`
+	Name                         string             `db:"name" json:"name" yaml:"name"`
 	Status                       StatusT            `db:"status" json:"status" yaml:"status"`
-	Symbol                       *string            `db:"symbol" json:"symbol,omitempty" yaml:"symbol,omitempty"`
+	Symbol                       string             `db:"symbol" json:"symbol" yaml:"symbol"`
 	Address                      string             `db:"address" json:"address" yaml:"address"`
 	TransactionTX                string             `db:"transaction_tx" json:"transaction_tx" yaml:"transaction_tx"`
 	DeploymentOperationID        *uuid.UUID         `db:"deployment_operation_id" json:"deployment_operation_id,omitempty" yaml:"deployment_operation_id,omitempty"`

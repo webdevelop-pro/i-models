@@ -42,7 +42,7 @@ type UserUser struct {
 	LastLogin   pgtype.Timestamptz `db:"last_login" json:"last_login" yaml:"last_login"`
 	CreatedAt   pgtype.Timestamptz `db:"created_at" json:"created_at" yaml:"created_at"`
 	UpdatedAt   pgtype.Timestamptz `db:"updated_at" json:"updated_at" yaml:"updated_at"`
-	ImageLinkID int                `db:"image_link_id" json:"image_link_id" yaml:"image_link_id"`
+	ImageLinkID *int               `db:"image_link_id" json:"image_link_id,omitempty" yaml:"image_link_id,omitempty"`
 
 	db db.Repository `db:"-" json:"-"`
 }

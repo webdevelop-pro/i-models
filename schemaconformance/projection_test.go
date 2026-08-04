@@ -33,6 +33,7 @@ type offerProjection struct {
 	MarketedJurisdictions []string           `db:"marketed_jurisdictions"`
 	RiskDisclosures       string             `db:"risk_disclosures"`
 	StartAt               pgtype.Timestamptz `db:"start_at"`
+	MinInvestment         string             `db:"min_investment"`
 	TotalShares           string             `db:"total_shares"`
 	PricePerShare         string             `db:"price_per_share"`
 	DataRoomGroupID       *int               `db:"data_room_group_id"`
@@ -88,7 +89,7 @@ func TestOfferProjectionAgainstPostgreSQL(t *testing.T) {
 		userID,
 		"Projection offer",
 		"projection-offer",
-		100,
+		"0.000000000000000001",
 		"legal_review",
 		`{"nc_stamping_text":"Stamped \"quoted\" ✓"}`,
 		`["accredited","qualified_investor"]`,
@@ -121,10 +122,12 @@ func TestOfferProjectionAgainstPostgreSQL(t *testing.T) {
 	if projection.RiskDisclosures != "Risk disclosure with Unicode ✓" {
 		t.Fatalf("unexpected risk disclosure: %q", projection.RiskDisclosures)
 	}
-	if projection.TotalShares != "125.250000000000000000" ||
+	if projection.MinInvestment != "0.000000000000000001" ||
+		projection.TotalShares != "125.250000000000000000" ||
 		projection.PricePerShare != "2.500000000000000000" {
 		t.Fatalf(
-			"fractional offer values did not retain exact PostgreSQL decimals: shares=%q price=%q",
+			"fractional offer values did not retain exact PostgreSQL decimals: minimum=%q shares=%q price=%q",
+			projection.MinInvestment,
 			projection.TotalShares,
 			projection.PricePerShare,
 		)

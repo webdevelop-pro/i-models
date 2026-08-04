@@ -46,11 +46,6 @@ type Wallet struct {
 	TurnkeyExecutionAllowlistApprovalID        string             `db:"turnkey_execution_allowlist_approval_id" json:"-" yaml:"-"`
 	TurnkeyExecutionInventoryAuditSHA256       string             `db:"turnkey_execution_inventory_audit_sha256" json:"-" yaml:"-"`
 	TurnkeyExecutionLifecycleEvidenceSHA256    string             `db:"turnkey_execution_lifecycle_evidence_sha256" json:"-" yaml:"-"`
-	TurnkeyExecutionQuarantined                bool               `db:"turnkey_execution_quarantined" json:"-" yaml:"-"`
-	TurnkeyExecutionQuarantinedAt              pgtype.Timestamptz `db:"turnkey_execution_quarantined_at" json:"-" yaml:"-"`
-	TurnkeyExecutionQuarantineReason           string             `db:"turnkey_execution_quarantine_reason" json:"-" yaml:"-"`
-	TurnkeyRotationTargetDelegatedFingerprint  string             `db:"turnkey_rotation_target_delegated_fingerprint" json:"-" yaml:"-"`
-	TurnkeyRotationTargetCredentialVersion     int64              `db:"turnkey_rotation_target_delegated_credential_version" json:"-" yaml:"-"`
 
 	updatedFields []string       `db:"-" json:"-"`
 	fns           map[string]any `db:"-" json:"-"`
