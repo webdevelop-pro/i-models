@@ -13,7 +13,7 @@ func TestWalletToJSONUsesDatabaseKeysAndExcludesPrivateKey(t *testing.T) {
 	model := Wallet{
 		ID:         7,
 		UserID:     ptr(8),
-		PublicKey:  ptr("public"),
+		PublicKey:  "public",
 		PrivateKey: "secret",
 		Balance:    10.5,
 		Status:     WalletStatusTVerified,
@@ -37,7 +37,7 @@ func TestWalletToJSONUsesDatabaseKeysAndExcludesPrivateKey(t *testing.T) {
 func TestWalletSerializationExcludesPrivateKey(t *testing.T) {
 	nullTime := pgtype.Timestamptz{Status: pgtype.Null}
 	model := Wallet{
-		PublicKey:  ptr("public"),
+		PublicKey:  "public",
 		PrivateKey: "secret",
 		CreatedAt:  nullTime,
 		UpdatedAt:  nullTime,

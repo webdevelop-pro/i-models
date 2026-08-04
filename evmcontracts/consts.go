@@ -4,6 +4,8 @@ import "github.com/pkg/errors"
 
 type StatusT string
 
+type DeploymentLegT string
+
 // Enum values for StatusT
 const (
 	StatusTCreated  StatusT = "created"
@@ -20,6 +22,14 @@ const (
 	SignerNonceReservationsTableName      = "evm_signer_nonce_reservations"
 
 	pkgName = "models/emvcontracts"
+
+	DeploymentLegTToken             DeploymentLegT = "token"
+	DeploymentLegTTreasury          DeploymentLegT = "treasury"
+	DeploymentLegTTreasuryAllowlist DeploymentLegT = "treasury_allowlist"
+	DeploymentLegTTreasuryFunding   DeploymentLegT = "treasury_funding"
+	DeploymentLegTVault             DeploymentLegT = "vault"
+	DeploymentLegTUSDCFunding       DeploymentLegT = "usdc_funding"
+	DeploymentLegTExchangePayout    DeploymentLegT = "exchange_payout"
 )
 
 func AllStatusT() []StatusT {

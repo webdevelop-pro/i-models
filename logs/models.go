@@ -28,7 +28,7 @@ type LogLog struct {
 	RequestHeaders   any                `db:"request_headers" json:"request_headers" yaml:"request_headers"`
 	RequestData      string             `db:"request_data" json:"request_data" yaml:"request_data"`
 	ResponseHeaders  any                `db:"response_headers" json:"response_headers" yaml:"response_headers"`
-	ResponseData     string             `db:"response_data" json:"response_data" yaml:"response_data"`
+	ResponseData     any                `db:"response_data" json:"response_data" yaml:"response_data"`
 	Service          ServicesT          `db:"service" json:"service" yaml:"service"`
 	Type             LogTypeT           `db:"type" json:"type" yaml:"type"`
 	RequestID        *string            `db:"request_id" json:"request_id,omitempty" yaml:"request_id,omitempty"`

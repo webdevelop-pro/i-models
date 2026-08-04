@@ -17,8 +17,8 @@ type Wallet struct {
 	UserID        *int   `db:"user_id" json:"user_id,omitempty" yaml:"user_id,omitempty"`
 	ObjectID      string `db:"object_id" json:"object_id" yaml:"object_id"`
 
-	PublicKey  *string `db:"public_key" json:"public_key,omitempty" yaml:"public_key,omitempty"`
-	PrivateKey string  `db:"-" json:"-" yaml:"-"`
+	PublicKey  string `db:"public_key" json:"public_key" yaml:"public_key"`
+	PrivateKey string `db:"-" json:"-" yaml:"-"`
 
 	Balance                                    float64            `db:"balance" json:"balance" yaml:"balance"`
 	IncBalance                                 float64            `db:"inc_balance" json:"inc_balance" yaml:"inc_balance"`
@@ -46,6 +46,11 @@ type Wallet struct {
 	TurnkeyExecutionAllowlistApprovalID        string             `db:"turnkey_execution_allowlist_approval_id" json:"-" yaml:"-"`
 	TurnkeyExecutionInventoryAuditSHA256       string             `db:"turnkey_execution_inventory_audit_sha256" json:"-" yaml:"-"`
 	TurnkeyExecutionLifecycleEvidenceSHA256    string             `db:"turnkey_execution_lifecycle_evidence_sha256" json:"-" yaml:"-"`
+	TurnkeyExecutionQuarantined                bool               `db:"turnkey_execution_quarantined" json:"-" yaml:"-"`
+	TurnkeyExecutionQuarantinedAt              pgtype.Timestamptz `db:"turnkey_execution_quarantined_at" json:"-" yaml:"-"`
+	TurnkeyExecutionQuarantineReason           string             `db:"turnkey_execution_quarantine_reason" json:"-" yaml:"-"`
+	TurnkeyRotationTargetDelegatedFingerprint  string             `db:"turnkey_rotation_target_delegated_fingerprint" json:"-" yaml:"-"`
+	TurnkeyRotationTargetCredentialVersion     int64              `db:"turnkey_rotation_target_delegated_credential_version" json:"-" yaml:"-"`
 
 	updatedFields []string       `db:"-" json:"-"`
 	fns           map[string]any `db:"-" json:"-"`

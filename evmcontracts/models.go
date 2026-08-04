@@ -17,12 +17,13 @@ type Contract struct {
 	UserID  *int `db:"user_id" json:"user_id,omitempty" yaml:"user_id,omitempty"`
 	OfferID *int `db:"offer_id" json:"offer_id,omitempty" yaml:"offer_id,omitempty"`
 
-	Name                         string             `db:"name" json:"name" yaml:"name"`
+	Name                         *string            `db:"name" json:"name,omitempty" yaml:"name,omitempty"`
 	Status                       StatusT            `db:"status" json:"status" yaml:"status"`
-	Symbol                       string             `db:"symbol" json:"symbol" yaml:"symbol"`
+	Symbol                       *string            `db:"symbol" json:"symbol,omitempty" yaml:"symbol,omitempty"`
 	Address                      string             `db:"address" json:"address" yaml:"address"`
 	TransactionTX                string             `db:"transaction_tx" json:"transaction_tx" yaml:"transaction_tx"`
 	DeploymentOperationID        *uuid.UUID         `db:"deployment_operation_id" json:"deployment_operation_id,omitempty" yaml:"deployment_operation_id,omitempty"`
+	DeploymentLeg                *DeploymentLegT    `db:"deployment_leg" json:"deployment_leg,omitempty" yaml:"deployment_leg,omitempty"`
 	Chain                        *string            `db:"chain" json:"chain,omitempty" yaml:"chain,omitempty"`
 	FulfillmentChainAccountID    *int               `db:"fulfillment_chain_account_id" json:"fulfillment_chain_account_id,omitempty" yaml:"fulfillment_chain_account_id,omitempty"`
 	FulfillmentControllerAddress *string            `db:"fulfillment_controller_address" json:"fulfillment_controller_address,omitempty" yaml:"fulfillment_controller_address,omitempty"`
@@ -97,6 +98,8 @@ func (model Contract) GetValueByTag(name string) any {
 		return model.Status
 	case "deployment_operation_id":
 		return model.DeploymentOperationID
+	case "deployment_leg":
+		return model.DeploymentLeg
 	case "chain":
 		return model.Chain
 	case "fulfillment_chain_account_id":
@@ -145,7 +148,7 @@ func (model Contract) ToJSON() map[string]any {
 func (model Contract) Fields() []string {
 	return []string{
 		"id", "user_id", "offer_id", "name", "status", "symbol", "address",
-		"transaction_tx", "deployment_operation_id", "chain",
+		"transaction_tx", "deployment_operation_id", "deployment_leg", "chain",
 		"fulfillment_chain_account_id", "fulfillment_controller_address",
 		"asset_address", "asset_decimals", "share_decimals", "vault_standard",
 		"tokenization_engine", "events_scanned_through_block_number",
