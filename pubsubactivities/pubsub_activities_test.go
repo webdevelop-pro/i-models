@@ -135,7 +135,7 @@ func TestClaimLeaseReturnsErrInProgressForLiveOwner(t *testing.T) {
 			if !ok {
 				return errors.New("status destination is not *string")
 			}
-			*status = StatusProcessing
+			*status = string(StatusProcessing)
 
 			return nil
 		}),
