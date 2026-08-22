@@ -291,6 +291,7 @@ const (
 	DepositPriceSourceOfferDeck       DepositPriceSourceT = "offer_deck"
 	DepositPriceSourceFinalizedNAV    DepositPriceSourceT = "finalized_nav"
 	DepositPriceSourceChainForwardNAV DepositPriceSourceT = "chain_forward_nav"
+	DepositPriceSourceManagerDealing  DepositPriceSourceT = "manager_dealing_price"
 )
 
 func AllDepositPriceSourceT() []DepositPriceSourceT {
@@ -298,12 +299,14 @@ func AllDepositPriceSourceT() []DepositPriceSourceT {
 		DepositPriceSourceOfferDeck,
 		DepositPriceSourceFinalizedNAV,
 		DepositPriceSourceChainForwardNAV,
+		DepositPriceSourceManagerDealing,
 	}
 }
 
 func (e DepositPriceSourceT) IsValid() error {
 	switch e {
-	case DepositPriceSourceOfferDeck, DepositPriceSourceFinalizedNAV, DepositPriceSourceChainForwardNAV:
+	case DepositPriceSourceOfferDeck, DepositPriceSourceFinalizedNAV,
+		DepositPriceSourceChainForwardNAV, DepositPriceSourceManagerDealing:
 		return nil
 	default:
 		return errors.New("enum is not valid")

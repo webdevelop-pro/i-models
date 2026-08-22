@@ -76,3 +76,23 @@ func TestAllFundingTypesAreValid(t *testing.T) {
 		}
 	}
 }
+
+func TestAllDepositPriceSourcesAreValid(t *testing.T) {
+	t.Parallel()
+
+	want := map[DepositPriceSourceT]bool{
+		DepositPriceSourceOfferDeck:       true,
+		DepositPriceSourceFinalizedNAV:    true,
+		DepositPriceSourceChainForwardNAV: true,
+		DepositPriceSourceManagerDealing:  true,
+	}
+	for _, source := range AllDepositPriceSourceT() {
+		if err := source.IsValid(); err != nil {
+			t.Fatalf("deposit price source %q is invalid: %v", source, err)
+		}
+		delete(want, source)
+	}
+	if len(want) != 0 {
+		t.Fatalf("deposit price sources are missing from AllDepositPriceSourceT: %v", want)
+	}
+}
