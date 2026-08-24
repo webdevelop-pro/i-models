@@ -13,7 +13,7 @@ type InvestmentInvestment struct {
 	SiteID                          *int                 `db:"site_id" json:"site_id,omitempty" yaml:"site_id,omitempty"`
 	Amount                          *string              `db:"amount" json:"amount" yaml:"amount"`
 	PricePerShare                   string               `db:"price_per_share" json:"price_per_share" yaml:"price_per_share"`
-	NumberOfShares                  string               `db:"number_of_shares" json:"number_of_shares" yaml:"number_of_shares"`
+	NumberOfShares                  *string              `db:"number_of_shares" json:"number_of_shares" yaml:"number_of_shares"`
 	PaymentType                     PaymentT             `db:"payment_type" json:"payment_type" yaml:"payment_type"`
 	EscrowType                      EscrowT              `db:"escrow_type" json:"escrow_type" yaml:"escrow_type"`
 	FundingType                     FundingT             `db:"funding_type" json:"funding_type" yaml:"funding_type"`

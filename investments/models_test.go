@@ -9,9 +9,10 @@ func TestInvestmentAmountJSONUsesExactStringAndPreservesNullDraft(t *testing.T) 
 	t.Parallel()
 
 	amount := "12345678901234567890.123456"
+	numberOfShares := "98765432109876543210.123456789012345678"
 	model := InvestmentInvestment{
 		Amount:         &amount,
-		NumberOfShares: "98765432109876543210.123456789012345678",
+		NumberOfShares: &numberOfShares,
 	}
 
 	encoded, err := json.Marshal(model)
@@ -26,8 +27,8 @@ func TestInvestmentAmountJSONUsesExactStringAndPreservesNullDraft(t *testing.T) 
 	if got := payload["amount"]; got != amount {
 		t.Fatalf("amount must be an exact JSON string: got %#v, want %q", got, amount)
 	}
-	if got := payload["number_of_shares"]; got != model.NumberOfShares {
-		t.Fatalf("number_of_shares must be an exact JSON string: got %#v, want %q", got, model.NumberOfShares)
+	if got := payload["number_of_shares"]; got != numberOfShares {
+		t.Fatalf("number_of_shares must be an exact JSON string: got %#v, want %q", got, numberOfShares)
 	}
 
 	encoded, err = json.Marshal(InvestmentInvestment{})
@@ -40,16 +41,21 @@ func TestInvestmentAmountJSONUsesExactStringAndPreservesNullDraft(t *testing.T) 
 	if got, ok := payload["amount"]; !ok || got != nil {
 		t.Fatalf("draft amount must remain explicit JSON null: present=%v value=%#v", ok, got)
 	}
+	if got, ok := payload["number_of_shares"]; !ok || got != nil {
+		t.Fatalf("unpriced shares must remain explicit JSON null: present=%v value=%#v", ok, got)
+	}
 }
 
 func TestInvestmentToJSONPreservesExactProtocolAmounts(t *testing.T) {
 	t.Parallel()
 
 	amount := "10000000000000000000.000001"
+	numberOfShares := "98765432109876543210.123456789012345678"
 	assetRaw := "10000000000000000000000001"
 	shareRaw := "99999999999999999999999999999999999999"
 	model := InvestmentInvestment{
 		Amount:         &amount,
+		NumberOfShares: &numberOfShares,
 		AssetAmountRaw: &assetRaw,
 		ShareAmountRaw: &shareRaw,
 	}
@@ -57,6 +63,7 @@ func TestInvestmentToJSONPreservesExactProtocolAmounts(t *testing.T) {
 	payload := model.ToJSON()
 	for field, want := range map[string]string{
 		"amount":           amount,
+		"number_of_shares": numberOfShares,
 		"asset_amount_raw": assetRaw,
 		"share_amount_raw": shareRaw,
 	} {

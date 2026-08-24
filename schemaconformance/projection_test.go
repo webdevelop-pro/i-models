@@ -185,13 +185,36 @@ func TestOfferProjectionAgainstPostgreSQL(t *testing.T) {
 	if investment.Amount == nil ||
 		*investment.Amount != "123.456789000000000000" ||
 		investment.PricePerShare != "2.500000000000000000" ||
-		investment.NumberOfShares != "49.382715600000000000" {
+		investment.NumberOfShares == nil ||
+		*investment.NumberOfShares != "49.382715600000000000" {
 		t.Fatalf(
-			"investment decimals were not projected exactly: amount=%v price=%q shares=%q",
+			"investment decimals were not projected exactly: amount=%v price=%q shares=%v",
 			investment.Amount,
 			investment.PricePerShare,
 			investment.NumberOfShares,
 		)
+	}
+
+	_, err = tx.Exec(ctx, `
+		INSERT INTO investment_investments(
+			id, user_id, offer_id, profile_id, amount, price_per_share,
+			number_of_shares
+		) VALUES (
+			-700002, $1, $2, $3, 123.456789, 2.5, NULL
+		)
+	`, userID, offerID, profileID)
+	if err != nil {
+		t.Fatalf("insert unpriced projection investment: %v", err)
+	}
+	unpricedInvestment, err := orm.RetrieveOne[
+		investments.InvestmentInvestment,
+		*investments.InvestmentInvestment,
+	](ctx, repo, sq.Eq{"id": -700002})
+	if err != nil {
+		t.Fatalf("retrieve unpriced investment projection: %v", err)
+	}
+	if unpricedInvestment.NumberOfShares != nil {
+		t.Fatalf("unpriced investment shares = %q, want nil", *unpricedInvestment.NumberOfShares)
 	}
 
 	const externalStrategyAssetsRaw = "12345678901234567890123456789012345678901234567890"
