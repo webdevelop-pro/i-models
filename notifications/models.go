@@ -9,7 +9,7 @@ import (
 // Notification is an object representing the database table.
 type Notification struct {
 	ID                   int                 `db:"id" json:"id" yaml:"id"`
-	UserID               *int                `db:"user_id" json:"user_id,omitempty" yaml:"user_id,omitempty"`
+	UserID               int                 `db:"user_id" json:"user_id" yaml:"user_id"`
 	Content              string              `db:"content" json:"content" yaml:"content"`
 	Status               NotificationStatusT `db:"status" json:"status" yaml:"status"`
 	Type                 NotificationTypeT   `db:"type" json:"type" yaml:"type"`
@@ -18,6 +18,8 @@ type Notification struct {
 	UpdatedAt            pgtype.Timestamptz  `db:"updated_at" json:"updated_at" yaml:"updated_at"`
 	DomainEventID        *uuid.UUID          `db:"domain_event_id" json:"domain_event_id,omitempty" yaml:"domain_event_id,omitempty"`
 	NotificationRevision int64               `db:"notification_revision" json:"notification_revision" yaml:"notification_revision"`
+	NovuPushProcessedAt  pgtype.Timestamptz  `db:"novu_push_processed_at" json:"-" yaml:"-"`
+	NovuPushAttemptCount int                 `db:"novu_push_attempt_count" json:"-" yaml:"-"`
 
 	db db.Repository `db:"-" json:"-"`
 }
