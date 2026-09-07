@@ -8,6 +8,7 @@ import (
 type InvestmentInvestment struct {
 	ID                              int                  `db:"id" json:"id" yaml:"id"`
 	UserID                          *int                 `db:"user_id" json:"user_id,omitempty" yaml:"user_id,omitempty"`
+	CreatedBy                       int                  `db:"created_by" json:"created_by" yaml:"created_by"`
 	OfferID                         *int                 `db:"offer_id" json:"offer_id,omitempty" yaml:"offer_id,omitempty"`
 	ProfileID                       *int                 `db:"profile_id" json:"profile_id,omitempty" yaml:"profile_id,omitempty"`
 	SiteID                          *int                 `db:"site_id" json:"site_id,omitempty" yaml:"site_id,omitempty"`
@@ -73,6 +74,7 @@ func (model InvestmentInvestment) ToJSON() map[string]any {
 	return map[string]any{
 		"id":                                  model.ID,
 		"user_id":                             model.UserID,
+		"created_by":                          model.CreatedBy,
 		"offer_id":                            model.OfferID,
 		"profile_id":                          model.ProfileID,
 		"site_id":                             model.SiteID,
@@ -132,7 +134,7 @@ func (model InvestmentInvestment) ToJSON() map[string]any {
 
 func (model InvestmentInvestment) Fields() []string {
 	return []string{
-		"id", "user_id", "offer_id", "profile_id", "site_id", "amount",
+		"id", "user_id", "created_by", "offer_id", "profile_id", "site_id", "amount",
 		"price_per_share", "number_of_shares", "payment_type", "escrow_type",
 		"funding_type", "funding_status", "status", "prev_status", "step",
 		"commission", "cancelation_reason", "entity_id", "transaction_ref",
