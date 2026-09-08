@@ -193,6 +193,10 @@ type InvestmentRedemption struct {
 	NAVVersion                      *int64              `db:"nav_version" json:"nav_version,omitempty"`
 	NAVValuationBlockNumber         *int64              `db:"nav_valuation_block_number" json:"nav_valuation_block_number,omitempty"`
 	NAVValuationAsOf                pgtype.Timestamptz  `db:"nav_valuation_as_of" json:"nav_valuation_as_of,omitempty"`
+	DealingPriceUSDCRaw             *string             `db:"dealing_price_usdc_raw" json:"dealing_price_usdc_raw,omitempty"`
+	PricingSource                   *string             `db:"pricing_source" json:"pricing_source,omitempty"`
+	PricedByUserID                  *int                `db:"priced_by_user_id" json:"priced_by_user_id,omitempty"`
+	PricedRequestEffectID           *int64              `db:"priced_request_effect_id" json:"priced_request_effect_id,omitempty"`
 	PricedAt                        pgtype.Timestamptz  `db:"priced_at" json:"priced_at,omitempty"`
 	LiquidityShortfallRaw           string              `db:"liquidity_shortfall_raw" json:"liquidity_shortfall_raw"`
 	AssetAmountRaw                  *string             `db:"asset_amount_raw" json:"asset_amount_raw,omitempty"`
@@ -240,6 +244,10 @@ func (model InvestmentRedemption) ToJSON() map[string]any {
 		"nav_version":                          model.NAVVersion,
 		"nav_valuation_block_number":           model.NAVValuationBlockNumber,
 		"nav_valuation_as_of":                  model.NAVValuationAsOf,
+		"dealing_price_usdc_raw":               model.DealingPriceUSDCRaw,
+		"pricing_source":                       model.PricingSource,
+		"priced_by_user_id":                    model.PricedByUserID,
+		"priced_request_effect_id":             model.PricedRequestEffectID,
 		"priced_at":                            model.PricedAt,
 		"liquidity_shortfall_raw":              model.LiquidityShortfallRaw,
 		"asset_amount_raw":                     model.AssetAmountRaw,
@@ -271,6 +279,7 @@ func (model InvestmentRedemption) Fields() []string {
 		"dealing_cutoff_block_number", "dealing_cutoff_at", "nav_record_id",
 		"nav_usdc_raw", "nav_version", "nav_valuation_block_number",
 		"nav_valuation_as_of", "priced_at", "liquidity_shortfall_raw",
+		"dealing_price_usdc_raw", "pricing_source", "priced_by_user_id", "priced_request_effect_id",
 		"asset_amount_raw", "share_amount_raw", "pending_shares_raw",
 		"claimable_assets_raw", "claimable_shares_raw", "claimed_assets_raw",
 		"claimed_shares_raw", "transition_version", "request_locked_at",
